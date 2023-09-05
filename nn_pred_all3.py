@@ -9,14 +9,14 @@ import torch.optim as optim
 import sys
 #import netCDF4 as nc
 #from prettytable import PrettyTable
-from count_trainable_params import count_parameters
+#from count_trainable_params import count_parameters
 import hdf5storage
 import pickle
 
 
-path_outputs = '/media/volume/sdb/RK4_analysis/KS_stuff/new_outputs/'
+path_outputs = '/media/volume/sdb/conrad_temp/model_eval/'
 
-with open('/media/volume/sdb/RK4_analysis/KS_stuff/models/save/KS_1024.pkl', 'rb') as f:
+with open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
@@ -244,6 +244,7 @@ matfiledata_PEC = {}
 matfiledata_PEC[u'prediction'] = pred_PEC
 matfiledata_PEC[u'Truth'] = label_test 
 hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+
 
 
 print('Saved Predictions')
