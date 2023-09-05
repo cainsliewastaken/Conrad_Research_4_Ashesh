@@ -151,7 +151,7 @@ for ep in range(0, epochs+1):
 
         #train Euler_step net
         optimizer_Euler.zero_grad()
-        outputs_Euler = Eulerstep(optimizer_Euler,input_batch)
+        outputs_Euler = Eulerstep(mynet_Eulerstep,input_batch)
         loss = loss_fn(outputs_Euler,label_batch)
   
         loss.backward(retain_graph=True)
@@ -159,7 +159,7 @@ for ep in range(0, epochs+1):
 
         #train RK4_step net
         optimizer_RK4.zero_grad()
-        outputs_RK4 = RK4step(optimizer_RK4,input_batch)
+        outputs_RK4 = RK4step(mynet_RK4step,input_batch)
         loss = loss_fn(outputs_RK4,label_batch)
   
         loss.backward(retain_graph=True)
@@ -167,7 +167,7 @@ for ep in range(0, epochs+1):
 
         #train PEC_step net
         optimizer_PEC.zero_grad()
-        outputs_PEC = PECstep(optimizer_PEC,input_batch)
+        outputs_PEC = PECstep(mynet_PECstep,input_batch)
         loss = loss_fn(outputs_PEC,label_batch)
   
         loss.backward(retain_graph=True)
