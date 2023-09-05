@@ -9,8 +9,8 @@ import torch.optim as optim
 import sys
 #import netCDF4 as nc
 #from prettytable import PrettyTable
-#from count_trainable_params import count_parameters
-import hdf5storage
+#from count_trainable_params import count_parameters    
+# import hdf5storage
 import pickle
 
 
@@ -225,25 +225,25 @@ for k in range(0,M):
         pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
 
 
-matfiledata_direct = {}
-matfiledata_direct[u'prediction'] = pred_direct
-matfiledata_direct[u'Truth'] = label_test 
-hdf5storage.write(matfiledata_direct, '.', path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+# matfiledata_direct = {}
+# matfiledata_direct[u'prediction'] = pred_direct
+# matfiledata_direct[u'Truth'] = label_test 
+# hdf5storage.write(matfiledata_direct, '.', path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
-matfiledata_Euler = {}
-matfiledata_Euler[u'prediction'] = pred_Euler
-matfiledata_Euler[u'Truth'] = label_test 
-hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+# matfiledata_Euler = {}
+# matfiledata_Euler[u'prediction'] = pred_Euler
+# matfiledata_Euler[u'Truth'] = label_test 
+# hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
-matfiledata_RK4 = {}
-matfiledata_RK4[u'prediction'] = pred_RK4
-matfiledata_RK4[u'Truth'] = label_test 
-hdf5storage.write(matfiledata_RK4, '.', path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+# matfiledata_RK4 = {}
+# matfiledata_RK4[u'prediction'] = pred_RK4
+# matfiledata_RK4[u'Truth'] = label_test 
+# hdf5storage.write(matfiledata_RK4, '.', path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
-matfiledata_PEC = {}
-matfiledata_PEC[u'prediction'] = pred_PEC
-matfiledata_PEC[u'Truth'] = label_test 
-hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+# matfiledata_PEC = {}
+# matfiledata_PEC[u'prediction'] = pred_PEC
+# matfiledata_PEC[u'Truth'] = label_test 
+# hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 
 
