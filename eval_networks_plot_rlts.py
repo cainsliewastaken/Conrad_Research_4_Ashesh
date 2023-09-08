@@ -173,7 +173,7 @@ ax1.semilogy(matfiledata_PEC[u'RMSE'], label='PEC step')
 ax1.set_xlabel('Time step')
 ax1.set_ylabel('Log RSME')
 ax1.legend()
-fig1.savefig('RMSE')
+fig1.savefig('RMSE.png')
 
 # create second plot
 fig2, ax2 = plt.subplots(2,2)
@@ -211,7 +211,7 @@ ax2[1,1].legend()
 ax2[1,1].set_xlabel('Spacial grid')
 ax2[1,1].set_ylabel('Values of u(x)')
 
-fig2.savefig('Values_at_multiple_timesteps')
+fig2.savefig('Values_at_multiple_timesteps.png')
 
 
 # create third plot, fspec at multiple timesteps
@@ -243,7 +243,7 @@ ax3[1,0].legend()
 ax3[1,0].set_title('Values of the fourier spectrum of u and PEC step at timesteps 0, 10k, 20k and 100k')
 ax3[1,0].set_xlabel('Fourier modes')
 ax3[1,0].set_ylabel('Amplitudes')
-fig3.savefig('Fspec_at_multiple_timesteps')
+fig3.savefig('Fspec_at_multiple_timesteps.png')
 
 
 # create fourth plot, fspec of time derivative at multiple timesteps
@@ -275,7 +275,7 @@ ax4[1,0].set_title('Values of the fourier spectrum of du/dt and PEC step time de
 ax4[1,0].set_xlabel('Fourier modes')
 ax4[1,0].set_ylabel('Amplitudes')
 
-fig4.savefig('Time_derivative_Fspec_at_multiple_timesteps')
+fig4.savefig('Time_derivative_Fspec_at_multiple_timesteps.png')
 
 
 print('Graphs plotted and saved')
