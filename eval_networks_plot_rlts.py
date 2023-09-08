@@ -169,7 +169,7 @@ for k in range(0,M):
 
 
 def RMSE(y_hat, y_true):
-    return torch.sqrt(torch.mean(y_hat - y_true, dim=1, keepdim=True)**2)
+    return np.sqrt(np.mean(y_hat - y_true, axis=1, keepdims=True)**2)
 
 
 
@@ -205,7 +205,7 @@ for n in range(np.shape(u_truth_difft_n2)[0]):
 matfiledata_direct = {}
 matfiledata_direct[u'prediction'] = pred_direct
 matfiledata_direct[u'Truth'] = label_test 
-matfiledata_direct[u'RMSE'] = RMSE(pred_direct, torch.from_numpy(label_test))
+matfiledata_direct[u'RMSE'] = RMSE(pred_direct, label_test)
 matfiledata_direct[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_direct[u'pred_FFT'] = direct_1d_fspec_tdim
 scipy.io.savemat(path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matfiledata_direct)
@@ -214,21 +214,21 @@ scipy.io.savemat(path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat',
 matfiledata_Euler = {}
 matfiledata_Euler[u'prediction'] = pred_Euler
 matfiledata_Euler[u'Truth'] = label_test 
-matfiledata_Euler[u'RMSE'] = RMSE(pred_Euler, torch.from_numpy(label_test))
+matfiledata_Euler[u'RMSE'] = RMSE(pred_Euler, label_test)
 scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matfiledata_Euler)
 #hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_RK4 = {}
 matfiledata_RK4[u'prediction'] = pred_RK4
 matfiledata_RK4[u'Truth'] = label_test 
-matfiledata_RK4[u'RMSE'] = RMSE(pred_RK4, torch.from_numpy(label_test))
+matfiledata_RK4[u'RMSE'] = RMSE(pred_RK4, label_test)
 scipy.io.savemat(path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matfiledata_RK4)
 #hdf5storage.write(matfiledata_RK4, '.', path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_PEC = {}
 matfiledata_PEC[u'prediction'] = pred_PEC
 matfiledata_PEC[u'Truth'] = label_test 
-matfiledata_PEC[u'RMSE'] = RMSE(pred_PEC, torch.from_numpy(label_test))
+matfiledata_PEC[u'RMSE'] = RMSE(pred_PEC, label_test)
 matfiledata_PEC[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_PEC[u'pred_FFT'] = PEC_1d_fspec_tdim
 scipy.io.savemat(path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matfiledata_PEC)
