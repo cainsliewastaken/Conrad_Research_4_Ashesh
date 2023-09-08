@@ -1,4 +1,5 @@
 import numpy as np
+import scipy.io
 import torch
 print(torch.__version__)
 
@@ -10,7 +11,7 @@ import sys
 #import netCDF4 as nc
 #from prettytable import PrettyTable
 #from count_trainable_params import count_parameters    
-import hdf5storage
+#import hdf5storage
 import pickle
 from nn_train_all4 import Net, directstep, Eulerstep, RK4step, PECstep
 import matplotlib.pyplot as plt
@@ -133,19 +134,22 @@ matfiledata_direct[u'Truth'] = label_test
 matfiledata_direct[u'RMSE'] = RMSE(pred_direct, label_test)
 matfiledata_direct[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_direct[u'pred_FFT'] = direct_1d_fspec_tdim
-hdf5storage.write(matfiledata_direct, '.', path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+scipy.io.savemat(path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matfiledata_direct)
+#hdf5storage.write(matfiledata_direct, '.', path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_Euler = {}
 matfiledata_Euler[u'prediction'] = pred_Euler
 matfiledata_Euler[u'Truth'] = label_test 
 matfiledata_Euler[u'RMSE'] = RMSE(pred_Euler, label_test)
-hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matfiledata_Euler)
+#hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_RK4 = {}
 matfiledata_RK4[u'prediction'] = pred_RK4
 matfiledata_RK4[u'Truth'] = label_test 
 matfiledata_RK4[u'RMSE'] = RMSE(pred_RK4, label_test)
-hdf5storage.write(matfiledata_RK4, '.', path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+scipy.io.savemat(path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matfiledata_RK4)
+#hdf5storage.write(matfiledata_RK4, '.', path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_PEC = {}
 matfiledata_PEC[u'prediction'] = pred_PEC
@@ -153,7 +157,8 @@ matfiledata_PEC[u'Truth'] = label_test
 matfiledata_PEC[u'RMSE'] = RMSE(pred_PEC, label_test)
 matfiledata_PEC[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_PEC[u'pred_FFT'] = PEC_1d_fspec_tdim
-hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+scipy.io.savemat(path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matfiledata_PEC)
+#hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 print('Saved predictions, etc')
 

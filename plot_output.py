@@ -26,5 +26,5 @@ for n in range(np.shape(u_truth_long)[1]-1):
 #%%
 plt.loglog(np.mean(u_1d_f_spec_tdim[:,1:512], axis=0))
 
-    
+
 # %%
