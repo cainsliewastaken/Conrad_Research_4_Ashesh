@@ -13,6 +13,26 @@ import sys
 #import hdf5storage
 import pickle
 
+path_outputs = '/media/volume/sdb/conrad_temp/model_eval/'
+
+with open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'rb') as f:
+    data = pickle.load(f)
+data=np.asarray(data[:,:250000])
+
+
+lead=1
+time_step = 1e-3
+trainN=150000
+input_size = 1024
+output_size = 1024
+hidden_layer_size = 2000
+input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
+label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
+
+input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
+label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
+label_test = np.transpose(data[:,trainN+lead:])
+
 
 def RK4step(net,input_batch):
  output_1 = net(input_batch.cuda())
@@ -83,30 +103,11 @@ class Net(nn.Module):
 
 if __name__ == "__main__":
 
-  path_outputs = '/media/volume/sdb/conrad_temp/model_eval/'
-
-  with open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'rb') as f:
-      data = pickle.load(f)
-  data=np.asarray(data[:,:250000])
-
-
-  lead=1
-  time_step = 1e-3
-  trainN=150000
-  input_size = 1024
-  output_size = 1024
-  hidden_layer_size = 2000
-  input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
-  label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
-
-  input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
-  label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
-  label_test = np.transpose(data[:,trainN+lead:])
 
 
 
   mynet_directstep = Net()
-  mynet_Eulerstep = Net(      )
+  mynet_Eulerstep = Net()
   mynet_RK4step = Net()
   mynet_PECstep = Net()
 
