@@ -5,8 +5,8 @@ Run the KS model without u_xxxx,
 Find the u_xxxx using RVM
 """
 import numpy as np
-from canonicalPDEs import save_sol
 from canonicalPDEs import ETRNK4intKS as intKS 
+import pickle
 L = 100
 N = 1024
 dx = L/N
@@ -31,7 +31,6 @@ print('starting spin up',Nt_spinoff)
 u_spun_full = intKS(u0,t,kappa,N,lambdas)
 u_spun = u_spun_full[:,-2] #solver leaves last timestep as zeros :(
 
-save_sol(u_truth_long, 'KS_1024')
 
 t = np.arange(Nt_spinoff*dt ,Nt*dt,dt) 
 dt = t[1]-t[0]
@@ -41,6 +40,9 @@ print('dt',dt)
 print('end time',Nt*dt)
 
 u_truth_long = intKS(u_spun,t,kappa,N,lambdas)
-#save_sol(u_truth_long, 'KS_1024')
+
+f = open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'wb')
+pickle.dump(u_truth_long[:,-2], f)
+f.close()
 
 
