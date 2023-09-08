@@ -142,30 +142,30 @@ for k in range(0,M):
     if (k==0):
 
         out_direct = directstep(mynet_directstep,input_test_torch[0,:])
-        pred_direct [k,:] = out_direct.detach().numpy()
+        pred_direct [k,:] = out_direct.detach().cpu().numpy()
 
         out_Euler = Eulerstep(mynet_Eulerstep,input_test_torch[0,:])
-        pred_Euler [k,:] = out_Euler.detach().numpy()
+        pred_Euler [k,:] = out_Euler.detach().cpu().numpy()
 
         out_RK4 = RK4step(mynet_RK4step,input_test_torch[0,:])
-        pred_RK4 [k,:] = out_RK4.detach().numpy()
+        pred_RK4 [k,:] = out_RK4.detach().cpu().numpy()
 
         out_PEC = PECstep(mynet_RK4step,input_test_torch[0,:])
-        pred_PEC [k,:] = out_PEC.detach().numpy()
+        pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
 
     else:
 
         out_direct = directstep(mynet_directstep,torch.from_numpy(pred_direct[k-1,:]).float().cuda())
-        pred_direct [k,:] = out_direct.detach().numpy()
+        pred_direct [k,:] = out_direct.detach().cpu().numpy()
 
         out_Euler = Eulerstep(mynet_Eulerstep,torch.from_numpy(pred_Euler[k-1,:]).float().cuda())
-        pred_Euler [k,:] = out_Euler.detach().numpy()
+        pred_Euler [k,:] = out_Euler.detach().cpu().numpy()
 
         out_RK4 = RK4step(mynet_RK4step,torch.from_numpy(pred_RK4[k-1,:]).float().cuda())
-        pred_RK4 [k,:] = out_RK4.detach().numpy()
+        pred_RK4 [k,:] = out_RK4.detach().cpu().numpy()
 
         out_PEC = PECstep(mynet_PECstep,torch.from_numpy(pred_PEC[k-1,:]).float().cuda())
-        pred_PEC [k,:] = out_PEC.detach().numpy()
+        pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
 
 
 def RMSE(y_hat, y_true):
