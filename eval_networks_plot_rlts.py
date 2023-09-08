@@ -130,7 +130,7 @@ mynet_PECstep.cuda()
 
 
 
-M=100000
+M=99999
 pred_direct = np.zeros([M,np.size(label_test,1)])
 pred_Euler = np.zeros([M,np.size(label_test,1)])
 pred_RK4 = np.zeros([M,np.size(label_test,1)])
