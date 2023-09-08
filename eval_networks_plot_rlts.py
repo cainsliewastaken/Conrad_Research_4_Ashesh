@@ -119,6 +119,14 @@ mynet_RK4step.load_state_dict(torch.load('NN_RK4step_lead1.pt'))
 mynet_PECstep = Net()
 mynet_RK4step.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
 
+mynet_directstep.cuda()
+
+mynet_Eulerstep.cuda()
+
+mynet_RK4step.cuda()
+
+mynet_PECstep.cuda()
+
 
 
 
