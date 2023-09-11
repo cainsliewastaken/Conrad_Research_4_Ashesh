@@ -248,7 +248,13 @@ ax1.set_xlabel('Time step')
 ax1.set_ylabel('RSME')
 ax1.legend(fontsize='x-small')
 fig1.savefig('RMSE.png')
-print(sum(matfiledata_direct[u'RMSE'][1000:]))
+#print(sum(matfiledata_direct[u'RMSE']))
+
+fig12, ax12 = plt.subplots(figsize=(10,8))
+ax12.plot(matfiledata_direct[u'RMSE'], label='Direct step')
+ax12.legend(fontsize='x-small')
+fig12.savefig('RMSE_direct.png')
+
 
 # create second plot
 fig2, ax2 = plt.subplots(2,2, figsize=(10,8))
