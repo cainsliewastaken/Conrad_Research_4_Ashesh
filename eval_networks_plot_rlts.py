@@ -248,7 +248,7 @@ ax1.set_xlabel('Time step')
 ax1.set_ylabel('RSME')
 ax1.legend(fontsize='x-small')
 fig1.savefig('RMSE.png')
-print(sum(matfiledata_direct[u'RMSE']))
+print(sum(matfiledata_direct[u'RMSE'][1000:]))
 
 # create second plot
 fig2, ax2 = plt.subplots(2,2, figsize=(10,8))
