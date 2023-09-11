@@ -245,9 +245,10 @@ ax1.plot(matfiledata_Euler[u'RMSE'], label='Euler step')
 ax1.plot(matfiledata_RK4[u'RMSE'], label='RK4 step')
 ax1.plot(matfiledata_PEC[u'RMSE'], label='PEC step')
 ax1.set_xlabel('Time step')
-ax1.set_ylabel('Log RSME')
+ax1.set_ylabel('RSME')
 ax1.legend(fontsize='x-small')
 fig1.savefig('RMSE.png')
+print(sum(matfiledata_direct[u'RMSE']))
 
 # create second plot
 fig2, ax2 = plt.subplots(2,2, figsize=(10,8))
