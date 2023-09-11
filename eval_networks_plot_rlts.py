@@ -169,7 +169,7 @@ for k in range(0,M):
 
 
 def RMSE(y_hat, y_true):
-    return np.sqrt(np.mean(y_hat - y_true, axis=1, keepdims=True)**2)
+    return np.sqrt(np.mean(y_hat - y_true, axis=1, keepdims=True)**2 + np.finfo(float).eps) #change for different values of epsilon
 
 
 
