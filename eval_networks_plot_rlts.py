@@ -265,6 +265,8 @@ ax2[0,0].set_title('t = 0')
 ax2[0,0].legend(fontsize='x-small')
 #ax2[0,0].set_xlabel('Spacial grid')
 ax2[0,0].set_ylabel('Values of u(x)')
+ax2[0,0].set(ylim=(-5,5))
+
 
 ax2[0,1].plot(pred_PEC[10000,:], label='PEC step')
 ax2[0,1].plot(label_test[10000,:], label='Truth')
@@ -273,6 +275,8 @@ ax2[0,1].set_title('t = 10000')
 ax2[0,1].legend(fontsize='x-small')
 #ax2[0,1].set_xlabel('Spacial grid')
 ax2[0,1].set_ylabel('Values of u(x)')
+ax2[0,1].set(ylim=(-5,5))
+
 
 ax2[1,0].plot(pred_PEC[20000,:], label='PEC step')
 ax2[1,0].plot(label_test[20000,:], label='Truth')
@@ -281,6 +285,8 @@ ax2[1,0].set_title('t = 20000')
 ax2[1,0].legend(fontsize='x-small')
 ax2[1,0].set_xlabel('Spacial grid')
 ax2[1,0].set_ylabel('Values of u(x)')
+ax2[1,0].set(ylim=(-5,5))
+
 
 ax2[1,1].plot(pred_PEC[-1,:], label='PEC step')
 ax2[1,1].plot(label_test[-1,:], label='Truth')
@@ -289,6 +295,8 @@ ax2[1,1].set_title('t = 100000')
 ax2[1,1].legend(fontsize='x-small')
 ax2[1,1].set_xlabel('Spacial grid')
 ax2[1,1].set_ylabel('Values of u(x)')
+ax2[1,1].set(ylim=(-5,5))
+
 
 fig2.savefig('Values_at_multiple_timesteps.png')
 
@@ -307,7 +315,6 @@ ax3[0].legend(fontsize='x-small')
 ax3[0].set_xlabel('Fourier modes')
 ax3[0].set_ylabel('Amplitudes')
 ax3[0].set_title('Values of the fourier spectrum of u and direct step at timesteps 0, 10k, 20k and 100k')
-ax3.set(ylim=(-5,5))
 
 
 ax3[1].loglog(u_1d_fspec_tdim[0,1:512], label='Truth at t=0')
