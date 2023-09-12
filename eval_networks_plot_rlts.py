@@ -307,7 +307,7 @@ ax3[0].legend(fontsize='x-small')
 ax3[0].set_xlabel('Fourier modes')
 ax3[0].set_ylabel('Amplitudes')
 ax3[0].set_title('Values of the fourier spectrum of u and direct step at timesteps 0, 10k, 20k and 100k')
-
+ax3.set(ylim=(-5,5))
 
 
 ax3[1].loglog(u_1d_fspec_tdim[0,1:512], label='Truth at t=0')
