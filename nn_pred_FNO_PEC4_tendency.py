@@ -20,13 +20,13 @@ with open('/glade/scratch/asheshc/RK4_analysis/KS_stuff/models/save/KS.pkl', 'rb
     data = pickle.load(f)
 
 
-data=np.asarray(data[:,100000:])
+data=np.asarray(data[:,:250000])
 lead=1
 time_step = 1e-3
-trainN=80000
-input_size = 512
-output_size = 512
-hidden_layer_size = 1000
+trainN= 150000
+input_size = 1024
+output_size = 1024
+hidden_layer_size = 2000
 
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
@@ -79,6 +79,11 @@ def Eulerstep(net,input_batch):
 def directstep(net,input_batch):
   output_1 = net(input_batch.cuda())
   return output_1
+
+
+def PECstep(net,input_batch):
+ output_1 = net(input_batch.cuda()) + input_batch.cuda()
+ return input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_1))
 
 def PEC4step(net,input_batch):
  output_1 = time_step*net(input_batch.cuda()) + input_batch.cuda()
@@ -244,9 +249,10 @@ for ep in range(0, epochs+1):
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
 
-        
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
         label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
+
+        du_label_batch = input_batch - label_batch
 
         #pick a random boundary batch
         optimizer.zero_grad()
