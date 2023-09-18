@@ -18,12 +18,12 @@ path_outputs = '/glade/scratch/asheshc/RK4_analysis/KS_stuff/new_outputs/'
 
 with open('/glade/scratch/asheshc/RK4_analysis/KS_stuff/models/save/KS.pkl', 'rb') as f:
     data = pickle.load(f)
+data=np.asarray(data[:,:250000])
 
 
-data=np.asarray(data[:,100000:])
 lead=1
 time_step = 1e-3
-trainN=80000
+trainN=150000
 input_size = 1024
 output_size = 1024
 hidden_layer_size = 2000

@@ -18,9 +18,9 @@ path_outputs = '/glade/scratch/asheshc/RK4_analysis/KS_stuff/new_outputs/'
 
 with open('/glade/scratch/asheshc/RK4_analysis/KS_stuff/models/save/KS.pkl', 'rb') as f:
     data = pickle.load(f)
-
-
 data=np.asarray(data[:,:250000])
+
+
 lead=1
 time_step = 1e-3
 trainN= 150000
