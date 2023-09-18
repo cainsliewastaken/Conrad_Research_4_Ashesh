@@ -18,15 +18,15 @@ path_outputs = '/media/volume/sdb/RK4_analysis/KS_stuff/new_outputs/'
 
 with open('/media/volume/sdb/RK4_analysis/KS_stuff/models/save/KS.pkl', 'rb') as f:
     data = pickle.load(f)
+data=np.asarray(data[:,:250000])
 
 
-data=np.asarray(data[:,100000:])
 lead=1
 time_step = 1e-3
-trainN=80000
-input_size = 512
-output_size = 512
-hidden_layer_size = 1000
+trainN=150000
+input_size = 1024
+output_size = 1024
+hidden_layer_size = 2000
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
 
