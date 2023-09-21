@@ -258,6 +258,17 @@ pred_Euler = val_dict_Euler[u'prediction']
 pred_RK4 = val_dict_RK4[u'prediction']
 pred_PEC = val_dict_PEC[u'prediction']
 
+inputs_w_grad_direct = torch.zeros([int(4),input_size])
+inputs_w_grad_Euler = torch.zeros([int(4),input_size])
+inputs_w_grad_RK4 = torch.zeros([int(4),input_size])
+inputs_w_grad_PEC = torch.zeros([int(4),input_size])
+
+
+ygrad_direct = torch.zeros([int(4),input_size,input_size])
+ygrad_Euler = torch.zeros([int(4),input_size,input_size])
+ygrad_RK4 = torch.zeros([int(4),input_size,input_size])
+ygrad_PEC = torch.zeros([int(4),input_size,input_size])
+
 
 
 #tendency models and predictions
@@ -294,20 +305,21 @@ pred_PEC_tendency = val_dict_PEC_tendency[u'prediction']
 
 
 
-inputs_w_grad_direct = torch.zeros([int(4),input_size])
-inputs_w_grad_Euler = torch.zeros([int(4),input_size])
-inputs_w_grad_RK4 = torch.zeros([int(4),input_size])
-inputs_w_grad_PEC = torch.zeros([int(4),input_size])
+inputs_w_grad_direct_tendency = torch.zeros([int(4),input_size])
+inputs_w_grad_Euler_tendency = torch.zeros([int(4),input_size])
+inputs_w_grad_RK4_tendency= torch.zeros([int(4),input_size])
+inputs_w_grad_PEC_tendency = torch.zeros([int(4),input_size])
 
 
-ygrad_direct = torch.zeros([int(4),input_size,input_size])
-ygrad_Euler = torch.zeros([int(4),input_size,input_size])
-ygrad_RK4 = torch.zeros([int(4),input_size,input_size])
-ygrad_PEC = torch.zeros([int(4),input_size,input_size])
+ygrad_direct_tendency = torch.zeros([int(4),input_size,input_size])
+ygrad_Euler_tendency = torch.zeros([int(4),input_size,input_size])
+ygrad_RK4_tendency = torch.zeros([int(4),input_size,input_size])
+ygrad_PEC_tendency = torch.zeros([int(4),input_size,input_size])
 
 
 i = 0
 for j in np.array(int([0, 10000, 50000, 100000])):
+    #basic linear model jacobian calculation
     inputs_w_grad_direct[i,:] = pred_direct[j,:].requires_grad_(requires_grad=True)
     inputs_w_grad_Euler[i,:] = pred_Euler[j,:].requires_grad_(requires_grad=True)
     inputs_w_grad_RK4[i,:] = pred_RK4[j,:].requires_grad_(requires_grad=True)
@@ -317,6 +329,18 @@ for j in np.array(int([0, 10000, 50000, 100000])):
     ygrad_Euler[i,:,:] = torch.autograd.functional.jacobian(Eulerstep, inputs_w_grad_Euler[i,:])
     ygrad_RK4[i,:,:] = torch.autograd.functional.jacobian(RK4step, inputs_w_grad_RK4[i,:])
     ygrad_PEC[i,:,:] = torch.autograd.functional.jacobian(PECstep, inputs_w_grad_PEC[i,:])
+
+    #linear plus tendency (spectral loss) jacobian calculation
+    inputs_w_grad_direct_tendency[i,:] = pred_direct_tendency[j,:].requires_grad_(requires_grad=True)
+    inputs_w_grad_Euler_tendency[i,:] = pred_Euler_tendency[j,:].requires_grad_(requires_grad=True)
+    inputs_w_grad_RK4_tendency[i,:] = pred_RK4_tendency[j,:].requires_grad_(requires_grad=True)
+    inputs_w_grad_PEC_tendency[i,:] = pred_PEC_tendency[j,:].requires_grad_(requires_grad=True)
+
+    ygrad_direct_tendency[i,:,:] = torch.autograd.functional.jacobian(directstep, inputs_w_grad_direct_tendency[i,:])
+    ygrad_Euler_tendency[i,:,:] = torch.autograd.functional.jacobian(Eulerstep, inputs_w_grad_Euler_tendency[i,:])
+    ygrad_RK4_tendency[i,:,:] = torch.autograd.functional.jacobian(RK4step, inputs_w_grad_RK4_tendency[i,:])
+    ygrad_PEC_tendency[i,:,:] = torch.autograd.functional.jacobian(PECstep, inputs_w_grad_PEC_tendency[i,:])
+
 
     i += 1
 
