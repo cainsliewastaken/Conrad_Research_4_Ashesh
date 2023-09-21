@@ -127,13 +127,10 @@ if __name__ == "__main__":
 
   epochs = 60
 
-  loss_fn = nn.MSELoss()
-
   optimizer_direct = optim.SGD(mynet_directstep.parameters(), lr=0.005)
   optimizer_Euler = optim.SGD(mynet_Eulerstep.parameters(), lr=0.005)
   optimizer_RK4 = optim.SGD(mynet_RK4step.parameters(), lr=0.005)
   optimizer_PEC = optim.SGD(mynet_PECstep.parameters(), lr=0.005)
-
 
 
   loss_fn = nn.MSELoss()

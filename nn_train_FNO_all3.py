@@ -7,10 +7,10 @@ import torch.nn.functional as F
 import torch.optim as optim
 #from torchinfo import summary
 import sys
-import netCDF4 as nc
+# import netCDF4 as nc
 #from prettytable import PrettyTable
 from count_trainable_params import count_parameters
-import hdf5storage
+# import hdf5storage
 import pickle
 
 
@@ -23,43 +23,16 @@ data=np.asarray(data[:,:250000])
 
 lead=1
 time_step = 1e-3
-trainN= 150000
+trainN=150000
 input_size = 1024
 output_size = 1024
 hidden_layer_size = 2000
-
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
-
-du_label_torch = input_train_torch - label_train_torch
-
-
 
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
 label_test = np.transpose(data[:,trainN+lead:])
-
-def spectral_loss (output, output2, target,tendency):
-
-   loss1 = torch.mean((output-target)**2)
-
-   out_fft = torch.fft.rfft(output,dim=1)
-   target_fft = torch.fft.rfft(target,dim=1)
-
-   loss2 = torch.mean(torch.abs(out_fft[:,wavenum_init:,0] - target_fft[:,wavenum_init:,0]))
-
-
-   out_du_fft =torch.fft.rfft((output-output2)/time_step,dim=1)
-   target_du_fft =torch.fft.rfft(tendency/time_step,dim=1)
-
-   loss3 = torch.mean(torch.abs(out_du_fft[:,0:,0]-target_du_fft[:,0:,0]))
-
-   loss = loss1 + lamda_reg*loss3
-
-   return loss
-
-
-
 
 
 def RK4step(net,input_batch):
@@ -82,14 +55,10 @@ def directstep(net,input_batch):
 
 
 def PECstep(net,input_batch):
- output_1 = net(input_batch.cuda()) + input_batch.cuda()
+ output_1 = time_step*net(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_1))
 
-def PEC4step(net,input_batch):
- output_1 = time_step*net(input_batch.cuda()) + input_batch.cuda()
- output_2 = input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_1))
- output_3 = input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_2))
- return input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_3))
+
 
 ################################################################
 #  1d Fourier Integral Operator
@@ -218,28 +187,47 @@ class FNO1d(nn.Module):
 
 time_history = 1 #time steps to be considered as input to the solver
 time_future = 1 #time steps to be considered as output of the solver
-device = 'cuda'  #change to cpu of no cuda available
+device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 256 # number of Fourier modes to multiply
+modes = 512 # number of Fourier modes to multiply, changed from 256
 width = 1 # input and output channels to the FNO layer
 
-num_epochs = 1 #set to one so faster computation, in principle 20 is best
+num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
 learning_rate = 0.0001
 lr_decay = 0.4
-num_workers = 0
-wavenum_init=100
-mynet = FNO1d(modes, width, time_future, time_history).cuda()
-count_parameters(mynet)
-mynet.cuda()
-epochs = 60
-lamda_reg=5
+num_workers = 0  #What does this do?
+
+
+# declare all 3 networks
+mynet_directstep = FNO1d(modes, width, time_future, time_history).cuda()
+mynet_Eulerstep = FNO1d(modes, width, time_future, time_history).cuda()
+mynet_PECstep = FNO1d(modes, width, time_future, time_history).cuda()
+
+#count_parameters(mynet_directstep)
+mynet_directstep.cuda()
+
+#count_parameters(mynet_Eulerstep)
+mynet_Eulerstep.cuda()
+
+#count_parameters(mynet_PECstep)
+mynet_PECstep.cuda()
+
+# declare all 3 optimizers and schedulers
+optimizer_direct = optim.AdamW(mynet_directstep.parameters(), lr=learning_rate)
+scheduler_direct = optim.lr_scheduler.MultiStepLR(optimizer_direct, milestones=[0, 5, 10, 15], gamma=lr_decay)
+
+optimizer_Euler = optim.AdamW(mynet_Eulerstep.parameters(), lr=learning_rate)
+scheduler_Euler = optim.lr_scheduler.MultiStepLR(optimizer_Euler, milestones=[0, 5, 10, 15], gamma=lr_decay)
+
+optimizer_PEC = optim.AdamW(mynet_PECstep.parameters(), lr=learning_rate)
+scheduler_PEC = optim.lr_scheduler.MultiStepLR(optimizer_PEC, milestones=[0, 5, 10, 15], gamma=lr_decay)
+
+
+
+
 loss_fn = nn.MSELoss()
-#use two optimizers.  learing rates seem to work.
-
-optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate)
-scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15], gamma=lr_decay)
-
+epochs = 60
 batch_size=100
 
 for ep in range(0, epochs+1):
@@ -248,49 +236,66 @@ for ep in range(0, epochs+1):
       for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
-
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
         label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
-
-        du_label_batch = input_batch - label_batch
-
         #pick a random boundary batch
-        optimizer.zero_grad()
-        outputs = PEC4step(mynet,input_batch)
-        outputs2 = PEC4step(mynet,outputs)
-        loss = spectral_loss(outputs,outputs2,label_batch,du_label_batch)
-        
+        #train direct_step net
+        optimizer_direct.zero_grad()
+        outputs_direct = directstep(mynet_directstep, input_batch)
+        loss = loss_fn(outputs_direct, label_batch)
+
         loss.backward(retain_graph=True)
-        optimizer.step()
+        optimizer_direct.step()
+
+        #train Euler_step net
+        optimizer_Euler.zero_grad()
+        outputs_Euler = Eulerstep(mynet_Eulerstep, input_batch)
+        loss = loss_fn(outputs_Euler, label_batch)
+
+        loss.backward(retain_graph=True)
+        optimizer_Euler.step()
+
+        #train PEC_step net
+        optimizer_PEC.zero_grad()
+        outputs_PEC = PECstep(mynet_PECstep, input_batch)
+        loss = loss_fn(outputs_PEC, label_batch)
+
+        loss.backward(retain_graph=True)
+        optimizer_PEC.step()
+
    #     epoch_loss = epoch_loss + loss
-        if ep % 10 == 0:
-          print('step',step)
-          print('Epoch', ep)
-          print ('Loss', loss)
+        # if ep % 10 == 0:
+        #   print('step',step)
+        #   print('Epoch', ep)
+        #   print ('Loss', loss)
 
-torch.save(mynet.state_dict(),'BNN_Spectral_Loss_FNO_PEC4step_tendency_lambda_reg'+str(lamda_reg)+'lead'+str(lead)+'.pt') 
+torch.save(mynet_directstep.state_dict(),'NN_FNO_Directstep_lead'+str(lead)+'.pt') 
+torch.save(mynet_Eulerstep.state_dict(),'NN_FNO_Eulerstep_lead'+str(lead)+'.pt') 
+torch.save(mynet_PECstep.state_dict(),'NN_FNO_PECstep_lead'+str(lead)+'.pt') 
+
+print('Saved Models')
 
 
-M=20000
-pred = np.zeros([M,np.size(label_test,1)])
-for k in range(0,M):
+# M=20000
+# pred = np.zeros([M,np.size(label_test,1)])
+# for k in range(0,M):
  
-    if (k==0):
+#     if (k==0):
 
-        out = PEC4step(mynet,torch.reshape(input_test_torch[0,:],(1,input_size,1)))
-        pred [k,:] = torch.reshape(out,(1,input_size)).detach().cpu().numpy()
+#         out = RK4step(mynet,torch.reshape(input_test_torch[0,:],(1,input_size,1)))
+#         pred [k,:] = torch.reshape(out,(1,input_size)).detach().cpu().numpy()
 
-    else:
+#     else:
 
-        out = PEC4step(mynet,torch.reshape(torch.from_numpy(pred[k-1,:]),(1,input_size,1)).float().cuda())
+#         out = RK4step(mynet,torch.reshape(torch.from_numpy(pred[k-1,:]),(1,input_size,1)).float().cuda())
 
-        pred [k,:] = torch.reshape(out,(1,input_size)).detach().cpu().numpy()
+#         pred [k,:] = torch.reshape(out,(1,input_size)).detach().cpu().numpy()
 
-matfiledata = {}
-matfiledata[u'prediction'] = pred
-matfiledata[u'Truth'] = label_test 
-hdf5storage.write(matfiledata, '.', path_outputs+'predicted_Spectral_Loss_FNO_KS_PEC4step_lambda_reg'+str(lamda_reg)+'_lead'+str(lead)+'.mat', matlab_compatible=True)
+# matfiledata = {}
+# matfiledata[u'prediction'] = pred
+# matfiledata[u'Truth'] = label_test 
+# hdf5storage.write(matfiledata, '.', path_outputs+'predicted_FNO_KS_RK4step_lead'+str(lead)+'.mat', matlab_compatible=True)
 
-print('Saved Predictions')
+# print('Saved Predictions')
 
         
