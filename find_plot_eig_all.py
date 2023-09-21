@@ -289,32 +289,62 @@ mynet_PECstep_tendency = Net()
 mynet_RK4step_tendency.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_PECstep_lead1.pt'))
 mynet_PECstep_tendency.cuda()
 
-
 val_dict_direct_tendency = scipy.io.loadmat('"/media/volume/sdb/conrad_temp/model_eval_tendency/predicted_directstep_1024_lead1_lambda_reg5_tendency.mat"')
 val_dict_Euler_tendency = scipy.io.loadmat('"/media/volume/sdb/conrad_temp/model_eval_tendency/predicted_Eulerstep_1024_lead1_lambda_reg5_tendency.mat"')
 val_dict_RK4_tendency = scipy.io.loadmat('"/media/volume/sdb/conrad_temp/model_eval_tendency/predicted_RK4step_1024_lead1_lambda_reg5_tendency.mat"')
 val_dict_PEC_tendency = scipy.io.loadmat('"/media/volume/sdb/conrad_temp/model_eval_tendency/predicted_PECstep_1024_lead1_lambda_reg5_tendency.mat"')
-
 
 pred_direct_tendency = val_dict_direct_tendency[u'prediction']
 pred_Euler_tendency = val_dict_Euler_tendency[u'prediction']
 pred_RK4_tendency = val_dict_RK4_tendency[u'prediction']
 pred_PEC_tendency = val_dict_PEC_tendency[u'prediction']
 
-
-
-
-
 inputs_w_grad_direct_tendency = torch.zeros([int(4),input_size])
 inputs_w_grad_Euler_tendency = torch.zeros([int(4),input_size])
 inputs_w_grad_RK4_tendency= torch.zeros([int(4),input_size])
 inputs_w_grad_PEC_tendency = torch.zeros([int(4),input_size])
 
-
 ygrad_direct_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_RK4_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_PEC_tendency = torch.zeros([int(4),input_size,input_size])
+
+
+# FNO models and predictions
+
+mynet_directstep_FNO = Net()
+mynet_directstep_FNO.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt'))
+mynet_directstep_FNO.cuda()
+
+mynet_Eulerstep_FNO = Net()
+mynet_Eulerstep_FNO.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_Eulerstep_lead1.pt'))
+mynet_Eulerstep_FNO.cuda()
+
+mynet_RK4step_FNO = Net()
+mynet_RK4step_FNO.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_PECstep_lead1.pt'))
+mynet_RK4step_FNO.cuda()
+
+
+
+val_dict_direct_FNO = scipy.io.loadmat('"/media/volume/sdb/conrad_temp/model_eval_tendency/predicted_directstep_1024_lead1_lambda_reg5_tendency.mat"')
+val_dict_Euler_FNO = scipy.io.loadmat('"/media/volume/sdb/conrad_temp/model_eval_tendency/predicted_Eulerstep_1024_lead1_lambda_reg5_tendency.mat"')
+val_dict_PEC_FNO = scipy.io.loadmat('"/media/volume/sdb/conrad_temp/model_eval_tendency/predicted_PECstep_1024_lead1_lambda_reg5_tendency.mat"')
+
+pred_direct_FNO = val_dict_direct_FNO[u'prediction']
+pred_Euler_FNO = val_dict_Euler_FNO[u'prediction']
+pred_PEC_FNO = val_dict_PEC_FNO[u'prediction']
+
+
+
+
+inputs_w_grad_direct_FNO = torch.zeros([int(4),input_size])
+inputs_w_grad_Euler_FNO = torch.zeros([int(4),input_size])
+inputs_w_grad_PEC_FNO = torch.zeros([int(4),input_size])
+
+
+ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
+ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
+ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 
 i = 0
@@ -325,10 +355,10 @@ for j in np.array(int([0, 10000, 50000, 100000])):
     inputs_w_grad_RK4[i,:] = pred_RK4[j,:].requires_grad_(requires_grad=True)
     inputs_w_grad_PEC[i,:] = pred_PEC[j,:].requires_grad_(requires_grad=True)
 
-    ygrad_direct[i,:,:] = torch.autograd.functional.jacobian(directstep, inputs_w_grad_direct[i,:])
-    ygrad_Euler[i,:,:] = torch.autograd.functional.jacobian(Eulerstep, inputs_w_grad_Euler[i,:])
-    ygrad_RK4[i,:,:] = torch.autograd.functional.jacobian(RK4step, inputs_w_grad_RK4[i,:])
-    ygrad_PEC[i,:,:] = torch.autograd.functional.jacobian(PECstep, inputs_w_grad_PEC[i,:])
+    ygrad_direct[i,:,:] = torch.autograd.functional.jacobian(directstep, (mynet_directstep, inputs_w_grad_direct[i,:]))
+    ygrad_Euler[i,:,:] = torch.autograd.functional.jacobian(Eulerstep, (mynet_Eulerstep, inputs_w_grad_Euler[i,:]))
+    ygrad_RK4[i,:,:] = torch.autograd.functional.jacobian(RK4step, (mynet_RK4step, inputs_w_grad_RK4[i,:]))
+    ygrad_PEC[i,:,:] = torch.autograd.functional.jacobian(PECstep, (mynet_PECstep, inputs_w_grad_PEC[i,:]))
 
     #linear plus tendency (spectral loss) jacobian calculation
     inputs_w_grad_direct_tendency[i,:] = pred_direct_tendency[j,:].requires_grad_(requires_grad=True)
@@ -336,11 +366,12 @@ for j in np.array(int([0, 10000, 50000, 100000])):
     inputs_w_grad_RK4_tendency[i,:] = pred_RK4_tendency[j,:].requires_grad_(requires_grad=True)
     inputs_w_grad_PEC_tendency[i,:] = pred_PEC_tendency[j,:].requires_grad_(requires_grad=True)
 
-    ygrad_direct_tendency[i,:,:] = torch.autograd.functional.jacobian(directstep, inputs_w_grad_direct_tendency[i,:])
-    ygrad_Euler_tendency[i,:,:] = torch.autograd.functional.jacobian(Eulerstep, inputs_w_grad_Euler_tendency[i,:])
-    ygrad_RK4_tendency[i,:,:] = torch.autograd.functional.jacobian(RK4step, inputs_w_grad_RK4_tendency[i,:])
-    ygrad_PEC_tendency[i,:,:] = torch.autograd.functional.jacobian(PECstep, inputs_w_grad_PEC_tendency[i,:])
+    ygrad_direct_tendency[i,:,:] = torch.autograd.functional.jacobian(directstep, (mynet_directstep_tendency, inputs_w_grad_direct_tendency[i,:]))
+    ygrad_Euler_tendency[i,:,:] = torch.autograd.functional.jacobian(Eulerstep, (mynet_Eulerstep_tendency, inputs_w_grad_Euler_tendency[i,:]))
+    ygrad_RK4_tendency[i,:,:] = torch.autograd.functional.jacobian(RK4step, (mynet_RK4step_tendency, inputs_w_grad_RK4_tendency[i,:]))
+    ygrad_PEC_tendency[i,:,:] = torch.autograd.functional.jacobian(PECstep, (mynet_PECstep_tendency, inputs_w_grad_PEC_tendency[i,:]))
 
+    # FNO jacobian calc
 
     i += 1
 
