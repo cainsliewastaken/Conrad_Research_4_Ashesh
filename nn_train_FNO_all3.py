@@ -14,9 +14,9 @@ from count_trainable_params import count_parameters
 import pickle
 
 
-path_outputs = '/glade/scratch/asheshc/RK4_analysis/KS_stuff/new_outputs/'
+path_outputs = '/media/volume/sdb/conrad_temp/model_eval/'
 
-with open('/glade/scratch/asheshc/RK4_analysis/KS_stuff/models/save/KS.pkl', 'rb') as f:
+with open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
