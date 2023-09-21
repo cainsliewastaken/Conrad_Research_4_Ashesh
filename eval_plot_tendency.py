@@ -115,7 +115,7 @@ mynet_Eulerstep = Net()
 mynet_Eulerstep.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_Eulerstep_lead1.pt'))
 
 mynet_RK4step = Net()
-mynet_RK4step.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_RK4tep_lead1.pt'))
+mynet_RK4step.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_RK4step_lead1.pt'))
 
 mynet_PECstep = Net()
 mynet_RK4step.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_PECstep_lead1.pt'))
