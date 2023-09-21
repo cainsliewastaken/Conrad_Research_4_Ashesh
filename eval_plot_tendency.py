@@ -16,9 +16,10 @@ import pickle
 import matplotlib.pyplot as plt
 
 
+# README
+# This file is identical to eval_networks_plot_rlts.py except it uses the tendency modified networks, not the regular ones
 
-
-path_outputs = '/media/volume/sdb/conrad_temp/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_temp/model_eval_tendency/' #this is pretty much the only change between the two py files
 
 with open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -108,16 +109,16 @@ class Net(nn.Module):
 
 
 mynet_directstep = Net()
-mynet_directstep.load_state_dict(torch.load('NN_directstep_lead1.pt'))
+mynet_directstep.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt'))
 
 mynet_Eulerstep = Net()
-mynet_Eulerstep.load_state_dict(torch.load('NN_Eulerstep_lead1.pt'))
+mynet_Eulerstep.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_Eulerstep_lead1.pt'))
 
 mynet_RK4step = Net()
-mynet_RK4step.load_state_dict(torch.load('NN_RK4step_lead1.pt'))
+mynet_RK4step.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_RK4tep_lead1.pt'))
 
 mynet_PECstep = Net()
-mynet_RK4step.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
+mynet_RK4step.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_PECstep_lead1.pt'))
 
 mynet_directstep.cuda()
 
@@ -208,21 +209,21 @@ matfiledata_direct[u'Truth'] = label_test
 matfiledata_direct[u'RMSE'] = RMSE(pred_direct, label_test)
 matfiledata_direct[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_direct[u'pred_FFT'] = direct_1d_fspec_tdim
-scipy.io.savemat(path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matfiledata_direct)
+scipy.io.savemat(path_outputs+'predicted_directstep_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat', matfiledata_direct)
 #hdf5storage.write(matfiledata_direct, '.', path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_Euler = {}
 matfiledata_Euler[u'prediction'] = pred_Euler
 matfiledata_Euler[u'Truth'] = label_test 
 matfiledata_Euler[u'RMSE'] = RMSE(pred_Euler, label_test)
-scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matfiledata_Euler)
+scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat', matfiledata_Euler)
 #hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_RK4 = {}
 matfiledata_RK4[u'prediction'] = pred_RK4
 matfiledata_RK4[u'Truth'] = label_test 
 matfiledata_RK4[u'RMSE'] = RMSE(pred_RK4, label_test)
-scipy.io.savemat(path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matfiledata_RK4)
+scipy.io.savemat(path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat', matfiledata_RK4)
 #hdf5storage.write(matfiledata_RK4, '.', path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_PEC = {}
@@ -231,7 +232,7 @@ matfiledata_PEC[u'Truth'] = label_test
 matfiledata_PEC[u'RMSE'] = RMSE(pred_PEC, label_test)
 matfiledata_PEC[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_PEC[u'pred_FFT'] = PEC_1d_fspec_tdim
-scipy.io.savemat(path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matfiledata_PEC)
+scipy.io.savemat(path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat', matfiledata_PEC)
 #hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 print('Saved predictions, etc')
@@ -247,13 +248,13 @@ ax1.plot(matfiledata_PEC[u'RMSE'], label='PEC step')
 ax1.set_xlabel('Time step')
 ax1.set_ylabel('RSME')
 ax1.legend(fontsize='x-small')
-fig1.savefig(path_outputs+'RMSE.png')
+fig1.savefig('RMSE.png')
 #print(sum(matfiledata_direct[u'RMSE']))
 
 fig12, ax12 = plt.subplots(figsize=(10,8))
 ax12.plot(matfiledata_direct[u'RMSE'], label='Direct step')
 ax12.legend(fontsize='x-small')
-# fig12.savefig('RMSE_direct.png')
+fig12.savefig(path_outputs+'RMSE_direct.png')
 
 
 # create second plot
@@ -366,6 +367,3 @@ fig4.savefig(path_outputs+'Time_derivative_Fspec_at_multiple_timesteps.png')
 
 print('Graphs plotted and saved')
 
-
-
-        
