@@ -15,11 +15,7 @@ import sys
 import pickle
 import matplotlib.pyplot as plt
 
-
-# README
-# This file is identical to eval_networks_plot_rlts.py except it uses the tendency modified networks, not the regular ones
-
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/' #this is pretty much the only change between the two py files
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/'
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -30,8 +26,10 @@ lead=1
 time_step = 1e-3
 trainN=150000
 input_size = 1024
-hidden_layer_size = 2000
 output_size = 1024
+hidden_layer_size = 2000
+input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
+label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
 
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
@@ -56,77 +54,169 @@ def directstep(net,input_batch):
   output_1 = net(input_batch.cuda())
   return output_1
 
+
 def PECstep(net,input_batch):
- output_1 = net(input_batch.cuda()) + input_batch.cuda()
+ output_1 = time_step*net(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_1))
 
-def PEC4step(net,input_batch):
- output_1 = time_step*net(input_batch.cuda()) + input_batch.cuda()
- output_2 = input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_1))
- output_3 = input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_2))
- return input_batch.cuda() + time_step*0.5*(net(input_batch.cuda())+net(output_3))
-
-class Net(nn.Module):
-    def __init__(self):
-        super(Net, self).__init__()
-        self.il  = ((nn.Linear(input_size,hidden_layer_size)))
-        torch.nn.init.xavier_uniform_(self.il.weight)
-
-        self.hidden1  = ((nn.Linear(hidden_layer_size,hidden_layer_size)))
-        torch.nn.init.xavier_uniform_(self.hidden1.weight)
-
-        self.hidden2  = (nn.Linear(hidden_layer_size,hidden_layer_size))
-        torch.nn.init.xavier_uniform_(self.hidden2.weight)
-
-        self.hidden3  = (nn.Linear(hidden_layer_size,hidden_layer_size))
-        torch.nn.init.xavier_uniform_(self.hidden3.weight)
-
-        self.hidden4  = (nn.Linear(hidden_layer_size,hidden_layer_size))
-        torch.nn.init.xavier_uniform_(self.hidden4.weight)
-
-        self.hidden5  = (nn.Linear(hidden_layer_size,hidden_layer_size))
-        torch.nn.init.xavier_uniform_(self.hidden5.weight)        
-
-        self.ol  = nn.Linear(hidden_layer_size,output_size)
-        torch.nn.init.xavier_uniform_(self.ol.weight)
-
-        self.tanh = nn.Tanh()
 
 
-    def forward(self,x):
-        
-        x1 = self.tanh(self.il(x))
-        x2 = self.tanh(self.hidden1(x1))
-        x3 = self.tanh(self.hidden2(x2))
-        x4 = self.tanh(self.hidden3(x3))
-        x5 = self.tanh(self.hidden4(x4))
-        x6 = self.tanh(self.hidden5(x5))
-        out =self.ol(x6)
-        return out
+################################################################
+#  1d Fourier Integral Operator
+################################################################
+class SpectralConv1d(nn.Module):
+    def __init__(self, in_channels: int, out_channels: int, modes: int):
+        super(SpectralConv1d, self).__init__()
+        """
+        Initializes the 1D Fourier layer. It does FFT, linear transform, and Inverse FFT.
+        Args:
+            in_channels (int): input channels to the FNO layer
+            out_channels (int): output channels of the FNO layer
+            modes (int): number of Fourier modes to multiply, at most floor(N/2) + 1
+        """
+        self.in_channels = in_channels
+        self.out_channels = out_channels
+        self.modes = modes
+        self.scale = (1 / (in_channels*out_channels))
+        self.weights = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes, dtype=torch.cfloat))
+
+    # Complex multiplication
+    def compl_mul1d(self, input, weights):
+        """
+        Complex multiplication of the Fourier modes.
+        [batch, in_channels, x], [in_channel, out_channels, x] -> [batch, out_channels, x]
+            Args:
+                input (torch.Tensor): input tensor of size [batch, in_channels, x]
+                weights (torch.Tensor): weight tensor of size [in_channels, out_channels, x]
+            Returns:
+                torch.Tensor: output tensor with shape [batch, out_channels, x]
+        """
+        return torch.einsum("bix,iox->box", input, weights)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        """
+        Fourier transformation, multiplication of relevant Fourier modes, backtransformation
+        Args:
+            x (torch.Tensor): input to forward pass os shape [batch, in_channels, x]
+        Returns:
+            torch.Tensor: output of size [batch, out_channels, x]
+        """
+        batchsize = x.shape[0]
+        # Fourier transformation
+        x_ft = torch.fft.rfft(x)
+
+        # Multiply relevant Fourier modes
+        out_ft = torch.zeros(batchsize, self.out_channels, x.size(-1)//2 + 1,  device=x.device, dtype=torch.cfloat)
+        out_ft[:, :, :self.modes] = self.compl_mul1d(x_ft[:, :, :self.modes], self.weights)
+
+        #Return to physical space
+        x = torch.fft.irfft(out_ft, n=x.size(-1))
+        return x
+
+
+class FNO1d(nn.Module):
+    def __init__(self, modes, width, time_future, time_history):
+        super(FNO1d, self).__init__()
+
+        """
+        The overall network. It contains 4 layers of the Fourier layer.
+        1. Lift the input to the desire channel dimension by self.fc0 .
+        2. 4 layers of the integral operators u' = (W + K)(u).
+            W defined by self.w; K defined by self.conv .
+        3. Project from the channel space to the output space by self.fc1 and self.fc2 .
+
+        input: a driving function observed at T timesteps + 1 locations (u(1, x), ..., u(T, x),  x).
+        input shape: (batchsize, x=s, c=2)
+        output: the solution of a later timestep
+        output shape: (batchsize, x=s, c=1)
+        """
+        self.modes = modes
+        self.width = width
+        self.time_future = time_future
+        self.time_history = time_history
+        self.fc0 = nn.Linear(self.time_history+1, self.width)
+
+        self.conv0 = SpectralConv1d(self.width, self.width, self.modes)
+        self.conv1 = SpectralConv1d(self.width, self.width, self.modes)
+        self.conv2 = SpectralConv1d(self.width, self.width, self.modes)
+        self.conv3 = SpectralConv1d(self.width, self.width, self.modes)
+        self.w0 = nn.Conv1d(self.width, self.width, 1)
+        self.w1 = nn.Conv1d(self.width, self.width, 1)
+        self.w2 = nn.Conv1d(self.width, self.width, 1)
+        self.w3 = nn.Conv1d(self.width, self.width, 1)
+
+        self.fc1 = nn.Linear(self.width, 128)
+        self.fc2 = nn.Linear(128, self.time_future)
+
+    def forward(self, u):
+        grid = self.get_grid(u.shape, u.device)
+        x = torch.cat((u, grid), dim=-1)
+        x = self.fc0(x)
+        x = x.permute(0, 2, 1)
+
+        x1 = self.conv0(x)
+        x2 = self.w0(x)
+        x = x1 + x2
+        x = F.gelu(x)
+
+        x1 = self.conv1(x)
+        x2 = self.w1(x)
+        x = x1 + x2
+        x = F.gelu(x)
+
+        x1 = self.conv2(x)
+        x2 = self.w2(x)
+        x = x1 + x2
+        x = F.gelu(x)
+
+        x1 = self.conv3(x)
+        x2 = self.w3(x)
+        x = x1 + x2
+
+        x = x.permute(0, 2, 1)
+        x = self.fc1(x)
+        x = F.gelu(x)
+        x = self.fc2(x)
+        return x
+
+    def get_grid(self, shape, device):
+        batchsize, size_x = shape[0], shape[1]
+        gridx = torch.tensor(np.linspace(0, 1, size_x), dtype=torch.float)
+        gridx = gridx.reshape(1, size_x, 1).repeat([batchsize, 1, 1])
+        return gridx.to(device)
+
+
+time_history = 1 #time steps to be considered as input to the solver
+time_future = 1 #time steps to be considered as output of the solver
+device = 'cuda'  #change to cpu if no cuda available
+
+#model parameters
+modes = 512 # number of Fourier modes to multiply, changed from 256
+width = 1 # input and output channels to the FNO layer
+
+num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
+learning_rate = 0.0001
+lr_decay = 0.4
+num_workers = 0  #What does this do?
 
 
 
+# declare all 3 networks
+mynet_directstep = FNO1d(modes, width, time_future, time_history).cuda()
+mynet_Eulerstep = FNO1d(modes, width, time_future, time_history).cuda()
+mynet_PECstep = FNO1d(modes, width, time_future, time_history).cuda()
 
-
-mynet_directstep = Net()
-mynet_directstep.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt'))
-
-mynet_Eulerstep = Net()
-mynet_Eulerstep.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_Eulerstep_lead1.pt'))
-
-mynet_RK4step = Net()
-mynet_RK4step.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_RK4step_lead1.pt'))
-
-mynet_PECstep = Net()
-mynet_RK4step.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_PECstep_lead1.pt'))
-
+#count_parameters(mynet_directstep)
+mynet_directstep.load_state_dict(torch.load('NN_directstep_lead1.pt'))
 mynet_directstep.cuda()
 
+#count_parameters(mynet_Eulerstep)
+mynet_Eulerstep.load_state_dict(torch.load('NN_Eulerstep_lead1.pt'))
 mynet_Eulerstep.cuda()
 
-mynet_RK4step.cuda()
-
+#count_parameters(mynet_PECstep)
 mynet_PECstep.cuda()
+mynet_PECstep.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
 
 
 
@@ -134,7 +224,6 @@ mynet_PECstep.cuda()
 M=99999
 pred_direct = np.zeros([M,np.size(label_test,1)])
 pred_Euler = np.zeros([M,np.size(label_test,1)])
-pred_RK4 = np.zeros([M,np.size(label_test,1)])
 pred_PEC = np.zeros([M,np.size(label_test,1)])
 
 
@@ -148,10 +237,7 @@ for k in range(0,M):
         out_Euler = Eulerstep(mynet_Eulerstep,input_test_torch[0,:])
         pred_Euler [k,:] = out_Euler.detach().cpu().numpy()
 
-        out_RK4 = RK4step(mynet_RK4step,input_test_torch[0,:])
-        pred_RK4 [k,:] = out_RK4.detach().cpu().numpy()
-
-        out_PEC = PECstep(mynet_RK4step,input_test_torch[0,:])
+        out_PEC = PECstep(mynet_PECstep,input_test_torch[0,:])
         pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
 
     else:
@@ -161,9 +247,6 @@ for k in range(0,M):
 
         out_Euler = Eulerstep(mynet_Eulerstep,torch.from_numpy(pred_Euler[k-1,:]).float().cuda())
         pred_Euler [k,:] = out_Euler.detach().cpu().numpy()
-
-        out_RK4 = RK4step(mynet_RK4step,torch.from_numpy(pred_RK4[k-1,:]).float().cuda())
-        pred_RK4 [k,:] = out_RK4.detach().cpu().numpy()
 
         out_PEC = PECstep(mynet_PECstep,torch.from_numpy(pred_PEC[k-1,:]).float().cuda())
         pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
@@ -209,22 +292,15 @@ matfiledata_direct[u'Truth'] = label_test
 matfiledata_direct[u'RMSE'] = RMSE(pred_direct, label_test)
 matfiledata_direct[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_direct[u'pred_FFT'] = direct_1d_fspec_tdim
-scipy.io.savemat(path_outputs+'predicted_directstep_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat', matfiledata_direct)
+scipy.io.savemat(path_outputs+'predicted_directstep_1024_FNO_lead'+str(lead)+'.mat', matfiledata_direct)
 #hdf5storage.write(matfiledata_direct, '.', path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_Euler = {}
 matfiledata_Euler[u'prediction'] = pred_Euler
 matfiledata_Euler[u'Truth'] = label_test 
 matfiledata_Euler[u'RMSE'] = RMSE(pred_Euler, label_test)
-scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat', matfiledata_Euler)
+scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_FNO_lead'+str(lead)+'.mat', matfiledata_Euler)
 #hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
-
-matfiledata_RK4 = {}
-matfiledata_RK4[u'prediction'] = pred_RK4
-matfiledata_RK4[u'Truth'] = label_test 
-matfiledata_RK4[u'RMSE'] = RMSE(pred_RK4, label_test)
-scipy.io.savemat(path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat', matfiledata_RK4)
-#hdf5storage.write(matfiledata_RK4, '.', path_outputs+'predicted_RK4step_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_PEC = {}
 matfiledata_PEC[u'prediction'] = pred_PEC
@@ -232,7 +308,7 @@ matfiledata_PEC[u'Truth'] = label_test
 matfiledata_PEC[u'RMSE'] = RMSE(pred_PEC, label_test)
 matfiledata_PEC[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_PEC[u'pred_FFT'] = PEC_1d_fspec_tdim
-scipy.io.savemat(path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat', matfiledata_PEC)
+scipy.io.savemat(path_outputs+'predicted_PECstep_1024_FNO_lead'+str(lead)+'.mat', matfiledata_PEC)
 #hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 print('Saved predictions, etc')
@@ -243,18 +319,17 @@ print('Saved predictions, etc')
 fig1, ax1 = plt.subplots(figsize=(10,8))
 ax1.plot(matfiledata_direct[u'RMSE'], label='Direct step')
 ax1.plot(matfiledata_Euler[u'RMSE'], label='Euler step')
-ax1.plot(matfiledata_RK4[u'RMSE'], label='RK4 step')
 ax1.plot(matfiledata_PEC[u'RMSE'], label='PEC step')
 ax1.set_xlabel('Time step')
 ax1.set_ylabel('RSME')
 ax1.legend(fontsize='x-small')
-fig1.savefig('RMSE.png')
+fig1.savefig(path_outputs+'RMSE.png')
 #print(sum(matfiledata_direct[u'RMSE']))
 
 fig12, ax12 = plt.subplots(figsize=(10,8))
 ax12.plot(matfiledata_direct[u'RMSE'], label='Direct step')
 ax12.legend(fontsize='x-small')
-fig12.savefig(path_outputs+'RMSE_direct.png')
+# fig12.savefig('RMSE_direct.png')
 
 
 # create second plot
@@ -367,3 +442,6 @@ fig4.savefig(path_outputs+'Time_derivative_Fspec_at_multiple_timesteps.png')
 
 print('Graphs plotted and saved')
 
+
+
+        

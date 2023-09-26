@@ -18,9 +18,9 @@ import matplotlib.pyplot as plt
 
 
 
-path_outputs = '/media/volume/sdb/conrad_temp/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
-with open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'rb') as f:
+with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
@@ -117,7 +117,7 @@ mynet_RK4step = Net()
 mynet_RK4step.load_state_dict(torch.load('NN_RK4step_lead1.pt'))
 
 mynet_PECstep = Net()
-mynet_RK4step.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
+mynet_PECstep.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
 
 mynet_directstep.cuda()
 
@@ -150,7 +150,7 @@ for k in range(0,M):
         out_RK4 = RK4step(mynet_RK4step,input_test_torch[0,:])
         pred_RK4 [k,:] = out_RK4.detach().cpu().numpy()
 
-        out_PEC = PECstep(mynet_RK4step,input_test_torch[0,:])
+        out_PEC = PECstep(mynet_PECstep,input_test_torch[0,:])
         pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
 
     else:

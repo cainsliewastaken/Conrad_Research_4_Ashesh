@@ -14,10 +14,10 @@ import sys
 import pickle
 
 
-path_outputs = '/media/volume/sdb/conrad_temp/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
-# /media/volume/sdb/conrad_temp/training_data/
-with open('KS_1024.pkl', 'rb') as f:
+# /media/volume/sdb/conrad_stability/training_data/
+with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 

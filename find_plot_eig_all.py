@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 
 
 
-path_outputs = '/media/volume/sdb/conrad_temp/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
-with open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'rb') as f:
+with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
@@ -383,23 +383,40 @@ fig2, ax2 = plt.subplots(figsize=(10,8))
 
 time_vals = [0, 10000, 50000, 100000]
 for i in range(4):
-    ax1.plot(np.linalg.eigvals(ygrad_direct[i,:,:]), label='Direct step at t='+ time_vals[i]) #direct step basic linear
-    ax1.plot(np.linalg.eigvals(ygrad_Euler[i,:,:]), label='Euler step at t='+ time_vals[i]) #euler step basic linear
-    ax1.plot(np.linalg.eigvals(ygrad_RK4[i,:,:]), label='RK4 step at t='+ time_vals[i]) #RK4 step basic linear
-    ax1.plot(np.linalg.eigvals(ygrad_PEC[i,:,:]), label='PEC step at t='+ time_vals[i]) #PEC step basic linear
+    eig_direct = np.linalg.eigvals(ygrad_direct[i,:,:])
+    ax1.scatter(eig_direct.real, eig_direct.imag, label='Direct step at t='+ time_vals[i]) #direct step basic linear
+    eig_Euler = np.linalg.eigvals(ygrad_Euler[i,:,:])
+    ax1.scatter(eig_Euler.real, eig_Euler.imag, label='Euler step at t='+ time_vals[i]) #euler step basic linear
+    eig_RK4 = np.linalg.eigvals(ygrad_RK4[i,:,:])
+    ax1.scatter(eig_RK4.real, eig_RK4.imag, label='RK4 step at t='+ time_vals[i]) #RK4 step basic linear
+    eig_PEC = np.linalg.eigvals(ygrad_PEC[i,:,:])
+    ax1.scatter(eig_PEC.real, eig_PEC.imag, label='PEC step at t='+ time_vals[i]) #PEC step basic linear
+    
+    eig_direct_tendency = np.linalg.eigvals(ygrad_direct_tendency[i,:,:])
+    ax2.scatter(eig_direct_tendency.real, eig_direct_tendency.imag, label='Direct stepat t='+ time_vals[i]) #direct step tendency linear
+    eig_Euler_tendency = np.linalg.eigvals(ygrad_Euler_tendency[i,:,:])
+    ax2.scatter(eig_Euler_tendency.real, eig_Euler_tendency.imag, label='Euler step at t='+ time_vals[i]) #euler step tendency linear
+    eig_RK4_tendency = np.linalg.eigvals(ygrad_RK4_tendency[i,:,:])
+    ax2.scatter(eig_RK4_tendency.real, eig_RK4_tendency.imag, label='RK4 step at t='+ time_vals[i]) #RK4 step tendency linear
+    eig_PEC_tendency = np.linalg.eigvals(ygrad_PEC_tendency[i,:,:])
+    ax2.scatter(eig_PEC_tendency.real, eig_PEC_tendency.imag, label='PEC step at t='+ time_vals[i]) #PEC step tendency linear
 
-    ax2.plot(np.linalg.eigvals(ygrad_direct_tendency[i,:,:]), label='Direct stepat t='+ time_vals[i]) #direct step tendency linear
-    ax2.plot(np.linalg.eigvals(ygrad_Euler_tendency[i,:,:]), label='Euler step at t='+ time_vals[i]) #euler step tendency linear
-    ax2.plot(np.linalg.eigvals(ygrad_RK4_tendency[i,:,:]), label='RK4 step at t='+ time_vals[i]) #RK4 step tendency linear
-    ax2.plot(np.linalg.eigvals(ygrad_PEC_tendency[i,:,:]), label='PEC step at t='+ time_vals[i]) #PEC step tendency linear
 
-    ax1.plot(np.linalg.eigvals(ygrad_direct_FNO[i,:,:]), label='Direct step FNO at t='+ time_vals[i]) #direct step FNO
-    ax1.plot(np.linalg.eigvals(ygrad_Euler_FNO[i,:,:]), label='Euler step FNO at t='+ time_vals[i]) #euler step FNO
-    ax1.plot(np.linalg.eigvals(ygrad_PEC_FNO[i,:,:]), label='PEC step FNO at t='+ time_vals[i]) #PEC step FNO
+    eig_direct_FNO = np.linalg.eigvals(ygrad_direct_FNO[i,:,:])
+    ax1.scatter(eig_direct_FNO.real, eig_direct_FNO.imag, label='Direct step FNO at t='+ time_vals[i]) #direct step FNO
+    eig_Euler_FNO = np.linalg.eigvals(ygrad_Euler_FNO[i,:,:])
+    ax1.scatter(eig_Euler_FNO.real, eig_Euler_FNO.imag, label='Euler step FNO at t='+ time_vals[i]) #euler step FNO
+    eig_PEC_FNO = np.linalg.eigvals(ygrad_PEC_FNO[i,:,:])
+    ax1.scatter(eig_PEC_FNO.real, eig_PEC_FNO.imag, label='PEC step FNO at t='+ time_vals[i]) #PEC step FNO
 
-    ax2.plot(np.linalg.eigvals(ygrad_direct_FNO_tendency[i,:,:]), label='Direct step at t='+ time_vals[i]) #direct step tendency FNO
-    ax2.plot(np.linalg.eigvals(ygrad_Euler_FNO_tendency[i,:,:]), label='Euler step at t='+ time_vals[i]) #euler step tendency FNO
-    ax2.plot(np.linalg.eigvals(ygrad_PEC_FNO_tendency[i,:,:]), label='PEC step at t='+ time_vals[i]) #PEC step tendency FNO
+
+    eig_direct_FNO_tendency = np.linalg.eigvals(ygrad_direct_FNO_tendency[i,:,:])
+    ax2.scatter(eig_PEC_FNO.real, eig_PEC_FNO.imag, label='Direct step at t='+ time_vals[i]) #direct step tendency FNO
+    eig_Euler_FNO_tendency = np.linalg.eigvals(ygrad_Euler_FNO_tendency[i,:,:])
+    ax2.scatter(eig_Euler_FNO_tendency.real, eig_Euler_FNO_tendency.imag, label='Euler step at t='+ time_vals[i]) #euler step tendency FNO
+    eig_PEC_FNO_tendency = np.linalg.eigvals(ygrad_PEC_FNO_tendency[i,:,:])
+    ax2.scatter(eig_PEC_FNO_tendency.real, eig_PEC_FNO_tendency.imag, label='PEC step at t='+ time_vals[i]) #PEC step tendency FNO
+
 
 fig1.savefig(path_outputs+'Eig_vals_linear.png') 
 fig2.savefig(path_outputs+'Eig_vals_FNO.png')
