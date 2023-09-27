@@ -328,9 +328,9 @@ mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history)
 mynet_PECstep_FNO.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
 mynet_PECstep_FNO.cuda()
 
-val_dict_direct_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_directstep_1024_FNO_lead1.mat')
-val_dict_Euler_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_Eulerstep_1024_FNO_lead1.mat')
-val_dict_PEC_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_PECstep_1024_FNO_lead1.mat')
+val_dict_direct_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_directstep_1024_FNO_lead1.mat')
+val_dict_Euler_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_Eulerstep_1024_FNO_lead1.mat')
+val_dict_PEC_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_PECstep_1024_FNO_lead1.mat')
 
 pred_direct_FNO = val_dict_direct_FNO[u'prediction']
 pred_Euler_FNO = val_dict_Euler_FNO[u'prediction']
@@ -354,9 +354,9 @@ mynet_PECstep_FNO_tendency = FNO1d(modes, width, time_future, time_history)
 mynet_PECstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_PECstep_tendency_lambda_reg5lead1.pt'))
 mynet_PECstep_FNO_tendency.cuda()
 
-val_dict_direct_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_directstep_1024_FNO_tendency_lead1.mat')
-val_dict_Euler_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_Eulerstep_1024_FNO_tendency_lead1.mat')
-val_dict_PEC_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_PECstep_1024_FNO_tendency_lead1.mat')
+val_dict_direct_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_directstep_1024_FNO_tendency_lead1.mat')
+val_dict_Euler_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_Eulerstep_1024_FNO_tendency_lead1.mat')
+val_dict_PEC_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_PECstep_1024_FNO_tendency_lead1.mat')
 
 pred_direct_FNO_tendency = val_dict_direct_FNO_tendency[u'prediction']
 pred_Euler_FNO_tendency = val_dict_Euler_FNO_tendency[u'prediction']
@@ -365,7 +365,7 @@ pred_PEC_FNO_tendency = val_dict_PEC_FNO_tendency[u'prediction']
 ygrad_direct_FNO_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_FNO_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_PEC_FNO_tendency = torch.zeros([int(4),input_size,input_size])
-
+print('Everything is loaded')
 
 i = 0
 for j in np.array(int([0, 10000, 50000, 100000])):
@@ -397,7 +397,7 @@ for j in np.array(int([0, 10000, 50000, 100000])):
     ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, pred_PEC_FNO_tendency[j,:])
 
     i += 1
-
+print('All jacobians calculated')
 fig1, ax1 = plt.subplots(figsize=(10,8))
 fig2, ax2 = plt.subplots(figsize=(10,8))
 fig3, ax3 = plt.subplots(figsize=(10,8))
@@ -488,7 +488,7 @@ ax3.legend(fontsize='x-small')
 fig1.savefig('Eig_vals_linear.pdf') 
 fig2.savefig('Eig_vals_FNO.pdf')
 fig3.savefig('Eig_Sing_vals_sum.pdf')
-
+print('All plots plotted')
 fig4, ax4 = plt.subplots(figsize=(10,8))
 
 
@@ -548,3 +548,4 @@ animation_FNO = plt.animation.FuncAnimation(fig5, func=ani_func_FNO, frames=rang
 writer = plt.animation.PillowWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 animation_lin.save('linear_evals.gif', writer=writer)
 animation_FNO.save('FNO_evals.gif', writer=writer)
+print('Movies saved')
