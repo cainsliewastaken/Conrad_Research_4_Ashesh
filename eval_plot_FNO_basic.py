@@ -222,9 +222,9 @@ mynet_PECstep.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
 
 
 M=99999
-pred_direct = np.zeros([M,np.size(label_test,1,1)])
-pred_Euler = np.zeros([M,np.size(label_test,1,1)])
-pred_PEC = np.zeros([M,np.size(label_test,1,1)])
+pred_direct = np.zeros([M,np.size(label_test,1)])
+pred_Euler = np.zeros([M,np.size(label_test,1)])
+pred_PEC = np.zeros([M,np.size(label_test,1)])
 
 
 for k in range(0,M):
