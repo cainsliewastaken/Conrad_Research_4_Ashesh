@@ -248,17 +248,17 @@ ax1.plot(matfiledata_PEC[u'RMSE'], label='PEC step')
 ax1.set_xlabel('Time step')
 ax1.set_ylabel('RSME')
 ax1.legend(fontsize='x-small')
-fig1.savefig('RMSE.png')
-print(sum(matfiledata_Euler[u'RMSE']))
-print(sum(matfiledata_RK4[u'RMSE']))
-print(sum(matfiledata_PEC[u'RMSE']))
+fig1.savefig(path_outputs+'RMSE.png')
+# print(sum(matfiledata_Euler[u'RMSE']))
+# print(sum(matfiledata_RK4[u'RMSE']))
+# print(sum(matfiledata_PEC[u'RMSE']))
 
 
 
-fig12, ax12 = plt.subplots(figsize=(10,8))
-ax12.plot(matfiledata_direct[u'RMSE'], label='Direct step')
-ax12.legend(fontsize='x-small')
-fig12.savefig(path_outputs+'RMSE_direct.png')
+# fig12, ax12 = plt.subplots(figsize=(10,8))
+# ax12.plot(matfiledata_direct[u'RMSE'], label='Direct step')
+# ax12.legend(fontsize='x-small')
+# fig12.savefig(path_outputs+'RMSE_direct.png')
 
 
 # create second plot
