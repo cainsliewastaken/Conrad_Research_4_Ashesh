@@ -15,9 +15,9 @@ import sys
 import pickle
 import matplotlib.pyplot as plt
 
-import os
 
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = "caching_allocator"
+
+
 
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
@@ -549,5 +549,3 @@ writer = plt.animation.PillowWriter(fps=15, metadata=dict(artist='Me'), bitrate=
 animation_lin.save('linear_evals.gif', writer=writer)
 animation_FNO.save('FNO_evals.gif', writer=writer)
 print('Movies saved')
-
-os.environ["PYTORCH_CUDA_ALLOC_CONF"] = ""
