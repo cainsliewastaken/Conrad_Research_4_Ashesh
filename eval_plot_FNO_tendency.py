@@ -226,6 +226,8 @@ pred_direct = np.zeros([M,np.size(label_test,1)])
 pred_Euler = np.zeros([M,np.size(label_test,1)])
 pred_PEC = np.zeros([M,np.size(label_test,1)])
 
+print('Eval started')
+
 for k in range(0,M):
  
     if (k==0):
