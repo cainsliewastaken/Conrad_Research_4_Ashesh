@@ -253,7 +253,7 @@ for k in range(0,M):
 def RMSE(y_hat, y_true):
     return np.sqrt(np.mean((y_hat - y_true)**2, axis=1, keepdims=True)) 
 
-
+print('Eval finished')
 
 #this is the fourier spectrum across a single timestep, output has rows as timestep and columns as modes
 u_1d_fspec_tdim = np.zeros(np.shape(label_test[:,:]), dtype=complex)
@@ -282,6 +282,7 @@ for n in range(np.shape(u_truth_difft_n2)[0]):
     u_direct_difft_n2_fspec[n,:] = np.abs(np.fft.fft(u_direct_difft_n2[n,:])) 
     u_PEC_difft_n2_fspec[n,:] = np.abs(np.fft.fft(u_PEC_difft_n2[n,:])) 
 
+print('calculations finished')
 
 
 matfiledata_direct = {}
@@ -292,6 +293,8 @@ matfiledata_direct[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_direct[u'pred_FFT'] = direct_1d_fspec_tdim
 scipy.io.savemat(path_outputs+'predicted_directstep_1024_FNO_tendency_lead'+str(lead)+'.mat', matfiledata_direct)
 #hdf5storage.write(matfiledata_direct, '.', path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+print('Saved Direct prediction')
+
 
 matfiledata_Euler = {}
 matfiledata_Euler[u'prediction'] = pred_Euler
@@ -299,6 +302,7 @@ matfiledata_Euler[u'Truth'] = label_test
 matfiledata_Euler[u'RMSE'] = RMSE(pred_Euler, label_test)
 scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_FNO_tendency_lead'+str(lead)+'.mat', matfiledata_Euler)
 #hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+print('Saved Euler prediction')
 
 matfiledata_PEC = {}
 matfiledata_PEC[u'prediction'] = pred_PEC
@@ -308,6 +312,7 @@ matfiledata_PEC[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_PEC[u'pred_FFT'] = PEC_1d_fspec_tdim
 scipy.io.savemat(path_outputs+'predicted_PECstep_1024_FNO_tendency_lead'+str(lead)+'.mat', matfiledata_PEC)
 #hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
+print('Saved PEC prediction')
 
 print('Saved predictions, etc')
 
@@ -324,10 +329,11 @@ ax1.legend(fontsize='x-small')
 fig1.savefig(path_outputs+'RMSE.png')
 #print(sum(matfiledata_direct[u'RMSE']))
 
-fig12, ax12 = plt.subplots(figsize=(10,8))
-ax12.plot(matfiledata_direct[u'RMSE'], label='Direct step')
-ax12.legend(fontsize='x-small')
-# fig12.savefig('RMSE_direct.png')
+
+# fig12, ax12 = plt.subplots(figsize=(10,8))
+# ax12.plot(matfiledata_direct[u'RMSE'], label='Direct step')
+# ax12.legend(fontsize='x-small')
+# # fig12.savefig('RMSE_direct.png')
 
 
 # create second plot
