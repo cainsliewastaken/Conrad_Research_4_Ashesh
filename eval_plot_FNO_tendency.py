@@ -231,24 +231,24 @@ for k in range(0,M):
  
     if (k==0):
 
-        out_direct = directstep(mynet_directstep,input_test_torch[0,:])
-        pred_direct [k,:] = out_direct.detach().cpu().numpy()
+        out_direct = directstep(mynet_directstep,torch.reshape(input_test_torch[0,:],(1,input_size,1)))
+        pred_direct [k,:] = torch.reshape(out_direct,(1,input_size)).detach().cpu().numpy()
 
-        out_Euler = Eulerstep(mynet_Eulerstep,input_test_torch[0,:])
-        pred_Euler [k,:] = out_Euler.detach().cpu().numpy()
+        out_Euler = Eulerstep(mynet_Eulerstep,torch.reshape(input_test_torch[0,:],(1,input_size,1)))
+        pred_Euler [k,:] = torch.reshape(out_Euler,(1,input_size)).detach().cpu().numpy()
 
-        out_PEC = PECstep(mynet_PECstep,input_test_torch[0,:])
-        pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
+        out_PEC = PECstep(mynet_PECstep,torch.reshape(input_test_torch[0,:],(1,input_size,1)))
+        pred_PEC [k,:] = torch.reshape(out_PEC,(1,input_size)).detach().cpu().numpy()
 
     else:
 
-        out_direct = directstep(mynet_directstep,torch.from_numpy(pred_direct[k-1,:]).float().cuda())
+        out_direct = directstep(mynet_directstep,torch.reshape(torch.from_numpy(pred_direct[k-1,:]),(1,input_size,1)).float().cuda())
         pred_direct [k,:] = out_direct.detach().cpu().numpy()
 
-        out_Euler = Eulerstep(mynet_Eulerstep,torch.from_numpy(pred_Euler[k-1,:]).float().cuda())
+        out_Euler = Eulerstep(mynet_Eulerstep,torch.reshape(torch.from_numpy(pred_Euler[k-1,:]),(1,input_size,1)).float().cuda())
         pred_Euler [k,:] = out_Euler.detach().cpu().numpy()
 
-        out_PEC = PECstep(mynet_PECstep,torch.from_numpy(pred_PEC[k-1,:]).float().cuda())
+        out_PEC = PECstep(mynet_PECstep,torch.reshape(torch.from_numpy(pred_PEC[k-1,:]),(1,input_size,1)).float().cuda())
         pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
 
 
