@@ -251,10 +251,10 @@ val_dict_PEC = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval/p
 ks_truth = val_dict_direct[u'Truth']
 
 
-pred_direct = torch.tensor(val_dict_direct[u'prediction'])
-pred_Euler = torch.tensor(val_dict_Euler[u'prediction'])
-pred_RK4 = torch.tensor(val_dict_RK4[u'prediction'])
-pred_PEC = torch.tensor(val_dict_PEC[u'prediction'])
+pred_direct = torch.tensor(val_dict_direct[u'prediction'], dtype=torch.double)
+pred_Euler = torch.tensor(val_dict_Euler[u'prediction'], dtype=torch.double)
+pred_RK4 = torch.tensor(val_dict_RK4[u'prediction'], dtype=torch.double)
+pred_PEC = torch.tensor(val_dict_PEC[u'prediction'], dtype=torch.double)
 
 
 ygrad_direct = torch.zeros([int(4),input_size,input_size])
@@ -286,10 +286,10 @@ val_dict_Euler_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/m
 val_dict_RK4_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_RK4step_1024_lead1_lambda_reg5_tendency.mat')
 val_dict_PEC_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_PECstep_1024_lead1_lambda_reg5_tendency.mat')
 
-pred_direct_tendency = torch.tensor(val_dict_direct_tendency[u'prediction'])
-pred_Euler_tendency = torch.tensor(val_dict_Euler_tendency[u'prediction'])
-pred_RK4_tendency = torch.tensor(val_dict_RK4_tendency[u'prediction'])
-pred_PEC_tendency = torch.tensor(val_dict_PEC_tendency[u'prediction'])
+pred_direct_tendency = torch.tensor(val_dict_direct_tendency[u'prediction'], dtype=torch.double)
+pred_Euler_tendency = torch.tensor(val_dict_Euler_tendency[u'prediction'], dtype=torch.double)
+pred_RK4_tendency = torch.tensor(val_dict_RK4_tendency[u'prediction'], dtype=torch.double)
+pred_PEC_tendency = torch.tensor(val_dict_PEC_tendency[u'prediction'], dtype=torch.double)
 
 ygrad_direct_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_tendency = torch.zeros([int(4),input_size,input_size])
@@ -332,9 +332,9 @@ val_dict_direct_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model
 val_dict_Euler_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_Eulerstep_1024_FNO_lead1.mat')
 val_dict_PEC_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_PECstep_1024_FNO_lead1.mat')
 
-pred_direct_FNO = torch.tensor(val_dict_direct_FNO[u'prediction'])
-pred_Euler_FNO = torch.tensor(val_dict_Euler_FNO[u'prediction'])
-pred_PEC_FNO = torch.tensor(val_dict_PEC_FNO[u'prediction'])
+pred_direct_FNO = torch.tensor(val_dict_direct_FNO[u'prediction'], dtype=torch.double)
+pred_Euler_FNO = torch.tensor(val_dict_Euler_FNO[u'prediction'], dtype=torch.double)
+pred_PEC_FNO = torch.tensor(val_dict_PEC_FNO[u'prediction'], dtype=torch.double)
 
 ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
@@ -358,9 +358,9 @@ val_dict_direct_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stabil
 val_dict_Euler_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_Eulerstep_1024_FNO_tendency_lead1.mat')
 val_dict_PEC_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_PECstep_1024_FNO_tendency_lead1.mat')
 
-pred_direct_FNO_tendency = torch.tensor(val_dict_direct_FNO_tendency[u'prediction'])
-pred_Euler_FNO_tendency = torch.tensor(val_dict_Euler_FNO_tendency[u'prediction'])
-pred_PEC_FNO_tendency = torch.tensor(val_dict_PEC_FNO_tendency[u'prediction'])
+pred_direct_FNO_tendency = torch.tensor(val_dict_direct_FNO_tendency[u'prediction'], dtype=torch.double)
+pred_Euler_FNO_tendency = torch.tensor(val_dict_Euler_FNO_tendency[u'prediction'], dtype=torch.double)
+pred_PEC_FNO_tendency = torch.tensor(val_dict_PEC_FNO_tendency[u'prediction'], dtype=torch.double)
 
 ygrad_direct_FNO_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_FNO_tendency = torch.zeros([int(4),input_size,input_size])
