@@ -226,19 +226,19 @@ class FNO1d(nn.Module):
 
 
 #load basic model predictions
-mynet_directstep = Net()
+mynet_directstep = Net().double()
 mynet_directstep.load_state_dict(torch.load('NN_directstep_lead1.pt'))
 mynet_directstep.cuda()
 
-mynet_Eulerstep = Net()
+mynet_Eulerstep = Net().double()
 mynet_Eulerstep.load_state_dict(torch.load('NN_Eulerstep_lead1.pt'))
 mynet_Eulerstep.cuda()
 
-mynet_RK4step = Net()
+mynet_RK4step = Net().double()
 mynet_RK4step.load_state_dict(torch.load('NN_RK4step_lead1.pt'))
 mynet_RK4step.cuda()
 
-mynet_PECstep = Net()
+mynet_PECstep = Net().double()
 mynet_RK4step.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
 mynet_PECstep.cuda()
 
@@ -265,19 +265,19 @@ ygrad_PEC = torch.zeros([int(4),input_size,input_size])
 
 
 #tendency models and predictions
-mynet_directstep_tendency = Net()
+mynet_directstep_tendency = Net().double()
 mynet_directstep_tendency.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt'))
 mynet_directstep_tendency.cuda()
 
-mynet_Eulerstep_tendency = Net()
+mynet_Eulerstep_tendency = Net().double()
 mynet_Eulerstep_tendency.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_Eulerstep_lead1.pt'))
 mynet_Eulerstep_tendency.cuda()
 
-mynet_RK4step_tendency = Net()
+mynet_RK4step_tendency = Net().double()
 mynet_RK4step_tendency.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_RK4step_lead1.pt'))
 mynet_RK4step_tendency.cuda()
 
-mynet_PECstep_tendency = Net()
+mynet_PECstep_tendency = Net().double()
 mynet_RK4step_tendency.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_PECstep_lead1.pt'))
 mynet_PECstep_tendency.cuda()
 
@@ -316,15 +316,15 @@ num_workers = 0  #What does this do?
 
 
 # FNO models and predictions
-mynet_directstep_FNO = FNO1d(modes, width, time_future, time_history)
+mynet_directstep_FNO = FNO1d(modes, width, time_future, time_history).double()
 mynet_directstep_FNO.load_state_dict(torch.load('NN_FNO_Directstep_lead1.pt'))
 mynet_directstep_FNO.cuda()
 
-mynet_Eulerstep_FNO = FNO1d(modes, width, time_future, time_history)
+mynet_Eulerstep_FNO = FNO1d(modes, width, time_future, time_history).double()
 mynet_Eulerstep_FNO.load_state_dict(torch.load('NN_FNO_Eulerstep_lead1.pt'))
 mynet_Eulerstep_FNO.cuda()
 
-mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history)
+mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history).double()
 mynet_PECstep_FNO.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
 mynet_PECstep_FNO.cuda()
 
@@ -342,15 +342,15 @@ ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 
 # FNO + tendency models and predictions
-mynet_directstep_FNO_tendency = FNO1d(modes, width, time_future, time_history)
+mynet_directstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).double()
 mynet_directstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt'))
 mynet_directstep_FNO_tendency.cuda() 
 
-mynet_Eulerstep_FNO_tendency = FNO1d(modes, width, time_future, time_history)
+mynet_Eulerstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).double()
 mynet_Eulerstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Eulerstep_tendency_lambda_reg5lead1.pt'))
 mynet_Eulerstep_FNO_tendency.cuda()
 
-mynet_PECstep_FNO_tendency = FNO1d(modes, width, time_future, time_history)
+mynet_PECstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).double()
 mynet_PECstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_PECstep_tendency_lambda_reg5lead1.pt'))
 mynet_PECstep_FNO_tendency.cuda()
 
