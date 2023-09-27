@@ -380,45 +380,91 @@ for j in np.array(int([0, 10000, 50000, 100000])):
 
 fig1, ax1 = plt.subplots(figsize=(10,8))
 fig2, ax2 = plt.subplots(figsize=(10,8))
+fig3, ax3 = plt.subplots(figsize=(10,8))
 circ = plt.Circle((0,0), radius=1)
 ax1.add_patch(circ)
 ax2.add_patch(circ)
 time_vals = [0, 10000, 50000, 100000]
 for i in range(4):
     eig_direct = np.linalg.eigvals(ygrad_direct[i,:,:])
+    sing_direct = np.linalg.svd(ygrad_direct[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_direct)), label='Direct step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_direct)), label='Direct step sing sum at t='+ time_vals[i])
     ax1.scatter(eig_direct.real, eig_direct.imag, label='Direct step at t='+ time_vals[i]) #direct step basic linear
     eig_Euler = np.linalg.eigvals(ygrad_Euler[i,:,:])
+    sing_Euler = np.linalg.svd(ygrad_Euler[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_Euler)), label='Euler step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_Euler)), label='Euler step sing sum at t='+ time_vals[i])
     ax1.scatter(eig_Euler.real, eig_Euler.imag, label='Euler step at t='+ time_vals[i]) #euler step basic linear
     eig_RK4 = np.linalg.eigvals(ygrad_RK4[i,:,:])
+    sing_RK4 = np.linalg.svd(ygrad_RK4[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_RK4)), label='RK4 step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_RK4)), label='RK4 step sing sum at t='+ time_vals[i])
     ax1.scatter(eig_RK4.real, eig_RK4.imag, label='RK4 step at t='+ time_vals[i]) #RK4 step basic linear
     eig_PEC = np.linalg.eigvals(ygrad_PEC[i,:,:])
+    sing_PEC = np.linalg.svd(ygrad_PEC[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_PEC)), label='PEC step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_PEC)), label='PEC step sing sum at t='+ time_vals[i])
     ax1.scatter(eig_PEC.real, eig_PEC.imag, label='PEC step at t='+ time_vals[i]) #PEC step basic linear
     
     eig_direct_tendency = np.linalg.eigvals(ygrad_direct_tendency[i,:,:])
+    sing_direct_tendency = np.linalg.svd(ygrad_direct_tendency[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_direct_tendency)), label='Tendency Direct step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_direct_tendency)), label='Tendency Direct step sing sum at t='+ time_vals[i])
     ax2.scatter(eig_direct_tendency.real, eig_direct_tendency.imag, label='Direct stepat t='+ time_vals[i]) #direct step tendency linear
     eig_Euler_tendency = np.linalg.eigvals(ygrad_Euler_tendency[i,:,:])
+    sing_Euler_tendency = np.linalg.svd(ygrad_Euler_tendency[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_Euler_tendency)), label='Tendency Euler step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_Euler_tendency)), label='Tendency Euler step sing sum at t='+ time_vals[i])
     ax2.scatter(eig_Euler_tendency.real, eig_Euler_tendency.imag, label='Euler step at t='+ time_vals[i]) #euler step tendency linear
     eig_RK4_tendency = np.linalg.eigvals(ygrad_RK4_tendency[i,:,:])
+    sing_RK4_tendency = np.linalg.svd(ygrad_RK4_tendency[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_RK4_tendency)), label='Tendency RK4 step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_RK4_tendency)), label='Tendency RK4 step sing sum at t='+ time_vals[i])
     ax2.scatter(eig_RK4_tendency.real, eig_RK4_tendency.imag, label='RK4 step at t='+ time_vals[i]) #RK4 step tendency linear
     eig_PEC_tendency = np.linalg.eigvals(ygrad_PEC_tendency[i,:,:])
+    sing_PEC_tendency = np.linalg.svd(ygrad_PEC_tendency[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_PEC_tendency)), label='Tendency PEC step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_PEC_tendency)), label='Tendency PEC step sing sum at t='+ time_vals[i])
     ax2.scatter(eig_PEC_tendency.real, eig_PEC_tendency.imag, label='PEC step at t='+ time_vals[i]) #PEC step tendency linear
 
 
     eig_direct_FNO = np.linalg.eigvals(ygrad_direct_FNO[i,:,:])
+    sing_direct_FNO = np.linalg.svd(ygrad_direct_FNO[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_direct_FNO)), label='FNO Direct step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_direct_FNO)), label='FNO Direct step sing sum at t='+ time_vals[i])
     ax1.scatter(eig_direct_FNO.real, eig_direct_FNO.imag, label='Direct step FNO at t='+ time_vals[i]) #direct step FNO
     eig_Euler_FNO = np.linalg.eigvals(ygrad_Euler_FNO[i,:,:])
+    sing_Euler_FNO = np.linalg.svd(ygrad_Euler_FNO[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_Euler_FNO)), label='FNO Euler step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_Euler_FNO)), label='FNO Euler step sing sum at t='+ time_vals[i])
     ax1.scatter(eig_Euler_FNO.real, eig_Euler_FNO.imag, label='Euler step FNO at t='+ time_vals[i]) #euler step FNO
     eig_PEC_FNO = np.linalg.eigvals(ygrad_PEC_FNO[i,:,:])
+    sing_PEC_FNO = np.linalg.svd(ygrad_PEC_FNO[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_PEC_FNO)), label='FNO PEC step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_PEC_FNO)), label='FNO PEC step sing sum at t='+ time_vals[i])
     ax1.scatter(eig_PEC_FNO.real, eig_PEC_FNO.imag, label='PEC step FNO at t='+ time_vals[i]) #PEC step FNO
 
 
     eig_direct_FNO_tendency = np.linalg.eigvals(ygrad_direct_FNO_tendency[i,:,:])
+    sing_direct_FNO_tendency = np.linalg.svd(ygrad_direct_FNO_tendency[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_direct_FNO_tendency)), label='FNO Tendency Direct step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_direct_FNO_tendency)), label='FNO Tendency Direct step sing sum at t='+ time_vals[i])
     ax2.scatter(eig_PEC_FNO.real, eig_PEC_FNO.imag, label='Direct step at t='+ time_vals[i]) #direct step tendency FNO
     eig_Euler_FNO_tendency = np.linalg.eigvals(ygrad_Euler_FNO_tendency[i,:,:])
+    sing_Euler_FNO_tendency = np.linalg.svd(ygrad_Euler_FNO_tendency[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_Euler_FNO_tendency)), label='FNO Tendency Euler step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_Euler_FNO_tendency)), label='FNO Tendency Euler step sing sum at t='+ time_vals[i])
     ax2.scatter(eig_Euler_FNO_tendency.real, eig_Euler_FNO_tendency.imag, label='Euler step at t='+ time_vals[i]) #euler step tendency FNO
     eig_PEC_FNO_tendency = np.linalg.eigvals(ygrad_PEC_FNO_tendency[i,:,:])
+    sing_PEC_FNO_tendency = np.linalg.svd(ygrad_PEC_FNO_tendency[i,:,:], compute_uv=False)
+    ax3.scatter(i, np.absolute(np.sum(eig_PEC_FNO_tendency)), label='FNO Tendency PEC step eigvals sum at t='+ time_vals[i])
+    ax3.scatter(i, np.sum(np.absolute(sing_PEC_FNO_tendency)), label='FNO Tendency PEC step sing sum at t='+ time_vals[i])
     ax2.scatter(eig_PEC_FNO_tendency.real, eig_PEC_FNO_tendency.imag, label='PEC step at t='+ time_vals[i]) #PEC step tendency FNO
+ax1.legend(fontsize='x-small')
+ax2.legend(fontsize='x-small')
+ax3.legend(fontsize='x-small')
 
-
-fig1.savefig(path_outputs+'Eig_vals_linear.png') 
-fig2.savefig(path_outputs+'Eig_vals_FNO.png')
+fig1.savefig('Eig_vals_linear.png') 
+fig2.savefig('Eig_vals_FNO.png')
+fig3.savefig('Eig_Sing_vals_sum.png')
