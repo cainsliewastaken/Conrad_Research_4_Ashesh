@@ -385,16 +385,15 @@ for j in np.array([0, 10000, 50000, 100000]):
 
     # FNO jacobian calc
 
-
-    ygrad_direct_FNO[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO, pred_direct_FNO[j,:])
-    ygrad_Euler_FNO[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, pred_Euler_FNO[j,:])
-    ygrad_PEC_FNO[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO, pred_PEC_FNO[j,:])
+    ygrad_direct_FNO[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(pred_direct_FNO[0,:],(1,input_size,1)))
+    ygrad_Euler_FNO[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(pred_Euler_FNO[0,:],(1,input_size,1)))
+    ygrad_PEC_FNO[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(pred_PEC_FNO[0,:],(1,input_size,1)))
 
     # FNO + tendency jacobian calc
 
-    ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO_tendency, pred_direct_FNO_tendency[j,:])
-    ygrad_Euler_FNO_tendency[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO_tendency, pred_Euler_FNO_tendency[j,:])
-    ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, pred_PEC_FNO_tendency[j,:])
+    ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO_tendency, torch.reshape(pred_direct_FNO_tendency[0,:],(1,input_size,1)))
+    ygrad_Euler_FNO_tendency[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO_tendency, torch.reshape(pred_Euler_FNO_tendency[0,:],(1,input_size,1)))
+    ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, torch.reshape(pred_PEC_FNO_tendency[0,:],(1,input_size,1)))
 
     i += 1
 print('All jacobians calculated')
