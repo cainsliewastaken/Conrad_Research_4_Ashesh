@@ -103,7 +103,7 @@ class SpectralConv1d(nn.Module):
         """
         batchsize = x.shape[0]
         # Fourier transformation
-        x_ft = torch.fft.rfft(x)
+        x_ft = torch.fft.rfft(x) #y cant the weight matrix be complex?
 
         # Multiply relevant Fourier modes
         out_ft = torch.zeros(batchsize, self.out_channels, x.size(-1)//2 + 1,  device=x.device, dtype=torch.cfloat)
@@ -196,7 +196,6 @@ width = 64 # input and output chasnnels to the FNO layer
 
 learning_rate = 0.0001
 lr_decay = 0.4
-num_workers = 0  #What does this do?
 
 
 # declare all 3 networks
