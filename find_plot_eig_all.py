@@ -248,6 +248,8 @@ val_dict_Euler = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eva
 val_dict_RK4 = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval/predicted_RK4step_1024_lead1.mat"')
 val_dict_PEC = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval/predicted_PECstep_1024_lead1.mat"')
 
+ks_truth = val_dict_direct[u'Truth']
+
 
 pred_direct = val_dict_direct[u'prediction']
 pred_Euler = val_dict_Euler[u'prediction']
@@ -486,3 +488,63 @@ ax3.legend(fontsize='x-small')
 fig1.savefig('Eig_vals_linear.pdf') 
 fig2.savefig('Eig_vals_FNO.pdf')
 fig3.savefig('Eig_Sing_vals_sum.pdf')
+
+fig4, ax4 = plt.subplots(figsize=(10,8))
+
+
+def ani_func_linear(t):
+    ax4.cla()
+    x_vals = np.arange(np.length(ks_truth[0,:]))
+    y_vals = ks_truth[t,:]
+    ax4.plot(x_vals, y_vals, label='Truth')
+
+    x_vals = np.arange(np.length(pred_direct[0,:]))
+    y_vals = pred_direct[t,:]
+    ax4.plot(x_vals, y_vals, label='Direct Step linear')
+    x_vals = np.arange(np.length(pred_PEC[0,:]))
+    y_vals = pred_PEC[t,:]
+    ax4.plot(x_vals, y_vals, label='PEC Step linear')
+
+    x_vals = np.arange(np.length(pred_direct_tendency[0,:]))
+    y_vals = pred_direct_tendency[t,:]
+    ax4.plot(x_vals, y_vals, label='Direct Step linear spectral loss')
+    x_vals = np.arange(np.length(pred_PEC_tendency[0,:]))
+    y_vals = pred_PEC_tendency[t,:]
+    ax4.plot(x_vals, y_vals, label='PEC Step linear spectral loss')
+    ax4.legend(fontsize='x-small')
+
+    return ax4
+
+animation_lin = plt.animation.FuncAnimation(fig4, func=ani_func_linear, frames=range(500))
+fig5, ax5 = plt.subplots(figsize=(10,8))
+
+
+
+def ani_func_FNO(t):
+    ax5.cla()
+    x_vals = np.arange(np.length(ks_truth[0,:]))
+    y_vals = ks_truth[t,:]
+    ax5.plot(x_vals, y_vals, label='Truth')
+
+    x_vals = np.arange(np.length(pred_direct_FNO[0,:]))
+    y_vals = pred_direct_FNO[t,:]
+    ax5.plot(x_vals, y_vals, label='Direct Step linear')
+    x_vals = np.arange(np.length(pred_PEC_FNO[0,:]))
+    y_vals = pred_PEC_FNO[t,:]
+    ax5.plot(x_vals, y_vals, label='PEC Step linear')
+
+    x_vals = np.arange(np.length(pred_direct_FNO_tendency[0,:]))
+    y_vals = pred_direct_FNO_tendency[t,:]
+    ax5.plot(x_vals, y_vals, label='Direct Step linear spectral loss')
+    x_vals = np.arange(np.length(pred_PEC_FNO_tendency[0,:]))
+    y_vals = pred_PEC_FNO_tendency[t,:]
+    ax5.plot(x_vals, y_vals, label='PEC Step linear spectral loss')
+    ax5.legend(fontsize='x-small')
+
+    return ax5
+
+animation_FNO = plt.animation.FuncAnimation(fig5, func=ani_func_FNO, frames=range(500))
+
+writer = plt.animation.PillowWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+animation_lin.save('linear_evals.gif', writer=writer)
+animation_FNO.save('FNO_evals.gif', writer=writer)
