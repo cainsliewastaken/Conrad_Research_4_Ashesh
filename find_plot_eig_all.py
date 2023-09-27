@@ -243,10 +243,10 @@ mynet_RK4step.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
 mynet_PECstep.cuda()
 
 
-val_dict_direct = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval/predicted_directstep_1024_lead1.mat"')
-val_dict_Euler = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval/predicted_Eulerstep_1024_lead1.mat"')
-val_dict_RK4 = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval/predicted_RK4step_1024_lead1.mat"')
-val_dict_PEC = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval/predicted_PECstep_1024_lead1.mat"')
+val_dict_direct = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval/predicted_directstep_1024_lead1.mat"')
+val_dict_Euler = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval/predicted_Eulerstep_1024_lead1.mat"')
+val_dict_RK4 = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval/predicted_RK4step_1024_lead1.mat"')
+val_dict_PEC = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval/predicted_PECstep_1024_lead1.mat"')
 
 ks_truth = val_dict_direct[u'Truth']
 
@@ -281,10 +281,10 @@ mynet_PECstep_tendency = Net()
 mynet_RK4step_tendency.load_state_dict(torch.load('NN_Spectral_Loss_with_tendencyfft_lambda_reg5_PECstep_lead1.pt'))
 mynet_PECstep_tendency.cuda()
 
-val_dict_direct_tendency = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_directstep_1024_lead1_lambda_reg5_tendency.mat"')
-val_dict_Euler_tendency = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_Eulerstep_1024_lead1_lambda_reg5_tendency.mat"')
-val_dict_RK4_tendency = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_RK4step_1024_lead1_lambda_reg5_tendency.mat"')
-val_dict_PEC_tendency = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_PECstep_1024_lead1_lambda_reg5_tendency.mat"')
+val_dict_direct_tendency = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_directstep_1024_lead1_lambda_reg5_tendency.mat"')
+val_dict_Euler_tendency = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_Eulerstep_1024_lead1_lambda_reg5_tendency.mat"')
+val_dict_RK4_tendency = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_RK4step_1024_lead1_lambda_reg5_tendency.mat"')
+val_dict_PEC_tendency = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_PECstep_1024_lead1_lambda_reg5_tendency.mat"')
 
 pred_direct_tendency = val_dict_direct_tendency[u'prediction']
 pred_Euler_tendency = val_dict_Euler_tendency[u'prediction']
@@ -328,9 +328,9 @@ mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history)
 mynet_PECstep_FNO.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
 mynet_PECstep_FNO.cuda()
 
-val_dict_direct_FNO = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_directstep_1024_FNO_lead1.mat"')
-val_dict_Euler_FNO = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_Eulerstep_1024_FNO_lead1.mat"')
-val_dict_PEC_FNO = scipy.io.loadmat('"/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_PECstep_1024_FNO_lead1.mat"')
+val_dict_direct_FNO = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_directstep_1024_FNO_lead1.mat"')
+val_dict_Euler_FNO = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_Eulerstep_1024_FNO_lead1.mat"')
+val_dict_PEC_FNO = scipy.io.loadmat('"/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_PECstep_1024_FNO_lead1.mat"')
 
 pred_direct_FNO = val_dict_direct_FNO[u'prediction']
 pred_Euler_FNO = val_dict_Euler_FNO[u'prediction']
@@ -354,9 +354,9 @@ mynet_PECstep_FNO_tendency = FNO1d(modes, width, time_future, time_history)
 mynet_PECstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_PECstep_tendency_lambda_reg5lead1.pt'))
 mynet_PECstep_FNO_tendency.cuda()
 
-val_dict_direct_FNO_tendency = scipy.io.loadmat('/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_directstep_1024_FNO_tendency_lead1.mat')
-val_dict_Euler_FNO_tendency = scipy.io.loadmat('/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_Eulerstep_1024_FNO_tendency_lead1.mat')
-val_dict_PEC_FNO_tendency = scipy.io.loadmat('/media/volume/sdc/conrad_stability/model_eval_tendency/predicted_PECstep_1024_FNO_tendency_lead1.mat')
+val_dict_direct_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_directstep_1024_FNO_tendency_lead1.mat')
+val_dict_Euler_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_Eulerstep_1024_FNO_tendency_lead1.mat')
+val_dict_PEC_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_PECstep_1024_FNO_tendency_lead1.mat')
 
 pred_direct_FNO_tendency = val_dict_direct_FNO_tendency[u'prediction']
 pred_Euler_FNO_tendency = val_dict_Euler_FNO_tendency[u'prediction']
