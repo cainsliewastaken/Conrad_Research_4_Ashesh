@@ -16,8 +16,8 @@ import pickle
 
 path_outputs = '/media/volume/sdc/conrad_stability/model_eval/'
 
-# /media/volume/sdc/conrad_temp/training_data/
-with open('KS_1024.pkl', 'rb') as f:
+
+with open('/media/volume/sdc/conrad_temp/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
