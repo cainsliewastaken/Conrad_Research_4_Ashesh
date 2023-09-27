@@ -191,8 +191,8 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 512 # number of Fourier modes to multiply, changed from 256
-width = 1 # input and output channels to the FNO layer
+modes = 256 # number of Fourier modes to multiply
+width = 64 # input and output chasnnels to the FNO layer
 
 num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
 learning_rate = 0.0001

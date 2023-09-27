@@ -145,7 +145,7 @@ class FNO1d(nn.Module):
         self.w2 = nn.Conv1d(self.width, self.width, 1)
         self.w3 = nn.Conv1d(self.width, self.width, 1)
 
-        self.fc1 = nn.Linear(self.width, 128)
+        self.fc1 = nn.Linear(self.width, 128) #I dont understand why this and fc2 are here, also the 128 seems like a hyperparameter
         self.fc2 = nn.Linear(128, self.time_future)
 
     def forward(self, u):
@@ -191,10 +191,9 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 512 # number of Fourier modes to multiply, changed from 256
-width = 2000 # input and output channels to the FNO layer
+modes = 256 # number of Fourier modes to multiply
+width = 64 # input and output chasnnels to the FNO layer
 
-num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
 learning_rate = 0.0001
 lr_decay = 0.4
 num_workers = 0  #What does this do?
@@ -240,6 +239,7 @@ for ep in range(0, epochs+1):
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
         label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
         #pick a random boundary batch
+
         #train direct_step net
         optimizer_direct.zero_grad()
         outputs_direct = directstep(mynet_directstep, input_batch)

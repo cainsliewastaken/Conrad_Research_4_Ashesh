@@ -295,16 +295,34 @@ ygrad_RK4_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_PEC_tendency = torch.zeros([int(4),input_size,input_size])
 
 
+# FNO archetecture hyperparams
+
+time_history = 1 #time steps to be considered as input to the solver
+time_future = 1 #time steps to be considered as output of the solver
+device = 'cuda'  #change to cpu if no cuda available
+
+#model parameters
+modes = 256 # number of Fourier modes to multiply
+width = 64 # input and output chasnnels to the FNO layer
+
+num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
+learning_rate = 0.0001
+lr_decay = 0.4
+num_workers = 0  #What does this do?
+
+
+
+
 # FNO models and predictions
-mynet_directstep_FNO = Net()
+mynet_directstep_FNO = FNO1d(modes, width, time_future, time_history)
 mynet_directstep_FNO.load_state_dict(torch.load('NN_FNO_Directstep_lead1.pt'))
 mynet_directstep_FNO.cuda()
 
-mynet_Eulerstep_FNO = Net()
+mynet_Eulerstep_FNO = FNO1d(modes, width, time_future, time_history)
 mynet_Eulerstep_FNO.load_state_dict(torch.load('NN_FNO_Eulerstep_lead1.pt'))
 mynet_Eulerstep_FNO.cuda()
 
-mynet_PECstep_FNO = Net()
+mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history)
 mynet_PECstep_FNO.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
 mynet_PECstep_FNO.cuda()
 
@@ -322,15 +340,15 @@ ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 
 # FNO + tendency models and predictions
-mynet_directstep_FNO_tendency = Net()
+mynet_directstep_FNO_tendency = FNO1d(modes, width, time_future, time_history)
 mynet_directstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt'))
 mynet_directstep_FNO_tendency.cuda() 
 
-mynet_Eulerstep_FNO_tendency = Net()
+mynet_Eulerstep_FNO_tendency = FNO1d(modes, width, time_future, time_history)
 mynet_Eulerstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Eulerstep_tendency_lambda_reg5lead1.pt'))
 mynet_Eulerstep_FNO_tendency.cuda()
 
-mynet_PECstep_FNO_tendency = Net()
+mynet_PECstep_FNO_tendency = FNO1d(modes, width, time_future, time_history)
 mynet_PECstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_PECstep_tendency_lambda_reg5lead1.pt'))
 mynet_PECstep_FNO_tendency.cuda()
 
