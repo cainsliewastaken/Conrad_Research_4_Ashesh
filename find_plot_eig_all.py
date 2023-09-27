@@ -368,7 +368,7 @@ ygrad_PEC_FNO_tendency = torch.zeros([int(4),input_size,input_size])
 print('Everything is loaded')
 
 i = 0
-for j in np.array(int([0, 10000, 50000, 100000])):
+for j in np.array([0, 10000, 50000, 100000]):
     #basic linear model jacobian calculation
 
     ygrad_direct[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep, pred_direct[j,:])
