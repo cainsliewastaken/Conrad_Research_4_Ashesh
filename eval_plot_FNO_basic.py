@@ -243,13 +243,13 @@ for k in range(0,M):
     else:
 
         out_direct = directstep(mynet_directstep,torch.reshape(torch.from_numpy(pred_direct[k-1,:]),(1,input_size,1)).float().cuda())
-        pred_direct [k,:] = out_direct.detach().cpu().numpy()
+        pred_direct [k,:] = torch.reshape(out_direct,(1,input_size)).detach().cpu().numpy()
 
         out_Euler = Eulerstep(mynet_Eulerstep,torch.reshape(torch.from_numpy(pred_Euler[k-1,:]),(1,input_size,1)).float().cuda())
-        pred_Euler [k,:] = out_Euler.detach().cpu().numpy()
+        pred_Euler [k,:] = torch.reshape(out_Euler,(1,input_size)).detach().cpu().numpy()
 
         out_PEC = PECstep(mynet_PECstep,torch.reshape(torch.from_numpy(pred_PEC[k-1,:]),(1,input_size,1)).float().cuda())
-        pred_PEC [k,:] = out_PEC.detach().cpu().numpy()
+        pred_PEC [k,:] = torch.reshape(out_PEC,(1,input_size)).detach().cpu().numpy()
 
 
 def RMSE(y_hat, y_true):
