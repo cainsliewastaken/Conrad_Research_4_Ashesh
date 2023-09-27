@@ -300,7 +300,7 @@ print('Linear is loaded')
 
 
 i = 0
-for j in np.array([0, 10000, 50000, 99999]):
+for j in np.array([0, 10000, 50000, 99998]):
     #basic linear model jacobian calculation
 
     ygrad_direct[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep, pred_direct[j,:])
@@ -395,7 +395,7 @@ print('FNO is loaded')
 
 
 i = 0
-for j in np.array([0, 10000, 50000, 99999]):
+for j in np.array([0, 10000, 50000, 99998]):
     # FNO jacobian calc
 
     ygrad_direct_FNO[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(pred_direct_FNO[0,:],(1,input_size,1)))
@@ -417,7 +417,7 @@ fig3, ax3 = plt.subplots(figsize=(10,8))
 circ = plt.Circle((0,0), radius=1)
 ax1.add_patch(circ)
 ax2.add_patch(circ)
-time_vals = [0, 10000, 50000, 99999]
+time_vals = [0, 10000, 50000, 99998]
 for i in range(4):
     eig_direct = np.linalg.eigvals(ygrad_direct[i,:,:])
     sing_direct = np.linalg.svd(ygrad_direct[i,:,:], compute_uv=False)
