@@ -316,6 +316,7 @@ for j in np.array([0, 10000, 50000, 99998]):
     ygrad_PEC_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_tendency, pred_PEC_tendency[j,:])
     i += 1
 print('Linear jacs calculated')
+torch.cuda.empty_cache()
 
 # del mynet_directstep, mynet_directstep_tendency, mynet_Eulerstep, mynet_Eulerstep_tendency
 # del mynet_PECstep, mynet_PECstep_tendency, mynet_RK4step, mynet_RK4step_tendency
