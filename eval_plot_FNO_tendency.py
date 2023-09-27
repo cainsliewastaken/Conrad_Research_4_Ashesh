@@ -207,16 +207,16 @@ mynet_Eulerstep = FNO1d(modes, width, time_future, time_history).cuda()
 mynet_PECstep = FNO1d(modes, width, time_future, time_history).cuda()
 
 #count_parameters(mynet_directstep)
-mynet_directstep.load_state_dict(torch.load('NN_directstep_lead1.pt'))
+mynet_directstep.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt'))
 mynet_directstep.cuda()
 
 #count_parameters(mynet_Eulerstep)
-mynet_Eulerstep.load_state_dict(torch.load('NN_Eulerstep_lead1.pt'))
+mynet_Eulerstep.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Eulerstep_tendency_lambda_reg5lead1.pt'))
 mynet_Eulerstep.cuda()
 
 #count_parameters(mynet_PECstep)
 mynet_PECstep.cuda()
-mynet_PECstep.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
+mynet_PECstep.load_state_dict(torch.load('NN_Spectral_Loss_FNO_PECstep_tendency_lambda_reg5lead1.pt'))
 
 
 
@@ -292,14 +292,14 @@ matfiledata_direct[u'Truth'] = label_test
 matfiledata_direct[u'RMSE'] = RMSE(pred_direct, label_test)
 matfiledata_direct[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_direct[u'pred_FFT'] = direct_1d_fspec_tdim
-scipy.io.savemat(path_outputs+'predicted_directstep_1024_FNO_lead'+str(lead)+'.mat', matfiledata_direct)
+scipy.io.savemat(path_outputs+'predicted_directstep_1024_FNO_tendency_lead'+str(lead)+'.mat', matfiledata_direct)
 #hdf5storage.write(matfiledata_direct, '.', path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_Euler = {}
 matfiledata_Euler[u'prediction'] = pred_Euler
 matfiledata_Euler[u'Truth'] = label_test 
 matfiledata_Euler[u'RMSE'] = RMSE(pred_Euler, label_test)
-scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_FNO_lead'+str(lead)+'.mat', matfiledata_Euler)
+scipy.io.savemat(path_outputs+'predicted_Eulerstep_1024_FNO_tendency_lead'+str(lead)+'.mat', matfiledata_Euler)
 #hdf5storage.write(matfiledata_Euler, '.', path_outputs+'predicted_Eulerstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 matfiledata_PEC = {}
@@ -308,7 +308,7 @@ matfiledata_PEC[u'Truth'] = label_test
 matfiledata_PEC[u'RMSE'] = RMSE(pred_PEC, label_test)
 matfiledata_PEC[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_PEC[u'pred_FFT'] = PEC_1d_fspec_tdim
-scipy.io.savemat(path_outputs+'predicted_PECstep_1024_FNO_lead'+str(lead)+'.mat', matfiledata_PEC)
+scipy.io.savemat(path_outputs+'predicted_PECstep_1024_FNO_tendency_lead'+str(lead)+'.mat', matfiledata_PEC)
 #hdf5storage.write(matfiledata_PEC, '.', path_outputs+'predicted_PECstep_1024_lead'+str(lead)+'.mat', matlab_compatible=True)
 
 print('Saved predictions, etc')

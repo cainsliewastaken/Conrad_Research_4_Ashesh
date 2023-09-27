@@ -207,16 +207,16 @@ mynet_Eulerstep = FNO1d(modes, width, time_future, time_history).cuda()
 mynet_PECstep = FNO1d(modes, width, time_future, time_history).cuda()
 
 #count_parameters(mynet_directstep)
-mynet_directstep.load_state_dict(torch.load('NN_directstep_lead1.pt'))
+mynet_directstep.load_state_dict(torch.load('NN_FNO_Directstep_lead1.pt'))
 mynet_directstep.cuda()
 
 #count_parameters(mynet_Eulerstep)
-mynet_Eulerstep.load_state_dict(torch.load('NN_Eulerstep_lead1.pt'))
+mynet_Eulerstep.load_state_dict(torch.load('NN_FNO_Eulerstep_lead1.pt'))
 mynet_Eulerstep.cuda()
 
 #count_parameters(mynet_PECstep)
 mynet_PECstep.cuda()
-mynet_PECstep.load_state_dict(torch.load('NN_PECstep_lead1.pt'))
+mynet_PECstep.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
 
 
 
