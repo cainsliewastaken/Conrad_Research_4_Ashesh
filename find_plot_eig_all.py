@@ -20,9 +20,9 @@ import matplotlib.pyplot as plt
 
 
 
-path_outputs = '/media/volume/sdc/conrad_stability/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
-with open('/media/volume/sdc/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
+with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
