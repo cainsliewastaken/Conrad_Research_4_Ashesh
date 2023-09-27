@@ -19,9 +19,9 @@ import matplotlib.pyplot as plt
 # README
 # This file is identical to eval_networks_plot_rlts.py except it uses the tendency modified networks, not the regular ones
 
-path_outputs = '/media/volume/sdc/conrad_stability/model_eval_tendency/' #this is pretty much the only change between the two py files
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/' #this is pretty much the only change between the two py files
 
-with open('/media/volume/sdc/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
+with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
