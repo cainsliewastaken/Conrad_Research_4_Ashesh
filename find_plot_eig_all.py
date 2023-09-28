@@ -14,7 +14,7 @@ import sys
 #import hdf5storage
 import pickle
 import matplotlib.pyplot as plt
-
+import matplotlib.animation as anim
 
 
 
@@ -575,7 +575,7 @@ def ani_func_linear(t):
 
     return ax4
 
-animation_lin = plt.animation.FuncAnimation(fig4, func=ani_func_linear, frames=range(500))
+animation_lin = anim.FuncAnimation(fig4, func=ani_func_linear, frames=range(500))
 fig5, ax5 = plt.subplots(figsize=(10,8))
 
 
@@ -605,7 +605,7 @@ fig5, ax5 = plt.subplots(figsize=(10,8))
 
 # animation_FNO = plt.animation.FuncAnimation(fig5, func=ani_func_FNO, frames=range(500))
 
-writer = plt.animation.PillowWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+writer = anim.PillowWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
 animation_lin.save('linear_evals.gif', writer=writer)
 # animation_FNO.save('FNO_evals.gif', writer=writer)
 print('Movies saved')
