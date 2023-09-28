@@ -225,6 +225,71 @@ class FNO1d(nn.Module):
         return gridx.to(device)
 
 
+# FNO archetecture hyperparams
+
+time_history = 1 #time steps to be considered as input to the solver
+time_future = 1 #time steps to be considered as output of the solver
+device = 'cuda'  #change to cpu if no cuda available
+
+#model parameters
+modes = 256 # number of Fourier modes to multiply
+width = 64 # input and output chasnnels to the FNO layer
+
+num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
+learning_rate = 0.0001
+lr_decay = 0.4
+num_workers = 0  #What does this do?
+
+
+
+
+# FNO models and predictions
+mynet_directstep_FNO = FNO1d(modes, width, time_future, time_history).float()
+mynet_directstep_FNO.load_state_dict(torch.load('NN_FNO_Directstep_lead1.pt'))
+mynet_directstep_FNO.cuda()
+
+mynet_Eulerstep_FNO = FNO1d(modes, width, time_future, time_history).float()
+mynet_Eulerstep_FNO.load_state_dict(torch.load('NN_FNO_Eulerstep_lead1.pt'))
+mynet_Eulerstep_FNO.cuda()
+
+mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history).float()
+mynet_PECstep_FNO.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
+mynet_PECstep_FNO.cuda()
+
+val_dict_direct_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_directstep_1024_FNO_lead1.mat')
+val_dict_Euler_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_Eulerstep_1024_FNO_lead1.mat')
+val_dict_PEC_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_PECstep_1024_FNO_lead1.mat')
+
+pred_direct_FNO = val_dict_direct_FNO[u'prediction']
+pred_Euler_FNO = val_dict_Euler_FNO[u'prediction']
+pred_PEC_FNO = val_dict_PEC_FNO[u'prediction']
+
+ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
+ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
+ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
+
+
+
+i = 0
+for j in np.array([0, 10000, 50000, 99998]):
+    # FNO jacobian calc
+
+    ygrad_direct_FNO[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_Euler_FNO[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_PEC_FNO[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    i += 1
+
+
+print('FNO basic jacs calculated')
+
+del mynet_directstep_FNO, mynet_Eulerstep_FNO, mynet_PECstep_FNO
+torch.cuda.empty_cache()
+
+
+
+
+
+
 #load basic model predictions
 mynet_directstep = Net().double()
 mynet_directstep.load_state_dict(torch.load('NN_directstep_lead1.pt'))
@@ -328,66 +393,6 @@ print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1
 print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
 print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
 
-
-# FNO archetecture hyperparams
-
-time_history = 1 #time steps to be considered as input to the solver
-time_future = 1 #time steps to be considered as output of the solver
-device = 'cuda'  #change to cpu if no cuda available
-
-#model parameters
-modes = 256 # number of Fourier modes to multiply
-width = 64 # input and output chasnnels to the FNO layer
-
-num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
-learning_rate = 0.0001
-lr_decay = 0.4
-num_workers = 0  #What does this do?
-
-
-
-
-# FNO models and predictions
-mynet_directstep_FNO = FNO1d(modes, width, time_future, time_history).float()
-mynet_directstep_FNO.load_state_dict(torch.load('NN_FNO_Directstep_lead1.pt'))
-mynet_directstep_FNO.cuda()
-
-mynet_Eulerstep_FNO = FNO1d(modes, width, time_future, time_history).float()
-mynet_Eulerstep_FNO.load_state_dict(torch.load('NN_FNO_Eulerstep_lead1.pt'))
-mynet_Eulerstep_FNO.cuda()
-
-mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history).float()
-mynet_PECstep_FNO.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
-mynet_PECstep_FNO.cuda()
-
-val_dict_direct_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_directstep_1024_FNO_lead1.mat')
-val_dict_Euler_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_Eulerstep_1024_FNO_lead1.mat')
-val_dict_PEC_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_PECstep_1024_FNO_lead1.mat')
-
-pred_direct_FNO = val_dict_direct_FNO[u'prediction']
-pred_Euler_FNO = val_dict_Euler_FNO[u'prediction']
-pred_PEC_FNO = val_dict_PEC_FNO[u'prediction']
-
-ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
-ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
-ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
-
-
-
-i = 0
-for j in np.array([0, 10000, 50000, 99998]):
-    # FNO jacobian calc
-
-    ygrad_direct_FNO[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_Euler_FNO[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_PEC_FNO[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-    i += 1
-
-
-print('FNO basic jacs calculated')
-
-del mynet_directstep_FNO, mynet_Eulerstep_FNO, mynet_PECstep_FNO
-torch.cuda.empty_cache()
 
 print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
 print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
