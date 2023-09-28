@@ -322,6 +322,9 @@ torch.cuda.empty_cache()
 del mynet_directstep, mynet_directstep_tendency, mynet_Eulerstep, mynet_Eulerstep_tendency
 del mynet_PECstep, mynet_PECstep_tendency, mynet_RK4step, mynet_RK4step_tendency
 
+print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
+print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
+print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
 
 
 # FNO archetecture hyperparams
@@ -367,6 +370,9 @@ ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
+print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
+print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
+print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
 
 
 i = 0
