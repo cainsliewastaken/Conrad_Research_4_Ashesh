@@ -450,6 +450,21 @@ circ2 = plt.Circle((0,0), radius=1)
 ax1.add_patch(circ)
 ax2.add_patch(circ2)
 time_vals = [0, 10000, 50000, 99998]
+
+ygrad_direct.detatch().numpy()
+ygrad_Euler.detatch().numpy()
+ygrad_RK4.detatch().numpy()
+ygrad_PEC.detatch().numpy()
+
+
+ygrad_direct_tendency.detatch().numpy()
+ygrad_Euler_tendency.detatch().numpy()
+ygrad_RK4_tendency.detatch().numpy()
+ygrad_PEC_tendency.detatch().numpy()
+
+
+
+
 for i in range(4):
     eig_direct = np.linalg.eigvals(ygrad_direct[i,:,:])
     sing_direct = np.linalg.svd(ygrad_direct[i,:,:], compute_uv=False)
