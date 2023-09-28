@@ -451,16 +451,16 @@ ax1.add_patch(circ)
 ax2.add_patch(circ2)
 time_vals = [0, 10000, 50000, 99998]
 
-ygrad_direct.detatch().numpy()
-ygrad_Euler.detatch().numpy()
-ygrad_RK4.detatch().numpy()
-ygrad_PEC.detatch().numpy()
+ygrad_direct.detach().numpy()
+ygrad_Euler.detach().numpy()
+ygrad_RK4.detach().numpy()
+ygrad_PEC.detach().numpy()
 
 
-ygrad_direct_tendency.detatch().numpy()
-ygrad_Euler_tendency.detatch().numpy()
-ygrad_RK4_tendency.detatch().numpy()
-ygrad_PEC_tendency.detatch().numpy()
+ygrad_direct_tendency.detach().numpy()
+ygrad_Euler_tendency.detach().numpy()
+ygrad_RK4_tendency.detach().numpy()
+ygrad_PEC_tendency.detach().numpy()
 
 
 
