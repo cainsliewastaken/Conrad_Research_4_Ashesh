@@ -251,10 +251,10 @@ val_dict_PEC = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval/p
 ks_truth = val_dict_direct[u'Truth']
 
 
-pred_direct = torch.tensor(val_dict_direct[u'prediction'], dtype=torch.double)
-pred_Euler = torch.tensor(val_dict_Euler[u'prediction'], dtype=torch.double)
-pred_RK4 = torch.tensor(val_dict_RK4[u'prediction'], dtype=torch.double)
-pred_PEC = torch.tensor(val_dict_PEC[u'prediction'], dtype=torch.double)
+pred_direct = val_dict_direct[u'prediction']
+pred_Euler = val_dict_Euler[u'prediction']
+pred_RK4 = val_dict_RK4[u'prediction']
+pred_PEC = val_dict_PEC[u'prediction']
 
 
 ygrad_direct = torch.zeros([int(4),input_size,input_size])
@@ -286,10 +286,10 @@ val_dict_Euler_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/m
 val_dict_RK4_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_RK4step_1024_lead1_lambda_reg5_tendency.mat')
 val_dict_PEC_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_tendency/predicted_PECstep_1024_lead1_lambda_reg5_tendency.mat')
 
-pred_direct_tendency = torch.tensor(val_dict_direct_tendency[u'prediction'], dtype=torch.double)
-pred_Euler_tendency = torch.tensor(val_dict_Euler_tendency[u'prediction'], dtype=torch.double)
-pred_RK4_tendency = torch.tensor(val_dict_RK4_tendency[u'prediction'], dtype=torch.double)
-pred_PEC_tendency = torch.tensor(val_dict_PEC_tendency[u'prediction'], dtype=torch.double)
+pred_direct_tendency = val_dict_direct_tendency[u'prediction']
+pred_Euler_tendency = val_dict_Euler_tendency[u'prediction']
+pred_RK4_tendency = val_dict_RK4_tendency[u'prediction']
+pred_PEC_tendency = val_dict_PEC_tendency[u'prediction']
 
 ygrad_direct_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_tendency = torch.zeros([int(4),input_size,input_size])
@@ -303,17 +303,17 @@ i = 0
 for j in np.array([0, 10000, 50000, 99998]):
     #basic linear model jacobian calculation
 
-    ygrad_direct[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep, pred_direct[j,:])
-    ygrad_Euler[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep, pred_Euler[j,:])
-    ygrad_RK4[i,:,:] = torch.func.jacrev(RK4step, argnums=1)(mynet_RK4step, pred_RK4[j,:])
-    ygrad_PEC[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep, pred_PEC[j,:])
+    ygrad_direct[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep, torch.tensor(pred_direct[j,:], dtype=torch.double))
+    ygrad_Euler[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep, torch.tensor(pred_Euler[j,:], dtype=torch.double))
+    ygrad_RK4[i,:,:] = torch.func.jacrev(RK4step, argnums=1)(mynet_RK4step, torch.tensor(pred_RK4[j,:], dtype=torch.double))
+    ygrad_PEC[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep, torch.tensor(pred_PEC[j,:], dtype=torch.double))
 
     #linear plus tendency (spectral loss) jacobian calculation
 
-    ygrad_direct_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_tendency, pred_direct_tendency[j,:])
-    ygrad_Euler_tendency[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_tendency, pred_Euler_tendency[j,:])
-    ygrad_RK4_tendency[i,:,:] = torch.func.jacrev(RK4step, argnums=1)(mynet_RK4step_tendency, pred_RK4_tendency[j,:])
-    ygrad_PEC_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_tendency, pred_PEC_tendency[j,:])
+    ygrad_direct_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_tendency, torch.tensor(pred_direct_tendency[j,:], dtype=torch.double))
+    ygrad_Euler_tendency[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_tendency, torch.tensor(pred_Euler_tendency[j,:], dtype=torch.double))
+    ygrad_RK4_tendency[i,:,:] = torch.func.jacrev(RK4step, argnums=1)(mynet_RK4step_tendency, torch.tensor(pred_RK4_tendency[j,:], dtype=torch.double))
+    ygrad_PEC_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_tendency, torch.tensor(pred_PEC_tendency[j,:], dtype=torch.double))
     i += 1
 print('Linear jacs calculated')
 torch.cuda.empty_cache()
@@ -358,9 +358,9 @@ val_dict_direct_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model
 val_dict_Euler_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_Eulerstep_1024_FNO_lead1.mat')
 val_dict_PEC_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_PECstep_1024_FNO_lead1.mat')
 
-pred_direct_FNO = torch.tensor(val_dict_direct_FNO[u'prediction'], dtype=torch.float)
-pred_Euler_FNO = torch.tensor(val_dict_Euler_FNO[u'prediction'], dtype=torch.float)
-pred_PEC_FNO = torch.tensor(val_dict_PEC_FNO[u'prediction'], dtype=torch.float)
+pred_direct_FNO = val_dict_direct_FNO[u'prediction']
+pred_Euler_FNO = val_dict_Euler_FNO[u'prediction']
+pred_PEC_FNO = val_dict_PEC_FNO[u'prediction']
 
 ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
@@ -372,9 +372,9 @@ i = 0
 for j in np.array([0, 10000, 50000, 99998]):
     # FNO jacobian calc
 
-    ygrad_direct_FNO[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(pred_direct_FNO[0,:],(1,input_size,1)))
-    ygrad_Euler_FNO[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(pred_Euler_FNO[0,:],(1,input_size,1)))
-    ygrad_PEC_FNO[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(pred_PEC_FNO[0,:],(1,input_size,1)))
+    ygrad_direct_FNO[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_Euler_FNO[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_PEC_FNO[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
     i += 1
 
 
@@ -401,9 +401,9 @@ val_dict_direct_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stabil
 val_dict_Euler_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_Eulerstep_1024_FNO_tendency_lead1.mat')
 val_dict_PEC_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_PECstep_1024_FNO_tendency_lead1.mat')
 
-pred_direct_FNO_tendency = torch.tensor(val_dict_direct_FNO_tendency[u'prediction'], dtype=torch.float)
-pred_Euler_FNO_tendency = torch.tensor(val_dict_Euler_FNO_tendency[u'prediction'], dtype=torch.float)
-pred_PEC_FNO_tendency = torch.tensor(val_dict_PEC_FNO_tendency[u'prediction'], dtype=torch.float)
+pred_direct_FNO_tendency = val_dict_direct_FNO_tendency[u'prediction']
+pred_Euler_FNO_tendency = val_dict_Euler_FNO_tendency[u'prediction']
+pred_PEC_FNO_tendency = val_dict_PEC_FNO_tendency[u'prediction']
 
 ygrad_direct_FNO_tendency = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_FNO_tendency = torch.zeros([int(4),input_size,input_size])
@@ -416,9 +416,9 @@ i = 0
 for j in np.array([0, 10000, 50000, 99998]):
     # FNO + tendency jacobian calc
 
-    ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO_tendency, torch.reshape(pred_direct_FNO_tendency[0,:],(1,input_size,1)))
-    ygrad_Euler_FNO_tendency[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO_tendency, torch.reshape(pred_Euler_FNO_tendency[0,:],(1,input_size,1)))
-    ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, torch.reshape(pred_PEC_FNO_tendency[0,:],(1,input_size,1)))
+    ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO_tendency, torch.reshape(torch.tensor(pred_direct_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_Euler_FNO_tendency[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO_tendency, torch.reshape(torch.tensor(pred_Euler_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, torch.reshape(torch.tensor(pred_PEC_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
     i += 1
 
 
