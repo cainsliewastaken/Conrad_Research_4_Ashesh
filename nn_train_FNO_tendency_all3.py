@@ -264,7 +264,7 @@ batch_size=100
 for ep in range(0, epochs+1):
 #      permutation = torch.randperm(M*N)
 #      epoch_loss=0
-      for step in range(0,trainN,batch_size):
+    for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
 
@@ -299,7 +299,8 @@ for ep in range(0, epochs+1):
   
         loss_PEC.backward(retain_graph=True)
         optimizer_PEC.step()
-
+    if ep % 10 ==0:
+        print(ep)
 #         epoch_loss = epoch_loss + loss
 #         if ep % 10 == 0:
 #           print('step',step)
