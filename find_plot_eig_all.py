@@ -575,7 +575,7 @@ def ani_func_linear(t):
 
     return ax4
 
-animation_lin = anim.FuncAnimation(fig4, func=ani_func_linear, frames=range(500))
+animation_lin = anim.FuncAnimation(fig4, func=ani_func_linear, frames=range(1000))
 fig5, ax5 = plt.subplots(figsize=(10,8))
 
 
