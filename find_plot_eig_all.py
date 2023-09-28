@@ -274,9 +274,9 @@ i = 0
 for j in np.array([0, 10000, 50000, 99998]):
     # FNO jacobian calc
 
-    ygrad_direct_FNO[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_Euler_FNO[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_PEC_FNO[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_direct_FNO[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_Euler_FNO[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_PEC_FNO[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
     i += 1
 
 
@@ -368,17 +368,17 @@ i = 0
 for j in np.array([0, 10000, 50000, 99998]):
     #basic linear model jacobian calculation
 
-    ygrad_direct[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep, torch.tensor(pred_direct[j,:], dtype=torch.double))
-    ygrad_Euler[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep, torch.tensor(pred_Euler[j,:], dtype=torch.double))
-    ygrad_RK4[i,:,:] = torch.func.jacfwd(RK4step, argnums=1)(mynet_RK4step, torch.tensor(pred_RK4[j,:], dtype=torch.double))
-    ygrad_PEC[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep, torch.tensor(pred_PEC[j,:], dtype=torch.double))
+    ygrad_direct[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep, torch.tensor(pred_direct[j,:], dtype=torch.double))
+    ygrad_Euler[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep, torch.tensor(pred_Euler[j,:], dtype=torch.double))
+    ygrad_RK4[i,:,:] = torch.func.jacrev(RK4step, argnums=1)(mynet_RK4step, torch.tensor(pred_RK4[j,:], dtype=torch.double))
+    ygrad_PEC[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep, torch.tensor(pred_PEC[j,:], dtype=torch.double))
 
     #linear plus tendency (spectral loss) jacobian calculation
 
-    ygrad_direct_tendency[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_tendency, torch.tensor(pred_direct_tendency[j,:], dtype=torch.double))
-    ygrad_Euler_tendency[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_tendency, torch.tensor(pred_Euler_tendency[j,:], dtype=torch.double))
-    ygrad_RK4_tendency[i,:,:] = torch.func.jacfwd(RK4step, argnums=1)(mynet_RK4step_tendency, torch.tensor(pred_RK4_tendency[j,:], dtype=torch.double))
-    ygrad_PEC_tendency[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_tendency, torch.tensor(pred_PEC_tendency[j,:], dtype=torch.double))
+    ygrad_direct_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_tendency, torch.tensor(pred_direct_tendency[j,:], dtype=torch.double))
+    ygrad_Euler_tendency[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_tendency, torch.tensor(pred_Euler_tendency[j,:], dtype=torch.double))
+    ygrad_RK4_tendency[i,:,:] = torch.func.jacrev(RK4step, argnums=1)(mynet_RK4step_tendency, torch.tensor(pred_RK4_tendency[j,:], dtype=torch.double))
+    ygrad_PEC_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_tendency, torch.tensor(pred_PEC_tendency[j,:], dtype=torch.double))
     i += 1
 print('Linear jacs calculated')
 
@@ -431,9 +431,9 @@ i = 0
 for j in np.array([0, 10000, 50000, 99998]):
     # FNO + tendency jacobian calc
 
-    ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO_tendency, torch.reshape(torch.tensor(pred_direct_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_Euler_FNO_tendency[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO_tendency, torch.reshape(torch.tensor(pred_Euler_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, torch.reshape(torch.tensor(pred_PEC_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO_tendency, torch.reshape(torch.tensor(pred_direct_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_Euler_FNO_tendency[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO_tendency, torch.reshape(torch.tensor(pred_Euler_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, torch.reshape(torch.tensor(pred_PEC_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
     i += 1
 
 
