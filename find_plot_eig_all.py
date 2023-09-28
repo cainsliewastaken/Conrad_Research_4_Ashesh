@@ -446,8 +446,9 @@ fig1, ax1 = plt.subplots(figsize=(10,8))
 fig2, ax2 = plt.subplots(figsize=(10,8))
 fig3, ax3 = plt.subplots(figsize=(10,8))
 circ = plt.Circle((0,0), radius=1)
+circ2 = plt.Circle((0,0), radius=1)
 ax1.add_patch(circ)
-ax2.add_patch(circ)
+ax2.add_patch(circ2)
 time_vals = [0, 10000, 50000, 99998]
 for i in range(4):
     eig_direct = np.linalg.eigvals(ygrad_direct[i,:,:])
