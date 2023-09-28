@@ -192,7 +192,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 256 # number of Fourier modes to multiply
-width = 32 # input and output chasnnels to the FNO layer
+width = 64 # input and output chasnnels to the FNO layer
 
 num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
 learning_rate = 0.0001
