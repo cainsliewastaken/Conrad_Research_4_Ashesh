@@ -554,21 +554,21 @@ fig4, ax4 = plt.subplots(figsize=(10,8))
 
 def ani_func_linear(t):
     ax4.cla()
-    x_vals = np.arange(np.length(ks_truth[0,:]))
+    x_vals = np.arange(np.size(ks_truth[0,:]))
     y_vals = ks_truth[t,:]
     ax4.plot(x_vals, y_vals, label='Truth')
 
-    x_vals = np.arange(np.length(pred_direct[0,:]))
+    x_vals = np.arange(np.size(pred_direct[0,:]))
     y_vals = pred_direct[t,:]
     ax4.plot(x_vals, y_vals, label='Direct Step linear')
-    x_vals = np.arange(np.length(pred_PEC[0,:]))
+    x_vals = np.arange(np.size(pred_PEC[0,:]))
     y_vals = pred_PEC[t,:]
     ax4.plot(x_vals, y_vals, label='PEC Step linear')
 
-    x_vals = np.arange(np.length(pred_direct_tendency[0,:]))
+    x_vals = np.arange(np.size(pred_direct_tendency[0,:]))
     y_vals = pred_direct_tendency[t,:]
     ax4.plot(x_vals, y_vals, label='Direct Step linear spectral loss')
-    x_vals = np.arange(np.length(pred_PEC_tendency[0,:]))
+    x_vals = np.arange(np.size(pred_PEC_tendency[0,:]))
     y_vals = pred_PEC_tendency[t,:]
     ax4.plot(x_vals, y_vals, label='PEC Step linear spectral loss')
     ax4.legend(fontsize='x-small')
