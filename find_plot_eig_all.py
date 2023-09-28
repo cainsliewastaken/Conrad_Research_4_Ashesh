@@ -325,118 +325,118 @@ del mynet_PECstep, mynet_PECstep_tendency, mynet_RK4step, mynet_RK4step_tendency
 
 torch.cuda.empty_cache()
 
-print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
-print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
-print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
+# print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
+# print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
+# print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
 
 
-print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
-print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
-print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
+# print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
+# print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
+# print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
 
 
-# FNO archetecture hyperparams
+# # FNO archetecture hyperparams
 
-time_history = 1 #time steps to be considered as input to the solver
-time_future = 1 #time steps to be considered as output of the solver
-device = 'cuda'  #change to cpu if no cuda available
+# time_history = 1 #time steps to be considered as input to the solver
+# time_future = 1 #time steps to be considered as output of the solver
+# device = 'cuda'  #change to cpu if no cuda available
 
-#model parameters
-modes = 256 # number of Fourier modes to multiply
-width = 64 # input and output chasnnels to the FNO layer
+# #model parameters
+# modes = 256 # number of Fourier modes to multiply
+# width = 64 # input and output chasnnels to the FNO layer
 
-num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
-learning_rate = 0.0001
-lr_decay = 0.4
-num_workers = 0  #What does this do?
-
-
-
-
-# FNO models and predictions
-mynet_directstep_FNO = FNO1d(modes, width, time_future, time_history).float()
-mynet_directstep_FNO.load_state_dict(torch.load('NN_FNO_Directstep_lead1.pt'))
-mynet_directstep_FNO.cuda()
-
-mynet_Eulerstep_FNO = FNO1d(modes, width, time_future, time_history).float()
-mynet_Eulerstep_FNO.load_state_dict(torch.load('NN_FNO_Eulerstep_lead1.pt'))
-mynet_Eulerstep_FNO.cuda()
-
-mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history).float()
-mynet_PECstep_FNO.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
-mynet_PECstep_FNO.cuda()
-
-val_dict_direct_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_directstep_1024_FNO_lead1.mat')
-val_dict_Euler_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_Eulerstep_1024_FNO_lead1.mat')
-val_dict_PEC_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_PECstep_1024_FNO_lead1.mat')
-
-pred_direct_FNO = val_dict_direct_FNO[u'prediction']
-pred_Euler_FNO = val_dict_Euler_FNO[u'prediction']
-pred_PEC_FNO = val_dict_PEC_FNO[u'prediction']
-
-ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
-ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
-ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
-
-
-
-i = 0
-for j in np.array([0, 10000, 50000, 99998]):
-    # FNO jacobian calc
-
-    ygrad_direct_FNO[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_Euler_FNO[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_PEC_FNO[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-    i += 1
-
-
-print('FNO basic jacs calculated')
-
-del mynet_directstep_FNO, mynet_Eulerstep_FNO, mynet_PECstep_FNO
-torch.cuda.empty_cache()
+# num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
+# learning_rate = 0.0001
+# lr_decay = 0.4
+# num_workers = 0  #What does this do?
 
 
 
 
+# # FNO models and predictions
+# mynet_directstep_FNO = FNO1d(modes, width, time_future, time_history).float()
+# mynet_directstep_FNO.load_state_dict(torch.load('NN_FNO_Directstep_lead1.pt'))
+# mynet_directstep_FNO.cuda()
+
+# mynet_Eulerstep_FNO = FNO1d(modes, width, time_future, time_history).float()
+# mynet_Eulerstep_FNO.load_state_dict(torch.load('NN_FNO_Eulerstep_lead1.pt'))
+# mynet_Eulerstep_FNO.cuda()
+
+# mynet_PECstep_FNO = FNO1d(modes, width, time_future, time_history).float()
+# mynet_PECstep_FNO.load_state_dict(torch.load('NN_FNO_PECstep_lead1.pt'))
+# mynet_PECstep_FNO.cuda()
+
+# val_dict_direct_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_directstep_1024_FNO_lead1.mat')
+# val_dict_Euler_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_Eulerstep_1024_FNO_lead1.mat')
+# val_dict_PEC_FNO = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO/predicted_PECstep_1024_FNO_lead1.mat')
+
+# pred_direct_FNO = val_dict_direct_FNO[u'prediction']
+# pred_Euler_FNO = val_dict_Euler_FNO[u'prediction']
+# pred_PEC_FNO = val_dict_PEC_FNO[u'prediction']
+
+# ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
+# ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
+# ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 
 
-# FNO + tendency models and predictions
-mynet_directstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).float()
-mynet_directstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt'))
-mynet_directstep_FNO_tendency.cuda() 
+# i = 0
+# for j in np.array([0, 10000, 50000, 99998]):
+#     # FNO jacobian calc
 
-mynet_Eulerstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).float()
-mynet_Eulerstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Eulerstep_tendency_lambda_reg5lead1.pt'))
-mynet_Eulerstep_FNO_tendency.cuda()
-
-mynet_PECstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).float()
-mynet_PECstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_PECstep_tendency_lambda_reg5lead1.pt'))
-mynet_PECstep_FNO_tendency.cuda()
-
-val_dict_direct_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_directstep_1024_FNO_tendency_lead1.mat')
-val_dict_Euler_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_Eulerstep_1024_FNO_tendency_lead1.mat')
-val_dict_PEC_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_PECstep_1024_FNO_tendency_lead1.mat')
-
-pred_direct_FNO_tendency = val_dict_direct_FNO_tendency[u'prediction']
-pred_Euler_FNO_tendency = val_dict_Euler_FNO_tendency[u'prediction']
-pred_PEC_FNO_tendency = val_dict_PEC_FNO_tendency[u'prediction']
-
-ygrad_direct_FNO_tendency = torch.zeros([int(4),input_size,input_size])
-ygrad_Euler_FNO_tendency = torch.zeros([int(4),input_size,input_size])
-ygrad_PEC_FNO_tendency = torch.zeros([int(4),input_size,input_size])
-
-print('FNO is loaded')
+#     ygrad_direct_FNO[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+#     ygrad_Euler_FNO[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+#     ygrad_PEC_FNO[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+#     i += 1
 
 
-i = 0
-for j in np.array([0, 10000, 50000, 99998]):
-    # FNO + tendency jacobian calc
+# print('FNO basic jacs calculated')
 
-    ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO_tendency, torch.reshape(torch.tensor(pred_direct_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_Euler_FNO_tendency[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO_tendency, torch.reshape(torch.tensor(pred_Euler_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
-    ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, torch.reshape(torch.tensor(pred_PEC_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
-    i += 1
+# del mynet_directstep_FNO, mynet_Eulerstep_FNO, mynet_PECstep_FNO
+# torch.cuda.empty_cache()
+
+
+
+
+
+
+
+# # FNO + tendency models and predictions
+# mynet_directstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).float()
+# mynet_directstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt'))
+# mynet_directstep_FNO_tendency.cuda() 
+
+# mynet_Eulerstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).float()
+# mynet_Eulerstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Eulerstep_tendency_lambda_reg5lead1.pt'))
+# mynet_Eulerstep_FNO_tendency.cuda()
+
+# mynet_PECstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).float()
+# mynet_PECstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_PECstep_tendency_lambda_reg5lead1.pt'))
+# mynet_PECstep_FNO_tendency.cuda()
+
+# val_dict_direct_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_directstep_1024_FNO_tendency_lead1.mat')
+# val_dict_Euler_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_Eulerstep_1024_FNO_tendency_lead1.mat')
+# val_dict_PEC_FNO_tendency = scipy.io.loadmat('/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/predicted_PECstep_1024_FNO_tendency_lead1.mat')
+
+# pred_direct_FNO_tendency = val_dict_direct_FNO_tendency[u'prediction']
+# pred_Euler_FNO_tendency = val_dict_Euler_FNO_tendency[u'prediction']
+# pred_PEC_FNO_tendency = val_dict_PEC_FNO_tendency[u'prediction']
+
+# ygrad_direct_FNO_tendency = torch.zeros([int(4),input_size,input_size])
+# ygrad_Euler_FNO_tendency = torch.zeros([int(4),input_size,input_size])
+# ygrad_PEC_FNO_tendency = torch.zeros([int(4),input_size,input_size])
+
+# print('FNO is loaded')
+
+
+# i = 0
+# for j in np.array([0, 10000, 50000, 99998]):
+#     # FNO + tendency jacobian calc
+
+#     ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO_tendency, torch.reshape(torch.tensor(pred_direct_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
+#     ygrad_Euler_FNO_tendency[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO_tendency, torch.reshape(torch.tensor(pred_Euler_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
+#     ygrad_PEC_FNO_tendency[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO_tendency, torch.reshape(torch.tensor(pred_PEC_FNO_tendency[0,:], dtype=torch.float),(1,input_size,1)))
+#     i += 1
 
 
 # print('All jacobians calculated')
@@ -509,38 +509,38 @@ for i in range(2):
     ax2.scatter(eig_PEC_tendency.real, eig_PEC_tendency.imag, label='PEC step at t='+ str(time_vals[i])) #PEC step tendency linear
 
 
-    eig_direct_FNO = np.linalg.eigvals(ygrad_direct_FNO[i,:,:])
-    sing_direct_FNO = np.linalg.svd(ygrad_direct_FNO[i,:,:], compute_uv=False)
-    ax3.scatter(i, np.absolute(np.sum(eig_direct_FNO)), label='FNO Direct step eigvals sum at t='+ time_vals[i])
-    ax3.scatter(i, np.sum(np.absolute(sing_direct_FNO)), label='FNO Direct step sing sum at t='+ time_vals[i])
-    ax1.scatter(eig_direct_FNO.real, eig_direct_FNO.imag, label='Direct step FNO at t='+ time_vals[i]) #direct step FNO
-    eig_Euler_FNO = np.linalg.eigvals(ygrad_Euler_FNO[i,:,:])
-    sing_Euler_FNO = np.linalg.svd(ygrad_Euler_FNO[i,:,:], compute_uv=False)
-    ax3.scatter(i, np.absolute(np.sum(eig_Euler_FNO)), label='FNO Euler step eigvals sum at t='+ time_vals[i])
-    ax3.scatter(i, np.sum(np.absolute(sing_Euler_FNO)), label='FNO Euler step sing sum at t='+ time_vals[i])
-    ax1.scatter(eig_Euler_FNO.real, eig_Euler_FNO.imag, label='Euler step FNO at t='+ time_vals[i]) #euler step FNO
-    eig_PEC_FNO = np.linalg.eigvals(ygrad_PEC_FNO[i,:,:])
-    sing_PEC_FNO = np.linalg.svd(ygrad_PEC_FNO[i,:,:], compute_uv=False)
-    ax3.scatter(i, np.absolute(np.sum(eig_PEC_FNO)), label='FNO PEC step eigvals sum at t='+ time_vals[i])
-    ax3.scatter(i, np.sum(np.absolute(sing_PEC_FNO)), label='FNO PEC step sing sum at t='+ time_vals[i])
-    ax1.scatter(eig_PEC_FNO.real, eig_PEC_FNO.imag, label='PEC step FNO at t='+ time_vals[i]) #PEC step FNO
+    # eig_direct_FNO = np.linalg.eigvals(ygrad_direct_FNO[i,:,:])
+    # sing_direct_FNO = np.linalg.svd(ygrad_direct_FNO[i,:,:], compute_uv=False)
+    # ax3.scatter(i, np.absolute(np.sum(eig_direct_FNO)), label='FNO Direct step eigvals sum at t='+ time_vals[i])
+    # ax3.scatter(i, np.sum(np.absolute(sing_direct_FNO)), label='FNO Direct step sing sum at t='+ time_vals[i])
+    # ax1.scatter(eig_direct_FNO.real, eig_direct_FNO.imag, label='Direct step FNO at t='+ time_vals[i]) #direct step FNO
+    # eig_Euler_FNO = np.linalg.eigvals(ygrad_Euler_FNO[i,:,:])
+    # sing_Euler_FNO = np.linalg.svd(ygrad_Euler_FNO[i,:,:], compute_uv=False)
+    # ax3.scatter(i, np.absolute(np.sum(eig_Euler_FNO)), label='FNO Euler step eigvals sum at t='+ time_vals[i])
+    # ax3.scatter(i, np.sum(np.absolute(sing_Euler_FNO)), label='FNO Euler step sing sum at t='+ time_vals[i])
+    # ax1.scatter(eig_Euler_FNO.real, eig_Euler_FNO.imag, label='Euler step FNO at t='+ time_vals[i]) #euler step FNO
+    # eig_PEC_FNO = np.linalg.eigvals(ygrad_PEC_FNO[i,:,:])
+    # sing_PEC_FNO = np.linalg.svd(ygrad_PEC_FNO[i,:,:], compute_uv=False)
+    # ax3.scatter(i, np.absolute(np.sum(eig_PEC_FNO)), label='FNO PEC step eigvals sum at t='+ time_vals[i])
+    # ax3.scatter(i, np.sum(np.absolute(sing_PEC_FNO)), label='FNO PEC step sing sum at t='+ time_vals[i])
+    # ax1.scatter(eig_PEC_FNO.real, eig_PEC_FNO.imag, label='PEC step FNO at t='+ time_vals[i]) #PEC step FNO
 
 
-    eig_direct_FNO_tendency = np.linalg.eigvals(ygrad_direct_FNO_tendency[i,:,:])
-    sing_direct_FNO_tendency = np.linalg.svd(ygrad_direct_FNO_tendency[i,:,:], compute_uv=False)
-    ax3.scatter(i, np.absolute(np.sum(eig_direct_FNO_tendency)), label='FNO Tendency Direct step eigvals sum at t='+ time_vals[i])
-    ax3.scatter(i, np.sum(np.absolute(sing_direct_FNO_tendency)), label='FNO Tendency Direct step sing sum at t='+ time_vals[i])
-    ax2.scatter(eig_PEC_FNO.real, eig_PEC_FNO.imag, label='Direct step at t='+ time_vals[i]) #direct step tendency FNO
-    eig_Euler_FNO_tendency = np.linalg.eigvals(ygrad_Euler_FNO_tendency[i,:,:])
-    sing_Euler_FNO_tendency = np.linalg.svd(ygrad_Euler_FNO_tendency[i,:,:], compute_uv=False)
-    ax3.scatter(i, np.absolute(np.sum(eig_Euler_FNO_tendency)), label='FNO Tendency Euler step eigvals sum at t='+ time_vals[i])
-    ax3.scatter(i, np.sum(np.absolute(sing_Euler_FNO_tendency)), label='FNO Tendency Euler step sing sum at t='+ time_vals[i])
-    ax2.scatter(eig_Euler_FNO_tendency.real, eig_Euler_FNO_tendency.imag, label='Euler step at t='+ time_vals[i]) #euler step tendency FNO
-    eig_PEC_FNO_tendency = np.linalg.eigvals(ygrad_PEC_FNO_tendency[i,:,:])
-    sing_PEC_FNO_tendency = np.linalg.svd(ygrad_PEC_FNO_tendency[i,:,:], compute_uv=False)
-    ax3.scatter(i, np.absolute(np.sum(eig_PEC_FNO_tendency)), label='FNO Tendency PEC step eigvals sum at t='+ time_vals[i])
-    ax3.scatter(i, np.sum(np.absolute(sing_PEC_FNO_tendency)), label='FNO Tendency PEC step sing sum at t='+ time_vals[i])
-    ax2.scatter(eig_PEC_FNO_tendency.real, eig_PEC_FNO_tendency.imag, label='PEC step at t='+ time_vals[i]) #PEC step tendency FNO
+    # eig_direct_FNO_tendency = np.linalg.eigvals(ygrad_direct_FNO_tendency[i,:,:])
+    # sing_direct_FNO_tendency = np.linalg.svd(ygrad_direct_FNO_tendency[i,:,:], compute_uv=False)
+    # ax3.scatter(i, np.absolute(np.sum(eig_direct_FNO_tendency)), label='FNO Tendency Direct step eigvals sum at t='+ time_vals[i])
+    # ax3.scatter(i, np.sum(np.absolute(sing_direct_FNO_tendency)), label='FNO Tendency Direct step sing sum at t='+ time_vals[i])
+    # ax2.scatter(eig_PEC_FNO.real, eig_PEC_FNO.imag, label='Direct step at t='+ time_vals[i]) #direct step tendency FNO
+    # eig_Euler_FNO_tendency = np.linalg.eigvals(ygrad_Euler_FNO_tendency[i,:,:])
+    # sing_Euler_FNO_tendency = np.linalg.svd(ygrad_Euler_FNO_tendency[i,:,:], compute_uv=False)
+    # ax3.scatter(i, np.absolute(np.sum(eig_Euler_FNO_tendency)), label='FNO Tendency Euler step eigvals sum at t='+ time_vals[i])
+    # ax3.scatter(i, np.sum(np.absolute(sing_Euler_FNO_tendency)), label='FNO Tendency Euler step sing sum at t='+ time_vals[i])
+    # ax2.scatter(eig_Euler_FNO_tendency.real, eig_Euler_FNO_tendency.imag, label='Euler step at t='+ time_vals[i]) #euler step tendency FNO
+    # eig_PEC_FNO_tendency = np.linalg.eigvals(ygrad_PEC_FNO_tendency[i,:,:])
+    # sing_PEC_FNO_tendency = np.linalg.svd(ygrad_PEC_FNO_tendency[i,:,:], compute_uv=False)
+    # ax3.scatter(i, np.absolute(np.sum(eig_PEC_FNO_tendency)), label='FNO Tendency PEC step eigvals sum at t='+ time_vals[i])
+    # ax3.scatter(i, np.sum(np.absolute(sing_PEC_FNO_tendency)), label='FNO Tendency PEC step sing sum at t='+ time_vals[i])
+    # ax2.scatter(eig_PEC_FNO_tendency.real, eig_PEC_FNO_tendency.imag, label='PEC step at t='+ time_vals[i]) #PEC step tendency FNO
 ax1.legend(fontsize='x-small')
 ax2.legend(fontsize='x-small')
 ax3.legend(fontsize='x-small')
@@ -575,35 +575,35 @@ def ani_func_linear(t):
 
     return ax4
 
-animation_lin = anim.FuncAnimation(fig4, func=ani_func_linear, frames=range(10000))
+animation_lin = anim.FuncAnimation(fig4, func=ani_func_linear, frames=range(0, 100000, 100))
 fig5, ax5 = plt.subplots(figsize=(10,8))
 
 
 
-def ani_func_FNO(t):
-    ax5.cla()
-    x_vals = np.arange(np.length(ks_truth[0,:]))
-    y_vals = ks_truth[t,:]
-    ax5.plot(x_vals, y_vals, label='Truth')
+# def ani_func_FNO(t):
+#     ax5.cla()
+#     x_vals = np.arange(np.length(ks_truth[0,:]))
+#     y_vals = ks_truth[t,:]
+#     ax5.plot(x_vals, y_vals, label='Truth')
 
-    x_vals = np.arange(np.length(pred_direct_FNO[0,:]))
-    y_vals = pred_direct_FNO[t,:]
-    ax5.plot(x_vals, y_vals, label='Direct Step linear')
-    x_vals = np.arange(np.length(pred_PEC_FNO[0,:]))
-    y_vals = pred_PEC_FNO[t,:]
-    ax5.plot(x_vals, y_vals, label='PEC Step linear')
+#     x_vals = np.arange(np.length(pred_direct_FNO[0,:]))
+#     y_vals = pred_direct_FNO[t,:]
+#     ax5.plot(x_vals, y_vals, label='Direct Step linear')
+#     x_vals = np.arange(np.length(pred_PEC_FNO[0,:]))
+#     y_vals = pred_PEC_FNO[t,:]
+#     ax5.plot(x_vals, y_vals, label='PEC Step linear')
 
-    x_vals = np.arange(np.length(pred_direct_FNO_tendency[0,:]))
-    y_vals = pred_direct_FNO_tendency[t,:]
-    ax5.plot(x_vals, y_vals, label='Direct Step linear spectral loss')
-    x_vals = np.arange(np.length(pred_PEC_FNO_tendency[0,:]))
-    y_vals = pred_PEC_FNO_tendency[t,:]
-    ax5.plot(x_vals, y_vals, label='PEC Step linear spectral loss')
-    ax5.legend(fontsize='x-small')
+#     x_vals = np.arange(np.length(pred_direct_FNO_tendency[0,:]))
+#     y_vals = pred_direct_FNO_tendency[t,:]
+#     ax5.plot(x_vals, y_vals, label='Direct Step linear spectral loss')
+#     x_vals = np.arange(np.length(pred_PEC_FNO_tendency[0,:]))
+#     y_vals = pred_PEC_FNO_tendency[t,:]
+#     ax5.plot(x_vals, y_vals, label='PEC Step linear spectral loss')
+#     ax5.legend(fontsize='x-small')
 
-    return ax5
+#     return ax5
 
-animation_FNO = plt.animation.FuncAnimation(fig5, func=ani_func_FNO, frames=range(500))
+# animation_FNO = plt.animation.FuncAnimation(fig5, func=ani_func_FNO, frames=range(500))
 
 writer = anim.PillowWriter(fps=15, metadata=dict(artist='Me'), bitrate=180)
 animation_lin.save('linear_evals.gif', writer=writer)
