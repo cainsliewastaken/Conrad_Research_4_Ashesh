@@ -317,10 +317,12 @@ for j in np.array([0, 10000, 50000, 99998]):
     i += 1
 print('Linear jacs calculated')
 
-torch.cuda.empty_cache()
 
 del mynet_directstep, mynet_directstep_tendency, mynet_Eulerstep, mynet_Eulerstep_tendency
 del mynet_PECstep, mynet_PECstep_tendency, mynet_RK4step, mynet_RK4step_tendency
+
+
+torch.cuda.empty_cache()
 
 print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
 print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
@@ -370,9 +372,6 @@ ygrad_direct_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
-print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
-print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
-print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
 
 
 i = 0
@@ -386,9 +385,13 @@ for j in np.array([0, 10000, 50000, 99998]):
 
 
 print('FNO basic jacs calculated')
-torch.cuda.empty_cache()
 
 del mynet_directstep_FNO, mynet_Eulerstep_FNO, mynet_PECstep_FNO
+torch.cuda.empty_cache()
+
+print("torch.cuda.memory_allocated: %fGB"%(torch.cuda.memory_allocated(0)/1024/1024/1024))
+print("torch.cuda.memory_reserved: %fGB"%(torch.cuda.memory_reserved(0)/1024/1024/1024))
+print("torch.cuda.max_memory_reserved: %fGB"%(torch.cuda.max_memory_reserved(0)/1024/1024/1024))
 
 
 # FNO + tendency models and predictions
