@@ -192,7 +192,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 256 # number of Fourier modes to multiply
-width = 64 # input and output chasnnels to the FNO layer
+width = 32 # input and output chasnnels to the FNO layer
 
 learning_rate = 0.0001
 lr_decay = 0.4
