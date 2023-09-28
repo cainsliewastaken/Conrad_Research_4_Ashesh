@@ -367,6 +367,23 @@ ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 
+
+i = 0
+for j in np.array([0, 10000, 50000, 99998]):
+    # FNO jacobian calc
+
+    ygrad_direct_FNO[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(pred_direct_FNO[0,:],(1,input_size,1)))
+    ygrad_Euler_FNO[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(pred_Euler_FNO[0,:],(1,input_size,1)))
+    ygrad_PEC_FNO[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(pred_PEC_FNO[0,:],(1,input_size,1)))
+    i += 1
+
+
+print('FNO basic jacs calculated')
+torch.cuda.empty_cache()
+
+
+
+
 # FNO + tendency models and predictions
 mynet_directstep_FNO_tendency = FNO1d(modes, width, time_future, time_history).float()
 mynet_directstep_FNO_tendency.load_state_dict(torch.load('NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt'))
@@ -397,12 +414,6 @@ print('FNO is loaded')
 
 i = 0
 for j in np.array([0, 10000, 50000, 99998]):
-    # FNO jacobian calc
-
-    ygrad_direct_FNO[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(pred_direct_FNO[0,:],(1,input_size,1)))
-    ygrad_Euler_FNO[i,:,:] = torch.func.jacrev(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(pred_Euler_FNO[0,:],(1,input_size,1)))
-    ygrad_PEC_FNO[i,:,:] = torch.func.jacrev(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(pred_PEC_FNO[0,:],(1,input_size,1)))
-
     # FNO + tendency jacobian calc
 
     ygrad_direct_FNO_tendency[i,:,:] = torch.func.jacrev(directstep, argnums=1)(mynet_directstep_FNO_tendency, torch.reshape(pred_direct_FNO_tendency[0,:],(1,input_size,1)))
@@ -412,6 +423,8 @@ for j in np.array([0, 10000, 50000, 99998]):
 
 
 print('All jacobians calculated')
+torch.cuda.empty_cache()
+
 fig1, ax1 = plt.subplots(figsize=(10,8))
 fig2, ax2 = plt.subplots(figsize=(10,8))
 fig3, ax3 = plt.subplots(figsize=(10,8))
