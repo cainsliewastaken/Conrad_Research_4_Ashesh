@@ -34,9 +34,9 @@ input_size = 1024
 hidden_layer_size = 2000
 output_size = 1024
 
-input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
-label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
-label_test = np.transpose(data[:,trainN+lead:])
+# input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
+# label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
+# label_test = np.transpose(data[:,trainN+lead:])
 
 
 # Declare all needed network definitions. Prob should have in another file
