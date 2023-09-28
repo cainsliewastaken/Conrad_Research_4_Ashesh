@@ -330,8 +330,9 @@ ax1.plot(matfiledata_PEC[u'RMSE'], label='PEC step')
 ax1.set_xlabel('Time step')
 ax1.set_ylabel('RSME')
 ax1.legend(fontsize='x-small')
+ax1.set(ylim=(0,30))
 fig1.savefig(path_outputs+'RMSE.png')
-#print(sum(matfiledata_direct[u'RMSE']))
+print(sum(matfiledata_direct[u'RMSE']))
 
 
 # fig12, ax12 = plt.subplots(figsize=(10,8))
