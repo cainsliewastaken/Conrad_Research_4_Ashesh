@@ -250,8 +250,8 @@ for k in range(0,M):
 
         out_PEC = PECstep(mynet_PECstep,torch.reshape(torch.from_numpy(pred_PEC[k-1,:]),(1,input_size,1)).float().cuda())
         pred_PEC [k,:] = torch.reshape(out_PEC,(1,input_size)).detach().cpu().numpy()
-    # if k%1000==0:
-    #    print(k)
+    if k%1000==0:
+       print(k)
 
 
 def RMSE(y_hat, y_true):
