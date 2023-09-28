@@ -605,7 +605,7 @@ fig5, ax5 = plt.subplots(figsize=(10,8))
 
 # animation_FNO = plt.animation.FuncAnimation(fig5, func=ani_func_FNO, frames=range(500))
 
-writer = anim.PillowWriter(fps=15, metadata=dict(artist='Me'), bitrate=1800)
+writer = anim.PillowWriter(fps=15, metadata=dict(artist='Me'), bitrate=180)
 animation_lin.save('linear_evals.gif', writer=writer)
 # animation_FNO.save('FNO_evals.gif', writer=writer)
 print('Movies saved')
