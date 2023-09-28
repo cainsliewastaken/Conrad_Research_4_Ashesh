@@ -445,10 +445,10 @@ torch.cuda.empty_cache()
 fig1, ax1 = plt.subplots(figsize=(10,8))
 fig2, ax2 = plt.subplots(figsize=(10,8))
 fig3, ax3 = plt.subplots(figsize=(10,8))
-circ = plt.Circle((0,0), radius=1)
-circ2 = plt.Circle((0,0), radius=1)
-ax1.add_patch(circ)
-ax2.add_patch(circ2)
+# circ = plt.Circle((0,0), radius=1)
+# circ2 = plt.Circle((0,0), radius=1)
+# ax1.add_patch(circ)
+# ax2.add_patch(circ2)
 time_vals = [0, 10000, 50000, 99998]
 
 ygrad_direct = ygrad_direct.detach().numpy()
@@ -465,7 +465,7 @@ ygrad_PEC_tendency = ygrad_PEC_tendency.detach().numpy()
 
 
 
-for i in range(4):
+for i in range(2):
     eig_direct = np.linalg.eigvals(ygrad_direct[i,:,:])
     sing_direct = np.linalg.svd(ygrad_direct[i,:,:], compute_uv=False)
     ax3.scatter(i, np.absolute(np.sum(eig_direct)), label='Direct step eigvals sum at t='+ str(time_vals[i]))
@@ -546,7 +546,7 @@ ax2.legend(fontsize='x-small')
 ax3.legend(fontsize='x-small')
 
 fig1.savefig('Eig_vals_linear.pdf') 
-fig2.savefig('Eig_vals_FNO.pdf')
+# fig2.savefig('Eig_vals_FNO.pdf')
 fig3.savefig('Eig_Sing_vals_sum.pdf')
 print('All plots plotted')
 fig4, ax4 = plt.subplots(figsize=(10,8))
