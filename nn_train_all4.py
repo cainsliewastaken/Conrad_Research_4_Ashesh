@@ -9,7 +9,7 @@ import torch.optim as optim
 import sys
 #import netCDF4 as nc
 #from prettytable import PrettyTable
-#from count_trainable_params import count_parameters    
+from count_trainable_params import count_parameters    
 #import hdf5storage
 import pickle
 
@@ -112,7 +112,7 @@ if __name__ == "__main__":
   mynet_PECstep = Net()
 
 
-  #count_parameters(mynet_directstep)
+  count_parameters(mynet_directstep)
   mynet_directstep.cuda()
 
   #count_parameters(mynet_Eulerstep)
