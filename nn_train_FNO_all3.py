@@ -9,7 +9,7 @@ import torch.optim as optim
 import sys
 # import netCDF4 as nc
 #from prettytable import PrettyTable
-# from count_trainable_params import count_parameters
+from count_trainable_params import count_parameters
 # import hdf5storage
 import pickle
 
@@ -203,13 +203,13 @@ mynet_directstep = FNO1d(modes, width, time_future, time_history).cuda()
 mynet_Eulerstep = FNO1d(modes, width, time_future, time_history).cuda()
 mynet_PECstep = FNO1d(modes, width, time_future, time_history).cuda()
 
-#count_parameters(mynet_directstep)
+count_parameters(mynet_directstep)
 mynet_directstep.cuda()
 
-#count_parameters(mynet_Eulerstep)
+count_parameters(mynet_Eulerstep)
 mynet_Eulerstep.cuda()
 
-#count_parameters(mynet_PECstep)
+count_parameters(mynet_PECstep)
 mynet_PECstep.cuda()
 
 # declare all 3 optimizers and schedulers
