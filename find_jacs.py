@@ -25,7 +25,7 @@ from torch.profiler import profile, record_function, ProfilerActivity
 
 
 print('loading data')
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -104,7 +104,7 @@ def PECstep(input_batch):
 
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-mynet.load_state_dict(torch.load('/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_PECstep_lead1.pt'))
+mynet.load_state_dict(torch.load("/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt"))
 mynet.eval()
 mynet.cuda()
 
@@ -112,7 +112,7 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
 
-    ygrad [k,:,:] = torch.autograd.functional.jacobian(PECstep,x_torch[k,:])
+    ygrad [k,:,:] = torch.autograd.functional.jacobian(directstep,x_torch[k,:])
 
 ygrad = ygrad.detach().cpu().numpy()
 
@@ -122,6 +122,6 @@ print(ygrad.shape)
 
 matfiledata = {}
 matfiledata[u'Jacobian_mats'] = ygrad
-scipy.io.savemat(path_outputs+'MLP_KS_PECstep_lead'+str(lead)+'.mat', matfiledata)
+scipy.io.savemat(path_outputs+'MLP_KS_directstep_tendency_lead'+str(lead)+'.mat', matfiledata)
 
 print('Saved Predictions')
