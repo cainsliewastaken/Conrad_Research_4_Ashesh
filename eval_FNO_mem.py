@@ -91,7 +91,7 @@ ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 with profile(
         profile_memory=True, record_shapes=True) as prof:
-    PECstep(mynet_PECstep_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)))
+    PECstep(mynet_PECstep_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)),time_step)
 
 print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
 
