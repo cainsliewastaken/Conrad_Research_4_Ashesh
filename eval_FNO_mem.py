@@ -17,7 +17,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
 from nn_FNO import FNO1d
-from nn_step_methods import directstep, Eulerstep, PECstep
+# from nn_step_methods import directstep, Eulerstep, PECstep
 
 from torch.profiler import profile, record_function, ProfilerActivity
 
@@ -91,7 +91,7 @@ ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 
 with profile(activities=[ProfilerActivity.CUDA],
-        profile_memory=True, record_shapes=True, with_modules=True) as prof:
+        profile_memory=True) as prof:
     PECstep(mynet_PECstep_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)), time_step)
 
 print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
