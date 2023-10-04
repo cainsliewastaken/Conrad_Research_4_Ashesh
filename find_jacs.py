@@ -103,7 +103,8 @@ def PECstep(input_batch):
 
 
 
-mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+mynet = FNO1d(modes, width, time_future, time_history)
 mynet.load_state_dict(torch.load("/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1.pt"))
 mynet.eval()
 mynet.cuda()
