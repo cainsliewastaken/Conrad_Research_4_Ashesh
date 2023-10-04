@@ -201,9 +201,9 @@ for ep in range(0, epochs+1):
 
         
    #     epoch_loss = epoch_loss + loss
-        # if ep % 10 == 0:
+      if ep % 10 == 0:
         #   print('step',step)
-        #   print('Epoch', ep)
+        print('Epoch', ep)
         #   print ('Loss', loss)
 
 #save network
