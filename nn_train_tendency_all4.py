@@ -20,6 +20,8 @@ with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') 
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
+print('training data loaded')
+
 
 lead=1
 time_step = 1e-3
