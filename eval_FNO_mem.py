@@ -22,7 +22,7 @@ from nn_step_methods import directstep, Eulerstep, PECstep
 from torch.profiler import profile, record_function, ProfilerActivity
 
 
-
+print('loading data')
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
@@ -89,7 +89,7 @@ ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 
-with profile(activities=[ProfilerActivity.CPU],
+with profile(
         profile_memory=True, record_shapes=True) as prof:
     PECstep(mynet_PECstep_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)))
 
