@@ -29,6 +29,7 @@ with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') 
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
+print('loading data')
 
 
 lead=1
@@ -89,8 +90,8 @@ ygrad_Euler_FNO = torch.zeros([int(4),input_size,input_size])
 ygrad_PEC_FNO = torch.zeros([int(4),input_size,input_size])
 
 
-with profile(
-        profile_memory=True, record_shapes=True) as prof:
+with profile(activities=[ProfilerActivity.CUDA],
+        profile_memory=True, record_shapes=True, with_modules=True) as prof:
     PECstep(mynet_PECstep_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)),time_step)
 
 print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
@@ -99,18 +100,18 @@ print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
 
 
 
-# i = 0
-# for j in np.array([0, 10000, 50000, 99998]):
-#     # FNO jacobian calc
+i = 0
+for j in np.array([0, 10000, 50000, 99998]):
+    # FNO jacobian calc
 
-#     ygrad_direct_FNO[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-#     ygrad_Euler_FNO[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-#     ygrad_PEC_FNO[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
-#     i += 1
+    ygrad_direct_FNO[i,:,:] = torch.func.jacfwd(directstep, argnums=1)(mynet_directstep_FNO, torch.reshape(torch.tensor(pred_direct_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_Euler_FNO[i,:,:] = torch.func.jacfwd(Eulerstep, argnums=1)(mynet_Eulerstep_FNO, torch.reshape(torch.tensor(pred_Euler_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    ygrad_PEC_FNO[i,:,:] = torch.func.jacfwd(PECstep, argnums=1)(mynet_PECstep_FNO, torch.reshape(torch.tensor(pred_PEC_FNO[0,:], dtype=torch.float),(1,input_size,1)))
+    i += 1
 
 
-# print('FNO basic jacs calculated')
+print('FNO basic jacs calculated')
 
-# del mynet_directstep_FNO, mynet_Eulerstep_FNO, mynet_PECstep_FNO
-# torch.cuda.empty_cache()
+del mynet_directstep_FNO, mynet_Eulerstep_FNO, mynet_PECstep_FNO
+torch.cuda.empty_cache()
 
