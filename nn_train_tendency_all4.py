@@ -125,28 +125,28 @@ class Net(nn.Module):
 
 # declare networks
 mynet_directstep = Net()
-mynet_Eulerstep = Net()
-mynet_RK4step = Net()
-mynet_PECstep = Net()
+# mynet_Eulerstep = Net()
+# mynet_RK4step = Net()
+# mynet_PECstep = Net()
 
 
 #count_parameters(mynet_directstep)
 mynet_directstep.cuda()
 
-#count_parameters(mynet_Eulerstep)
-mynet_Eulerstep.cuda()
+# #count_parameters(mynet_Eulerstep)
+# mynet_Eulerstep.cuda()
 
-#count_parameters(mynet_RK4step)
-mynet_RK4step.cuda()
+# #count_parameters(mynet_RK4step)
+# mynet_RK4step.cuda()
 
-#count_parameters(mynet_PECstep)
-mynet_PECstep.cuda()
+# #count_parameters(mynet_PECstep)
+# mynet_PECstep.cuda()
 
 #declare optimizers 
 optimizer_direct = optim.SGD(mynet_directstep.parameters(), lr=0.005)
-optimizer_Euler = optim.SGD(mynet_Eulerstep.parameters(), lr=0.005)
-optimizer_RK4 = optim.SGD(mynet_RK4step.parameters(), lr=0.005)
-optimizer_PEC = optim.SGD(mynet_PECstep.parameters(), lr=0.005)
+# optimizer_Euler = optim.SGD(mynet_Eulerstep.parameters(), lr=0.005)
+# optimizer_RK4 = optim.SGD(mynet_RK4step.parameters(), lr=0.005)
+# optimizer_PEC = optim.SGD(mynet_PECstep.parameters(), lr=0.005)
 
 
 
@@ -171,33 +171,33 @@ for ep in range(0, epochs+1):
         loss_direct.backward(retain_graph=True)
         optimizer_direct.step()
 
-        #train Euler step
-        optimizer_Euler.zero_grad()
-        outputs_euler = Eulerstep(mynet_Eulerstep,input_batch)
-        outputs2_euler = Eulerstep(mynet_Eulerstep,outputs_euler)
-        loss_euler = spectral_loss(outputs_euler,outputs2_euler,label_batch,du_label_batch)
+        # #train Euler step
+        # optimizer_Euler.zero_grad()
+        # outputs_euler = Eulerstep(mynet_Eulerstep,input_batch)
+        # outputs2_euler = Eulerstep(mynet_Eulerstep,outputs_euler)
+        # loss_euler = spectral_loss(outputs_euler,outputs2_euler,label_batch,du_label_batch)
   
-        loss_euler.backward(retain_graph=True)
-        optimizer_Euler.step()
+        # loss_euler.backward(retain_graph=True)
+        # optimizer_Euler.step()
 
-        #train RK4 step
-        optimizer_RK4.zero_grad()
-        outputs_RK4 = RK4step(mynet_RK4step,input_batch)
-        outputs2_RK4 = RK4step(mynet_RK4step,outputs_RK4)
-        loss_RK4 = spectral_loss(outputs_RK4,outputs2_RK4,label_batch,du_label_batch)
+        # #train RK4 step
+        # optimizer_RK4.zero_grad()
+        # outputs_RK4 = RK4step(mynet_RK4step,input_batch)
+        # outputs2_RK4 = RK4step(mynet_RK4step,outputs_RK4)
+        # loss_RK4 = spectral_loss(outputs_RK4,outputs2_RK4,label_batch,du_label_batch)
   
-        loss_RK4.backward(retain_graph=True)
-        optimizer_RK4.step()
+        # loss_RK4.backward(retain_graph=True)
+        # optimizer_RK4.step()
 
 
-        #train PEC step
-        optimizer_PEC.zero_grad()
-        outputs_PEC = PECstep(mynet_PECstep,input_batch)
-        outputs2_PEC = PECstep(mynet_PECstep,outputs_PEC)
-        loss_PEC = spectral_loss(outputs_PEC,outputs2_PEC,label_batch,du_label_batch)
+        # #train PEC step
+        # optimizer_PEC.zero_grad()
+        # outputs_PEC = PECstep(mynet_PECstep,input_batch)
+        # outputs2_PEC = PECstep(mynet_PECstep,outputs_PEC)
+        # loss_PEC = spectral_loss(outputs_PEC,outputs2_PEC,label_batch,du_label_batch)
   
-        loss_PEC.backward(retain_graph=True)
-        optimizer_PEC.step()
+        # loss_PEC.backward(retain_graph=True)
+        # optimizer_PEC.step()
 
         
    #     epoch_loss = epoch_loss + loss
@@ -208,9 +208,9 @@ for ep in range(0, epochs+1):
 
 #save network
 torch.save(mynet_directstep.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_directstep_lead'+str(lead)+'.pt') 
-torch.save(mynet_Eulerstep.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_Eulerstep_lead'+str(lead)+'.pt') 
-torch.save(mynet_RK4step.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_RK4step_lead'+str(lead)+'.pt') 
-torch.save(mynet_PECstep.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_PECstep_lead'+str(lead)+'.pt') 
+# torch.save(mynet_Eulerstep.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_Eulerstep_lead'+str(lead)+'.pt') 
+# torch.save(mynet_RK4step.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_RK4step_lead'+str(lead)+'.pt') 
+# torch.save(mynet_PECstep.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_PECstep_lead'+str(lead)+'.pt') 
 
 print('Saved Models')
 
