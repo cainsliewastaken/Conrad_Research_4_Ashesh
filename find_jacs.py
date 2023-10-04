@@ -113,7 +113,9 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
 
-    ygrad [k,:,:] = torch.autograd.functional.jacobian(directstep,x_torch[k,:])
+    # ygrad [k,:,:] = torch.autograd.functional.jacobian(directstep,x_torch[k,:])
+    ygrad [k,:,:] = torch.autograd.functional.jacobian(directstep, torch.reshape(torch.tensor(x_torch[0,:], dtype=torch.float)))
+
 
 ygrad = ygrad.detach().cpu().numpy()
 
