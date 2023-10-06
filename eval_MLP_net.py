@@ -13,7 +13,7 @@ import sys
 #from count_trainable_params import count_parameters    
 import pickle
 import matplotlib.pyplot as plt
-from nn_MLP import MLP_NET
+from nn_MLP import MLP_Net
 from nn_step_methods import directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 
