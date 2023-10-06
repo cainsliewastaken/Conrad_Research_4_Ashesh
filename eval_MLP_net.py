@@ -46,7 +46,6 @@ M = np.size(label_test,0)
 net_pred = np.zeros([M,np.size(label_test,1)])
 
 
-
 for k in range(0,M):
  
     if (k==0):
@@ -59,5 +58,33 @@ for k in range(0,M):
         net_output = step_func(my_net_MLP,torch.from_numpy(net_pred[k-1,:]).float().cuda(), time_step)
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
-       
 
+def RMSE(y_hat, y_true):
+    return np.sqrt(np.mean((y_hat - y_true)**2, axis=1, keepdims=True)) 
+
+#this is the fourier spectrum across a single timestep, output has rows as timestep and columns as modes
+u_1d_fspec_tdim = np.zeros(np.shape(label_test[:,:]), dtype=complex)
+pred_1d_fspec_tdim = np.zeros(np.shape(label_test[:,:]), dtype=complex)
+
+for n in range(np.shape(label_test)[0]):
+    u_1d_fspec_tdim[n,:] = np.abs(np.fft.fft(label_test[n,:])) 
+    pred_1d_fspec_tdim[n,:] = np.abs(np.fft.fft(net_pred[n,:])) 
+
+
+# calculate time derivative using 2nd order finite diff
+u_truth_difft_n2 = np.diff(label_test, n=2, axis=0)
+u_pred_diff_t_n2 = np.diff(net_pred, n=2, axis=0)
+
+# calculate fourier spectrum of time derivative along a single timestep
+u_truth_difft_n2_fspec = np.zeros(np.shape(u_truth_difft_n2[:,:]), dtype=complex)
+u_direct_difft_n2_fspec = np.zeros(np.shape(u_pred_diff_t_n2[:,:]), dtype=complex)
+
+
+
+matfiledata_output = {}
+matfiledata_output[u'prediction'] = net_pred
+matfiledata_output[u'Truth'] = label_test 
+matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test)
+matfiledata_output[u'Truth_FFT'] = u_1d_fspec_tdim
+matfiledata_output[u'pred_FFT'] = u_direct_difft_n2_fspec
+scipy.io.savemat(path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matfiledata_output)

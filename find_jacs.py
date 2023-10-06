@@ -127,6 +127,6 @@ print(ygrad.shape)
 
 matfiledata = {}
 matfiledata[u'Jacobian_mats'] = ygrad
-scipy.io.savemat(path_outputs+'MLP_KS_Directstep_tendency_lead'+str(lead)+'.mat', matfiledata)
+scipy.io.savemat(path_outputs+'MLP_KS_Directstep_tendency_lead'+str(lead)+'_jacs.mat', matfiledata)
 
 print('Saved Predictions')
