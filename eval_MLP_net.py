@@ -43,6 +43,8 @@ label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().
 label_test = np.transpose(data[:,trainN+lead:])
 
 my_net_MLP = MLP_Net(input_size, hidden_layer_size, output_size)
+my_net_MLP.cuda()
+
 
 M = np.size(label_test,0)
 net_pred = np.zeros([M,np.size(label_test,1)])
