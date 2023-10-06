@@ -32,7 +32,7 @@ net_file_name = "NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.
 
 step_func = directstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-eval_output_name = 'predicted_directstep_1024_lead'+str(lead)+'_lambda_reg5_tendency'  # what to name the output file
+eval_output_name = 'predicted_directstep_1024_lead'+str(lead)+'_lambda_reg5_tendency'  # what to name the output file, .mat ending not needed
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
     data = pickle.load(f)
@@ -99,11 +99,12 @@ matfiledata_output[u'Truth'] = label_test
 matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test)
 matfiledata_output[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_output[u'pred_FFT'] = u_pred_difft_n2_fspec
+
 scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
 
 
 
-if skip_factor: #check if not = 0
+if skip_factor: #check if not == 0
     matfiledata_output_skip = {}
     matfiledata_output_skip[u'prediction'] = net_pred[0::skip_factor,:]
     matfiledata_output_skip[u'Truth'] = label_test[0::skip_factor,:]
