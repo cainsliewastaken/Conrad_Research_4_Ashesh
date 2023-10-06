@@ -17,24 +17,26 @@ from nn_MLP import MLP_NET
 from nn_step_methods import directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 
+lead=1
+time_step = 1e-3
+trainN=150000 #dont explicitly need this as no training is done in file, here to help separate training from eval data
+input_size = 1024
+hidden_layer_size = 2000
+output_size = 1024
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval/' #this is where the saved graphs and .mat files end up
+
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/' #this is where the saved graphs and .mat files end up
 
 net_file_name = 'NN_directstep_lead1.pt' #change this to use a different network
 
 step_func = directstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
+eval_output_name = 'predicted_directstep_1024_lead'+str(lead)+'_lambda_reg5_tendency.mat'  # what to name the output file
+
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
-
-lead=1
-time_step = 1e-3
-trainN=150000 #dont explicitly need this as no training is done in file
-input_size = 1024
-hidden_layer_size = 2000
-output_size = 1024
 
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
@@ -87,4 +89,4 @@ matfiledata_output[u'Truth'] = label_test
 matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test)
 matfiledata_output[u'Truth_FFT'] = u_1d_fspec_tdim
 matfiledata_output[u'pred_FFT'] = u_direct_difft_n2_fspec
-scipy.io.savemat(path_outputs+'predicted_directstep_1024_lead'+str(lead)+'.mat', matfiledata_output)
+scipy.io.savemat(path_outputs+eval_output_name, matfiledata_output)
