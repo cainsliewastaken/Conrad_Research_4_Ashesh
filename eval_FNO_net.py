@@ -77,7 +77,7 @@ for k in range(0,M):
 
         net_output = step_func(my_net_FNO,torch.reshape(torch.from_numpy(net_pred[k-1,:]),(1,input_size,1)).float().cuda(), time_step)
         net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
-    if k%1000==0:
+    if k%10000==0:
         print(k) 
        
 print('Eval Finished')

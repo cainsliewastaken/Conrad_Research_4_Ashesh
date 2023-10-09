@@ -28,11 +28,11 @@ skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller),
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_directstep_lead1.pt" #change this to use a different network
+net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_PECstep_lead1.pt" #change this to use a different network
 
-step_func = directstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = PECstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-eval_output_name = 'predicted_directstep_1024_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_PECstep_1024_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
     data = pickle.load(f)
@@ -63,7 +63,7 @@ for k in range(0,M):
 
         net_output = step_func(my_net_MLP,torch.from_numpy(net_pred[k-1,:]).float().cuda(), time_step)
         net_pred [k,:] = net_output.detach().cpu().numpy()
-    if k%1000==0:
+    if k%10000==0:
         print(k)        
 
 print('Eval Finished')
