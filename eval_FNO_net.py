@@ -23,10 +23,10 @@ path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/' #th
 
 net_file_name = "NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt" #change this to use a different network
 
-step_func = PECstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = directstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
 lead=1
-eval_output_name = 'predicted_PECstep_1024_FNO_tendency_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_Directstep_1024_FNO_tendency_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
     data = pickle.load(f)
