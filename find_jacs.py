@@ -103,9 +103,9 @@ def PECstep(input_batch):
 
 
 
-# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+mynet = MLP_Net(input_size, hidden_layer_size, output_size)
 mynet = FNO1d(modes, width, time_future, time_history)
-# mynet.load_state_dict(torch.load("/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt"))
+mynet.load_state_dict(torch.load("/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt"))
 mynet.cuda()
 mynet.eval()
 
@@ -131,6 +131,6 @@ print(ygrad.shape)
 
 matfiledata = {}
 matfiledata[u'Jacobian_mats'] = ygrad
-scipy.io.savemat(path_outputs+'FNO_KS_PECstep_tendency_lead'+str(lead)+'_UNTRAINED_jacs.mat', matfiledata)
+scipy.io.savemat(path_outputs+'FNO_KS_PECstep_tendency_lead'+str(lead)+'_jacs.mat', matfiledata)
 
 print('Saved Predictions')
