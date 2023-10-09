@@ -63,6 +63,8 @@ for k in range(0,M):
 
         net_output = step_func(my_net_MLP,torch.from_numpy(net_pred[k-1,:]).float().cuda(), time_step)
         net_pred [k,:] = net_output.detach().cpu().numpy()
+    if k%1000==0:
+        print(k)        
 
 print('Eval Finished')
 
