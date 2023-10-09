@@ -19,14 +19,14 @@ from nn_step_methods import directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/' #this is where the saved graphs and .mat files end up
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "NN_FNO_PECstep_lead1.pt" #change this to use a different network
+net_file_name = "NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt" #change this to use a different network
 
 step_func = PECstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
 lead=1
-eval_output_name = 'predicted_PECstep_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_PECstep_1024_FNO_tendency_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
     data = pickle.load(f)
@@ -63,6 +63,7 @@ my_net_FNO = FNO1d(modes, width, time_future, time_history).cuda()
 M = np.size(label_test,0)
 net_pred = np.zeros([M,np.size(label_test,1)])
 
+print('Model loaded')
 
 
 for k in range(0,M):
@@ -80,6 +81,7 @@ for k in range(0,M):
         net_output = step_func(my_net_FNO,torch.reshape(torch.from_numpy(net_pred[k-1,:]),(1,input_size,1)).float().cuda(), time_step)
         net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
        
+print('Eval Finished')
 
 
 def RMSE(y_hat, y_true):
@@ -131,3 +133,5 @@ if skip_factor: #check if not == 0
     matfiledata_output_skip[u'pred_FFT'] = u_pred_difft_n2_fspec[0::skip_factor,:]
 
     scipy.io.savemat(path_outputs+eval_output_name+'_skip'+str(skip_factor)+'.mat', matfiledata_output_skip)
+
+print('Data saved')
