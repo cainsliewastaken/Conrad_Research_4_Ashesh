@@ -1,9 +1,9 @@
-direct_step_jacs = load('MLP_KS_Directstep_tendency_lead1.mat');
-Euler_step_jacs = load('MLP_KS_Eulerstep_tendency_lead1.mat');
-PEC_step_jacs = load('MLP_KS_PECstep_tendency_lead1.mat');
+direct_step_jacs = load('FNO_KS_Directstep_lead1.mat');
+Euler_step_jacs = load('FNO_KS_Eulerstep_lead1.mat');
+PEC_step_jacs = load('FNO_KS_PECstep_lead1.mat');
 
 
-[v_direct, e_direct] = eig(squeeze(direct_step_jacs.Jacobian_mats(1,:,:)));
+[v_direct, e_direct] = eig(squeeze(direct_step_jacs.Jacobian_mats(2,:,:)));
 [e_direct, ind_d] = sort(diag(e_direct));
 
 
@@ -28,28 +28,29 @@ plot(e_Euler,'ks', 'MarkerSize',10, 'MarkerFaceColor','k');
 plot(e_direct,'co','MarkerSize',10,'MarkerFaceColor','c');
 plot(e_PEC,'ro','MarkerSize',10,'MarkerFaceColor','r');
 
-legend('Unit Circle','Euler','Direct','RK4',fontsize=10)
+legend('Unit Circle','Euler','Direct','PEC',fontsize=10)
 xlabel('$Re(\lambda)$','Interpreter','latex')
 ylabel('$Im(\lambda)$','Interpreter','latex')
 
 figure(2)
 clf
-h = histogram(real(e_direct),50);
-p = histcounts(real(e_direct),50,'Normalization','pdf');
+h = histogram(abs(e_direct),50);
+p = histcounts(abs(e_direct),50,'Normalization','pdf');
 binCenters = h.BinEdges + (h.BinWidth/2);
-plot(binCenters(1:end-1), p)
+histogram(abs(e_direct))
 legend('Direct Eigvals',fontsize=10)
 
 figure(3)
 h = histogram(real(e_Euler),50);
 p = histcounts(real(e_Euler),50,'Normalization','pdf');
 binCenters = h.BinEdges + (h.BinWidth/2);
-plot(binCenters(1:end-1), p)
+%plot(h, p)
 legend('Euler Eigvals',fontsize=10)
 
 figure(4)
 h = histogram(real(e_PEC),50);
 p = histcounts(real(e_PEC),50,'Normalization','pdf');
 binCenters = h.BinEdges + (h.BinWidth/2);
-plot(binCenters(1:end-1), p)
+%plot(binCenters(1:end-1), p)
+histogram(abs(e_PEC))
 legend('PEC Eigvals',fontsize=10)
