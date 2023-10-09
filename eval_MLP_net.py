@@ -81,8 +81,8 @@ for n in range(np.shape(label_test)[0]):
 
 
 # calculate time derivative using 2nd order finite diff
-u_truth_difft_n2 = np.diff(label_test, n=2, axis=0)
-u_pred_diff_t_n2 = np.diff(net_pred, n=2, axis=0)
+u_truth_difft_n2 = np.diff(label_test, n=1, axis=0)
+u_pred_diff_t_n2 = np.diff(net_pred, n=1, axis=0)
 
 # calculate fourier spectrum of time derivative along a single timestep
 u_truth_difft_n2_fspec = np.zeros(np.shape(u_truth_difft_n2[:,:]), dtype=complex)
@@ -101,8 +101,10 @@ matfiledata_output = {}
 matfiledata_output[u'prediction'] = net_pred
 matfiledata_output[u'Truth'] = label_test 
 matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test)
-matfiledata_output[u'Truth_FFT'] = u_1d_fspec_tdim
-matfiledata_output[u'pred_FFT'] = u_pred_difft_n2_fspec
+matfiledata_output[u'Truth_FFT_dx'] = u_1d_fspec_tdim
+matfiledata_output[u'pred_FFT_dx'] = pred_1d_fspec_tdim
+matfiledata_output[u'Truth_FFT_dt'] = u_truth_difft_n2_fspec
+matfiledata_output[u'pred_FFT_dt'] = u_pred_difft_n2_fspec
 
 scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
 
@@ -113,8 +115,10 @@ if skip_factor: #check if not == 0
     matfiledata_output_skip[u'prediction'] = net_pred[0::skip_factor,:]
     matfiledata_output_skip[u'Truth'] = label_test[0::skip_factor,:]
     matfiledata_output_skip[u'RMSE'] = RMSE(net_pred, label_test)[0::skip_factor,:]
-    matfiledata_output_skip[u'Truth_FFT'] = u_1d_fspec_tdim[0::skip_factor,:]
-    matfiledata_output_skip[u'pred_FFT'] = u_pred_difft_n2_fspec[0::skip_factor,:]
+    matfiledata_output_skip[u'Truth_FFT_dx'] = u_1d_fspec_tdim[0::skip_factor,:]
+    matfiledata_output_skip[u'pred_FFT_dx'] = pred_1d_fspec_tdim[0::skip_factor,:]
+    matfiledata_output_skip[u'Truth_FFT_dt'] = u_truth_difft_n2_fspec[0::skip_factor,:]
+    matfiledata_output_skip[u'pred_FFT_dt'] = u_pred_difft_n2_fspec[0::skip_factor,:]
 
     scipy.io.savemat(path_outputs+eval_output_name+'_skip'+str(skip_factor)+'.mat', matfiledata_output_skip)
 print('Data saved')
