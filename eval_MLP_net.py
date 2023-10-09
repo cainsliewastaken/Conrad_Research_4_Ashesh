@@ -50,6 +50,7 @@ my_net_MLP.cuda()
 M = np.size(label_test,0)
 net_pred = np.zeros([M,np.size(label_test,1)])
 
+print('Model loaded')
 
 for k in range(0,M):
  
@@ -63,6 +64,7 @@ for k in range(0,M):
         net_output = step_func(my_net_MLP,torch.from_numpy(net_pred[k-1,:]).float().cuda(), time_step)
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
+print('Eval Finished')
 
 def RMSE(y_hat, y_true):
     return np.sqrt(np.mean((y_hat - y_true)**2, axis=1, keepdims=True)) 
@@ -113,3 +115,4 @@ if skip_factor: #check if not == 0
     matfiledata_output_skip[u'pred_FFT'] = u_pred_difft_n2_fspec[0::skip_factor,:]
 
     scipy.io.savemat(path_outputs+eval_output_name+'_skip'+str(skip_factor)+'.mat', matfiledata_output_skip)
+print('Data saved')
