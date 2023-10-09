@@ -116,7 +116,7 @@ for k in range(0,eq_points):
     # ygrad [k,:,:] = torch.autograd.functional.jacobian(PECstep,x_torch[k,:])
     # ygrad [k,:,:] = torch.func.jacfwd(directstep)(x_torch[k,:])
 
-    temp_mat = torch.autograd.functional.jacobian(directstep, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1)))
+    temp_mat = torch.autograd.functional.jacobian(PECstep, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1)))
     ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
     # print(sum(sum(ygrad[k,:,:])))
@@ -131,6 +131,6 @@ print(ygrad.shape)
 
 matfiledata = {}
 matfiledata[u'Jacobian_mats'] = ygrad
-scipy.io.savemat(path_outputs+'FNO_KS_Directstep_tendency_lead'+str(lead)+'_UNTRAINED_jacs.mat', matfiledata)
+scipy.io.savemat(path_outputs+'FNO_KS_PECstep_tendency_lead'+str(lead)+'_UNTRAINED_jacs.mat', matfiledata)
 
 print('Saved Predictions')
