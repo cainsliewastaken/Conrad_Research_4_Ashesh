@@ -106,8 +106,8 @@ def PECstep(input_batch):
 mynet = MLP_Net(input_size, hidden_layer_size, output_size)
 # mynet = FNO1d(modes, width, time_future, time_history)
 mynet.load_state_dict(torch.load("/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt"))
-mynet.eval()
 mynet.cuda()
+mynet.eval()
 
 ygrad = torch.zeros([eq_points,input_size,input_size])
 
@@ -118,6 +118,9 @@ for k in range(0,eq_points):
     # temp_mat = torch.autograd.functional.jacobian(PECstep, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1)))
     # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
+    # print(sum(sum(ygrad[k,:,:])))
+
+
 
 ygrad = ygrad.detach().cpu().numpy()
 
@@ -127,6 +130,6 @@ print(ygrad.shape)
 
 matfiledata = {}
 matfiledata[u'Jacobian_mats'] = ygrad
-scipy.io.savemat(path_outputs+'MLP_KS_Directstep_tendency_lead'+str(lead)+'.mat', matfiledata)
+scipy.io.savemat(path_outputs+'MLP_KS_Directstep_tendency_lead'+str(lead)+'_jacs.mat', matfiledata)
 
 print('Saved Predictions')

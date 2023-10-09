@@ -1,6 +1,6 @@
-direct_step_jacs = load('FNO_KS_Directstep_lead1.mat');
-Euler_step_jacs = load('FNO_KS_Eulerstep_lead1.mat');
-PEC_step_jacs = load('FNO_KS_PECstep_lead1.mat');
+direct_step_jacs = load('MLP_KS_Directstep_tendency_lead1_jacs.mat');
+Euler_step_jacs = load('MLP_KS_Eulerstep_tendency_lead1_jacs.mat');
+PEC_step_jacs = load('MLP_KS_PECstep_tendency_lead1_jacs.mat');
 
 
 [v_direct, e_direct] = eig(squeeze(direct_step_jacs.Jacobian_mats(2,:,:)));
