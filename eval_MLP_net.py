@@ -19,7 +19,7 @@ from nn_step_methods import directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 lead=1
 time_step = 1e-3
-trainN=150000 #dont explicitly need this as no training is done in file, here to help separate training from eval data
+trainN=150000 #dont explicitly need this as no training is done in file, here to help separate training data from eval data
 input_size = 1024
 hidden_layer_size = 2000
 output_size = 1024
