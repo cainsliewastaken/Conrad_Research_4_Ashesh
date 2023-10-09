@@ -3,31 +3,35 @@ PEC_step = load('predicted_PECstep_1024_lead1_skip100.mat');
 
 
 
-truth_dt = truth(2:end,:)-truth(1:end-1,:);
-prediction_dt = prediction(2:end,:)-prediction(1:end-1,:);
-
-pred_dt_fft = abs(fft(prediction_dt,[],2));
-truth_dt_fft = abs(fft(truth_dt,[],2));
-
-
-
 set(0, 'DefaultAxesFontSize', 20)
 
 figure(1)
 
-loglog([0:511],PEC_step.pred_FFT(1,1:512),'-k','Linewidth',2);hold on;
-loglog([0:511],PEC_step.Truth_FFT(1,1:512),'-r','Linewidth',2);
-
-legend('PEC Net','Truth', Location='southeast')
+loglog([0:511],PEC_step.pred_FFT_dx(1,1:512),'-k','Linewidth',2);hold on;
+loglog([0:511],PEC_step.Truth_FFT_dx(1,1:512),'-r','Linewidth',2);
+loglog([0:511],direct_step.pred_FFT_dx(1,1:512),'-k','Linewidth',2);
+legend('PEC Net','Truth','Direct Net', Location='southeast')
 
 set(0, 'DefaultAxesFontSize', 20)
 
-figure(12)
 
-loglog([0:511],direct_step.pred_FFT(1,1:512),'-k','Linewidth',2);hold on;
-loglog([0:511],direct_step.Truth_FFT(1,1:512),'-r','Linewidth',2);
+figure(2)
 
-legend('Direct Step Net','Truth', Location='southeast')
+loglog([0:511],PEC_step.pred_FFT_dt(1,1:512),'-k','Linewidth',2);hold on;
+loglog([0:511],PEC_step.Truth_FFT_dt(1,1:512),'-r','Linewidth',2);
+loglog([0:511],direct_step.pred_FFT_dt(1,1:512),'-k','Linewidth',2);
+legend('PEC Net','Truth','Direct Net', Location='southeast')
+
+set(0, 'DefaultAxesFontSize', 20)
+
+figure(2)
+
+plot(direct_step.RMSE);
+hold on
+plot(PEC_step.RMSE);
+legend('Direct RMSE', 'PEC RMSE')
+
+
 
 
 
