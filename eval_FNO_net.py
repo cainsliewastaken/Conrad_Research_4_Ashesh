@@ -70,14 +70,14 @@ for k in range(0,M):
     if (k==0):
 
 
-        net_output = step_func(my_net_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)))
+        net_output = step_func(my_net_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)), time_step)
         my_net_FNO [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
 
     else:
 
 
 
-        net_output = step_func(my_net_FNO,torch.reshape(torch.from_numpy(net_pred[k-1,:]),(1,input_size,1)).float().cuda())
+        net_output = step_func(my_net_FNO,torch.reshape(torch.from_numpy(net_pred[k-1,:]),(1,input_size,1)).float().cuda(), time_step)
         net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
        
 
