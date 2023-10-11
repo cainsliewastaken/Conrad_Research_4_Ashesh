@@ -41,7 +41,7 @@ print('end time',Nt*dt)
 
 u_truth_long = intKS(u_spun,t,kappa,N,lambdas)
 
-f = open('/media/volume/sdb/conrad_temp/training_data/KS_1024.pkl', 'wb')
+f = open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'wb')
 pickle.dump(u_truth_long[:,-2], f)
 f.close()
 
