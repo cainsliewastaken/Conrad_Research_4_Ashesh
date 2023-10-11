@@ -1,30 +1,42 @@
-direct_step = load('predicted_directstep_1024_lead1_skip100.mat');
+direct_step = load('predicted_Directstep_1024_lead1_skip100.mat');
 PEC_step = load('predicted_PECstep_1024_lead1_skip100.mat');
 
-
+direct_step_FNO = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
+PEC_step_FNO = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
 
 set(0, 'DefaultAxesFontSize', 20)
 
 figure(1)
+loglog([0:511],direct_step_FNO.Truth_FFT_dx(1,1:512),'Linewidth',4);
+hold on
+loglog([0:511],PEC_step.pred_FFT_dx(1,1:512),'Linewidth',2);
 
-loglog([0:511],PEC_step.pred_FFT_dx(1,1:512),'-k','Linewidth',2);hold on;
-loglog([0:511],PEC_step.Truth_FFT_dx(1,1:512),'-r','Linewidth',2);
-loglog([0:511],direct_step.pred_FFT_dx(1,1:512),'-k','Linewidth',2);
-legend('PEC Net','Truth','Direct Net', Location='southeast')
+loglog([0:511],direct_step.pred_FFT_dx(1,1:512),'Linewidth',2);
+
+loglog([0:511],PEC_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2);
+
+loglog([0:511],direct_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2);
+
+legend('Truth','PEC Net','Direct Net','PEC FNO','Direct FNO', Location='southwest')
+title('Fspec D')
 
 set(0, 'DefaultAxesFontSize', 20)
-
+hold off
 
 figure(2)
 
-loglog([0:511],PEC_step.pred_FFT_dt(1,1:512),'-k','Linewidth',2);hold on;
-loglog([0:511],PEC_step.Truth_FFT_dt(1,1:512),'-r','Linewidth',2);
+loglog([0:511],PEC_step.Truth_FFT_dt(1,1:512),'-r','Linewidth',4);
+
+
+loglog([0:511],PEC_step.pred_FFT_dt(1,1:512),'Linewidth',2);
+hold on;
 loglog([0:511],direct_step.pred_FFT_dt(1,1:512),'-k','Linewidth',2);
-legend('PEC Net','Truth','Direct Net', Location='southeast')
-
+legend('Truth','PEC Net','Direct Net', Location='southeast')
+title('Fspec dt')
 set(0, 'DefaultAxesFontSize', 20)
+hold off
 
-figure(2)
+figure(3)
 
 plot(direct_step.RMSE);
 hold on
@@ -32,9 +44,12 @@ plot(PEC_step.RMSE);
 legend('Direct RMSE', 'PEC RMSE')
 
 
+hold off
 
-
-
+% 
+% Trush = transpose(direct_step.Truth);
+% prediction = transpose(direct_step.prediction);
+% 
 % 
 % set(0, 'DefaultAxesFontSize', 20)
 % 
@@ -60,4 +75,4 @@ legend('Direct RMSE', 'PEC RMSE')
 % plot(x,prediction(1000,:),'b','Linewidth',2);hold on
 % plot(x,Truth(1000,:),'r','Linewidth',2)
 % title(['Time Step' num2str(1000)])
-
+% 

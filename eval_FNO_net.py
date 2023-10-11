@@ -60,7 +60,7 @@ num_workers = 0  #What does this do?
 my_net_FNO = FNO1d(modes, width, time_future, time_history).cuda()
 
 
-M = np.size(label_test,0)
+M = 99999
 net_pred = np.zeros([M,np.size(label_test,1)])
 
 print('Model loaded')
@@ -95,9 +95,9 @@ for n in range(np.shape(label_test)[0]):
     pred_1d_fspec_tdim[n,:] = np.abs(np.fft.fft(net_pred[n,:])) 
 
 
-# calculate time derivative using 2nd order finite diff
-u_truth_difft_n2 = np.diff(label_test, n=2, axis=0)
-u_pred_diff_t_n2 = np.diff(net_pred, n=2, axis=0)
+# calculate time derivative using 1st order finite diff
+u_truth_difft_n2 = np.diff(label_test, n=1, axis=0)
+u_pred_diff_t_n2 = np.diff(net_pred, n=1, axis=0)
 
 # calculate fourier spectrum of time derivative along a single timestep
 u_truth_difft_n2_fspec = np.zeros(np.shape(u_truth_difft_n2[:,:]), dtype=complex)
