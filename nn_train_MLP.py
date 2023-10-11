@@ -13,9 +13,9 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 lead=1
 
-step_func = PECstep
+step_func = Directstep
 
-net_file_name = 'NN_PECstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_Directstep_lead'+str(lead)+'.pt'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
@@ -43,10 +43,10 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
 count_parameters(mynet)
-epochs = 100
+epochs = 60
 
 #use two optimizers.  learing rates seem to work.
-optimizer = optim.SGD(mynet.parameters(), lr=0.01)
+optimizer = optim.SGD(mynet.parameters(), lr=0.005)
 
 loss_fn = nn.MSELoss()
 batch_size = 100
@@ -57,9 +57,8 @@ for ep in range(0, epochs+1):
         input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
         #pick a random boundary batch
         optimizer.zero_grad()
-        outputs = step_func(mynet,input_batch, time_step)
-        # outputs = mynet(input_batch.cuda())
-        loss = loss_fn(outputs,label_batch)
+        outputs = step_func(mynet, input_batch, time_step)
+        loss = loss_fn(outputs, label_batch)
 
         loss.backward(retain_graph=True)
         optimizer.step()
