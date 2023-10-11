@@ -43,13 +43,13 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
 count_parameters(mynet)
-epochs = 100
+epochs = 500
 
 #use two optimizers.  learing rates seem to work.
 optimizer = optim.SGD(mynet.parameters(), lr=0.01)
 
 loss_fn = nn.MSELoss()
-batch_size = 200
+batch_size = 100
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
