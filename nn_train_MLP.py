@@ -54,7 +54,7 @@ batch_size=100
 for ep in range(0, epochs+1):
 #      permutation = torch.randperm(M*N)
 #      epoch_loss=0
-      for step in range(0,trainN,batch_size):
+    for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
         #pick a random boundary batch
@@ -64,9 +64,8 @@ for ep in range(0, epochs+1):
 
         loss.backward(retain_graph=True)
         optimizer.step()
-        if ep % 10 == 0:
-          print('step',step)
-          print('Epoch', ep)
-          print ('Loss', loss)
+    if ep % 10 == 0:
+        print('Epoch', ep)
+        print ('Loss', loss)
 
 torch.save(mynet.state_dict(), net_file_name)
