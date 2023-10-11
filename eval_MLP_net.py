@@ -54,11 +54,14 @@ print('Model loaded')
 for k in range(0,M):
     if (k==0):
 
-        net_output = step_func(my_net_MLP,input_test_torch[0,:], time_step)
+        # net_output = step_func(my_net_MLP,input_test_torch[0,:], time_step)
+        net_output = my_net_MLP(input_test_torch[0,:].cuda())
+
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
     else:
-        net_output = step_func(my_net_MLP,torch.from_numpy(net_pred[k-1,:]).float().cuda(), time_step)
+        # net_output = step_func(my_net_MLP,torch.from_numpy(net_pred[k-1,:]).float().cuda(), time_step)
+        net_output = my_net_MLP(torch.from_numpy(net_pred[k-1,:]).float().cuda())
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
     if k%10000==0:
