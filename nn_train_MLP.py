@@ -43,7 +43,7 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
 count_parameters(mynet)
-epochs = 500
+epochs = 100
 
 #use two optimizers.  learing rates seem to work.
 optimizer = optim.SGD(mynet.parameters(), lr=0.01)
@@ -66,6 +66,5 @@ for ep in range(0, epochs+1):
     if ep % 10 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
-        print('Label check'+str(all(input_batch[lead,:]==label_batch[0,:])))
 
 torch.save(mynet.state_dict(), net_file_name)
