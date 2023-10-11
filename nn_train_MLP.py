@@ -9,7 +9,7 @@ import torch.optim as optim
 from count_trainable_params import count_parameters
 import pickle
 from nn_MLP import MLP_Net
-from nn_step_methods import directstep, Eulerstep, RK4step, PECstep, PEC4step
+from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 lead=1
 
