@@ -66,6 +66,6 @@ for ep in range(0, epochs+1):
     if ep % 10 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
-        print('Label check'+(input_batch[lead,:]==label_batch[0,:]))
+        print('Label check'+str(all(input_batch[lead,:]==label_batch[0,:])))
 
 torch.save(mynet.state_dict(), net_file_name)
