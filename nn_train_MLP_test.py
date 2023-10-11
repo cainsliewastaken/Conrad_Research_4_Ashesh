@@ -140,7 +140,7 @@ for ep in range(0, epochs+1):
  #       print('shape of input_batch',input_batch.shape)
         #pick a random boundary batch
         optimizer.zero_grad()
-        outputs = PECstep(mynet,input_batch)
+        outputs = directstep(mynet,input_batch)
         loss = loss_fn(outputs,label_batch)
 
         loss.backward(retain_graph=True)
