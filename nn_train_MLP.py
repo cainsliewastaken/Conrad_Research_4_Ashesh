@@ -13,9 +13,9 @@ from nn_step_methods import directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 lead=1
 
-step_func = directstep
+step_func = PECstep
 
-net_file_name = 'NN_Directstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_PECstep_lead'+str(lead)+'.pt'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
@@ -46,7 +46,7 @@ count_parameters(mynet)
 epochs = 500
 
 #use two optimizers.  learing rates seem to work.
-optimizer = optim.SGD(mynet.parameters(), lr=0.01)
+optimizer = optim.SGD(mynet.parameters(), lr=0.001)
 
 loss_fn = nn.MSELoss()
 batch_size = 100
