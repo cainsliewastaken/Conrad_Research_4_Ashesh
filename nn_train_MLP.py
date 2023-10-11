@@ -15,7 +15,7 @@ lead=1
 
 step_func = directstep
 
-net_file_name = 'NN_directstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_Directstep_lead'+str(lead)+'.pt'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
@@ -59,7 +59,8 @@ for ep in range(0, epochs+1):
         input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
         #pick a random boundary batch
         optimizer.zero_grad()
-        outputs = step_func(mynet,input_batch, time_step)
+        # outputs = step_func(mynet,input_batch, time_step)
+        outputs = mynet(input_batch.cuda())
         loss = loss_fn(outputs,label_batch)
 
         loss.backward(retain_graph=True)
