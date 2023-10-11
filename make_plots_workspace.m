@@ -7,10 +7,6 @@ PEC_step_FNO = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
 
 
 
-direct_step_FNO = load('predicted_Directstep_1024_FNO_tendency_lead1_skip100.mat');
-PEC_step_FNO = load('predicted_PECstep_1024_lead1_lambda_reg5_tendency_skip100.mat');
-
-
 figure(1)
 clf
 set(0, 'DefaultAxesFontSize', 20)
@@ -50,8 +46,8 @@ legend(Location='southeast')
 axis([-10 100 0 2])
 
 
-Truth = (direct_step_FNO.Truth);
-prediction = (direct_step_FNO.prediction);
+Truth = (direct_step.Truth);
+prediction = (direct_step.prediction);
 
 
 set(0, 'DefaultAxesFontSize', 20)

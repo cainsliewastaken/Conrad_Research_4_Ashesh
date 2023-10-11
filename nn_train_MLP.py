@@ -43,7 +43,7 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
 count_parameters(mynet)
-epochs = 60
+epochs = 100
 
 #use two optimizers.  learing rates seem to work.
 optimizer = optim.SGD(mynet.parameters(), lr=0.005)
