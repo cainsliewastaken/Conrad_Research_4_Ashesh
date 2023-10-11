@@ -48,7 +48,7 @@ PEC_step_FNO = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
 % 
 
 Truth = (direct_step.Truth);
-prediction = (PEC_step.prediction);
+prediction = (direct_step.prediction);
 
 
 set(0, 'DefaultAxesFontSize', 20)

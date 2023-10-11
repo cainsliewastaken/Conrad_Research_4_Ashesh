@@ -101,93 +101,89 @@ class Net(nn.Module):
         return out
 
 
-if __name__ == "__main__":
+
+mynet_directstep = Net()
+mynet_Eulerstep = Net()
+mynet_RK4step = Net()
+mynet_PECstep = Net()
 
 
+count_parameters(mynet_directstep)
+mynet_directstep.cuda()
+
+#count_parameters(mynet_Eulerstep)
+mynet_Eulerstep.cuda()
+
+#count_parameters(mynet_RK4step)
+mynet_RK4step.cuda()
+
+#count_parameters(mynet_PECstep)
+mynet_PECstep.cuda()
 
 
-  mynet_directstep = Net()
-  mynet_Eulerstep = Net()
-  mynet_RK4step = Net()
-  mynet_PECstep = Net()
+epochs = 60
+
+optimizer_direct = optim.SGD(mynet_directstep.parameters(), lr=0.005)
+optimizer_Euler = optim.SGD(mynet_Eulerstep.parameters(), lr=0.005)
+optimizer_RK4 = optim.SGD(mynet_RK4step.parameters(), lr=0.005)
+optimizer_PEC = optim.SGD(mynet_PECstep.parameters(), lr=0.005)
 
 
-  count_parameters(mynet_directstep)
-  mynet_directstep.cuda()
+loss_fn = nn.MSELoss()
+batch_size=100
 
-  #count_parameters(mynet_Eulerstep)
-  mynet_Eulerstep.cuda()
+for ep in range(0, epochs+1):
+      for step in range(0,trainN,batch_size):
+        indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
+        input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
+        #pick a random boundary batch
 
-  #count_parameters(mynet_RK4step)
-  mynet_RK4step.cuda()
+        #train direct_step net
+        optimizer_direct.zero_grad()
+        outputs_direct = directstep(mynet_directstep,input_batch)
+        loss = loss_fn(outputs_direct,label_batch)
+  
+        loss.backward(retain_graph=True)
+        optimizer_direct.step()
 
-  #count_parameters(mynet_PECstep)
-  mynet_PECstep.cuda()
+        #train Euler_step net
+        optimizer_Euler.zero_grad()
+        outputs_Euler = Eulerstep(mynet_Eulerstep,input_batch)
+        loss = loss_fn(outputs_Euler,label_batch)
+  
+        loss.backward(retain_graph=True)
+        optimizer_Euler.step()
 
+        #train RK4_step net
+        optimizer_RK4.zero_grad()
+        outputs_RK4 = RK4step(mynet_RK4step,input_batch)
+        loss = loss_fn(outputs_RK4,label_batch)
+  
+        loss.backward(retain_graph=True)
+        optimizer_RK4.step()
 
-  epochs = 60
+        #train PEC_step net
+        optimizer_PEC.zero_grad()
+        outputs_PEC = PECstep(mynet_PECstep,input_batch)
+        loss = loss_fn(outputs_PEC,label_batch)
+  
+        loss.backward(retain_graph=True)
+        optimizer_PEC.step()
 
-  optimizer_direct = optim.SGD(mynet_directstep.parameters(), lr=0.005)
-  optimizer_Euler = optim.SGD(mynet_Eulerstep.parameters(), lr=0.005)
-  optimizer_RK4 = optim.SGD(mynet_RK4step.parameters(), lr=0.005)
-  optimizer_PEC = optim.SGD(mynet_PECstep.parameters(), lr=0.005)
-
-
-  loss_fn = nn.MSELoss()
-  batch_size=100
-
-  for ep in range(0, epochs+1):
-        for step in range(0,trainN,batch_size):
-          indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
-          input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
-          #pick a random boundary batch
-
-          #train direct_step net
-          optimizer_direct.zero_grad()
-          outputs_direct = directstep(mynet_directstep,input_batch)
-          loss = loss_fn(outputs_direct,label_batch)
-    
-          loss.backward(retain_graph=True)
-          optimizer_direct.step()
-
-          #train Euler_step net
-          optimizer_Euler.zero_grad()
-          outputs_Euler = Eulerstep(mynet_Eulerstep,input_batch)
-          loss = loss_fn(outputs_Euler,label_batch)
-    
-          loss.backward(retain_graph=True)
-          optimizer_Euler.step()
-
-          #train RK4_step net
-          optimizer_RK4.zero_grad()
-          outputs_RK4 = RK4step(mynet_RK4step,input_batch)
-          loss = loss_fn(outputs_RK4,label_batch)
-    
-          loss.backward(retain_graph=True)
-          optimizer_RK4.step()
-
-          #train PEC_step net
-          optimizer_PEC.zero_grad()
-          outputs_PEC = PECstep(mynet_PECstep,input_batch)
-          loss = loss_fn(outputs_PEC,label_batch)
-    
-          loss.backward(retain_graph=True)
-          optimizer_PEC.step()
-
-  #    #     epoch_loss = epoch_loss + loss
-  #         if ep % 10 == 0:
-  #           print('step',step)
-  #           print('Epoch', ep)
-  #           print ('Loss', loss)
+#    #     epoch_loss = epoch_loss + loss
+#         if ep % 10 == 0:
+#           print('step',step)
+#           print('Epoch', ep)
+#           print ('Loss', loss)
 
 
-  #save network
-  torch.save(mynet_directstep.state_dict(),'NN_directstep_lead'+str(lead)+'.pt') 
-  torch.save(mynet_Eulerstep.state_dict(),'NN_Eulerstep_lead'+str(lead)+'.pt') 
-  torch.save(mynet_RK4step.state_dict(),'NN_RK4step_lead'+str(lead)+'.pt') 
-  torch.save(mynet_PECstep.state_dict(),'NN_PECstep_lead'+str(lead)+'.pt') 
+#save network
+torch.save(mynet_directstep.state_dict(),'NN_directstep_lead'+str(lead)+'.pt') 
+torch.save(mynet_Eulerstep.state_dict(),'NN_Eulerstep_lead'+str(lead)+'.pt') 
+torch.save(mynet_RK4step.state_dict(),'NN_RK4step_lead'+str(lead)+'.pt') 
+torch.save(mynet_PECstep.state_dict(),'NN_PECstep_lead'+str(lead)+'.pt') 
 
-  print('Saved Models')
+print('Saved Models')
 
 
 # creates and store predictions using last 100000 timesteps, this process is now included in eval_networks_plot_rlts.py
