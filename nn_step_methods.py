@@ -11,7 +11,7 @@ def Eulerstep(net, input_batch, time_step):
  output_1 = net(input_batch.cuda())
  return input_batch.cuda() + time_step*(output_1) 
   
-def directstep(net, input_batch, time_step):
+def Directstep(net, input_batch, time_step):
   output_1 = net(input_batch.cuda())
   return output_1
 
