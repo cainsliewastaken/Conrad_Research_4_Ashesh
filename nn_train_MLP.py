@@ -28,7 +28,7 @@ data=np.asarray(data[:,:250000])
 
 lead=1
 time_step = 1e-3
-trainN=150000
+trainN = 150000
 input_size = 1024
 output_size = 1024
 hidden_layer_size = 2000
@@ -46,21 +46,19 @@ count_parameters(mynet)
 epochs = 500
 
 #use two optimizers.  learing rates seem to work.
-optimizer = optim.SGD(mynet.parameters(), lr=0.005)
+optimizer = optim.SGD(mynet.parameters(), lr=0.01)
 
 loss_fn = nn.MSELoss()
 batch_size = 200
 
 for ep in range(0, epochs+1):
-#      permutation = torch.randperm(M*N)
-#      epoch_loss=0
     for step in range(0,trainN,batch_size):
-        indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
+        indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
         input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
         #pick a random boundary batch
         optimizer.zero_grad()
-        # outputs = step_func(mynet,input_batch, time_step)
-        outputs = mynet(input_batch.cuda())
+        outputs = step_func(mynet,input_batch, time_step)
+        # outputs = mynet(input_batch.cuda())
         loss = loss_fn(outputs,label_batch)
 
         loss.backward(retain_graph=True)
@@ -68,6 +66,6 @@ for ep in range(0, epochs+1):
     if ep % 10 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
-        
+        print('Label check'+(input_batch[lead,:]==label_batch[0,:]))
 
 torch.save(mynet.state_dict(), net_file_name)
