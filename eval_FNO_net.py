@@ -57,8 +57,9 @@ learning_rate = 0.0001
 lr_decay = 0.4
 num_workers = 0  #What does this do?
 
-my_net_FNO = FNO1d(modes, width, time_future, time_history).cuda()
-
+my_net_FNO = FNO1d(modes, width, time_future, time_history)
+my_net_FNO.load_state_dict(torch.load(net_file_name))
+my_net_FNO.cuda()
 
 M = 99999
 net_pred = np.zeros([M,np.size(label_test,1)])
