@@ -68,41 +68,41 @@ for k in range(0,M):
 
 print('Eval Finished')
 
-# def RMSE(y_hat, y_true):
-#     return np.sqrt(np.mean((y_hat - y_true)**2, axis=1, keepdims=True)) 
+def RMSE(y_hat, y_true):
+    return np.sqrt(np.mean((y_hat - y_true)**2, axis=1, keepdims=True)) 
 
-# #this is the fourier spectrum across a single timestep, output has rows as timestep and columns as modes
-# truth_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
-# net_pred_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
+#this is the fourier spectrum across a single timestep, output has rows as timestep and columns as modes
+truth_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
+net_pred_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
 
-# for n in range(np.shape(label_test)[0]):
-#     truth_fspec_x[n,:] = np.abs(np.fft.fft(label_test[n,:])) 
-#     net_pred_fspec_x[n,:] = np.abs(np.fft.fft(net_pred[n,:])) 
-
-
-# # calculate time derivative using 1st order finite diff
-# truth_dt = np.diff(label_test, n=1, axis=0)
-# net_pred_dt = np.diff(net_pred, n=1, axis=0)
-
-# # calculate fourier spectrum of time derivative along a single timestep
-# truth_fspec_dt = np.zeros(np.shape(truth_dt[:,:]), dtype=complex)
-# net_pred_fspec_dt = np.zeros(np.shape(net_pred_dt[:,:]), dtype=complex)
+for n in range(np.shape(label_test)[0]):
+    truth_fspec_x[n,:] = np.abs(np.fft.fft(label_test[n,:])) 
+    net_pred_fspec_x[n,:] = np.abs(np.fft.fft(net_pred[n,:])) 
 
 
-# for n in range(np.shape(truth_dt)[0]):
-#     truth_fspec_dt[n,:] = np.abs(np.fft.fft(truth_dt[n,:])) 
-#     net_pred_fspec_dt[n,:] = np.abs(np.fft.fft(net_pred_dt[n,:])) 
+# calculate time derivative using 1st order finite diff
+truth_dt = np.diff(label_test, n=1, axis=0)
+net_pred_dt = np.diff(net_pred, n=1, axis=0)
+
+# calculate fourier spectrum of time derivative along a single timestep
+truth_fspec_dt = np.zeros(np.shape(truth_dt[:,:]), dtype=complex)
+net_pred_fspec_dt = np.zeros(np.shape(net_pred_dt[:,:]), dtype=complex)
+
+
+for n in range(np.shape(truth_dt)[0]):
+    truth_fspec_dt[n,:] = np.abs(np.fft.fft(truth_dt[n,:])) 
+    net_pred_fspec_dt[n,:] = np.abs(np.fft.fft(net_pred_dt[n,:])) 
 
 
 
 matfiledata_output = {}
 matfiledata_output[u'prediction'] = net_pred
 matfiledata_output[u'Truth'] = label_test 
-# matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test)
-# matfiledata_output[u'Truth_FFT_x'] = truth_fspec_x
-# matfiledata_output[u'pred_FFT_x'] = net_pred_fspec_x
-# matfiledata_output[u'Truth_FFT_dt'] = truth_fspec_dt
-# matfiledata_output[u'pred_FFT_dt'] = net_pred_fspec_dt
+matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test)
+matfiledata_output[u'Truth_FFT_x'] = truth_fspec_x
+matfiledata_output[u'pred_FFT_x'] = net_pred_fspec_x
+matfiledata_output[u'Truth_FFT_dt'] = truth_fspec_dt
+matfiledata_output[u'pred_FFT_dt'] = net_pred_fspec_dt
 
 scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
 
@@ -112,11 +112,11 @@ if skip_factor: #check if not == 0
     matfiledata_output_skip = {}
     matfiledata_output_skip[u'prediction'] = net_pred[0::skip_factor,:]
     matfiledata_output_skip[u'Truth'] = label_test[0::skip_factor,:]
-    # matfiledata_output_skip[u'RMSE'] = RMSE(net_pred, label_test)[0::skip_factor,:]
-    # matfiledata_output_skip[u'Truth_FFT_x'] = truth_fspec_x[0::skip_factor,:]
-    # matfiledata_output_skip[u'pred_FFT_x'] = net_pred_fspec_x[0::skip_factor,:]
-    # matfiledata_output_skip[u'Truth_FFT_dt'] = truth_fspec_dt[0::skip_factor,:]
-    # matfiledata_output_skip[u'pred_FFT_dt'] = net_pred_fspec_dt[0::skip_factor,:]
+    matfiledata_output_skip[u'RMSE'] = RMSE(net_pred, label_test)[0::skip_factor,:]
+    matfiledata_output_skip[u'Truth_FFT_x'] = truth_fspec_x[0::skip_factor,:]
+    matfiledata_output_skip[u'pred_FFT_x'] = net_pred_fspec_x[0::skip_factor,:]
+    matfiledata_output_skip[u'Truth_FFT_dt'] = truth_fspec_dt[0::skip_factor,:]
+    matfiledata_output_skip[u'pred_FFT_dt'] = net_pred_fspec_dt[0::skip_factor,:]
 
     scipy.io.savemat(path_outputs+eval_output_name+'_skip'+str(skip_factor)+'.mat', matfiledata_output_skip)
 print('Data saved')
