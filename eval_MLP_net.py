@@ -26,7 +26,7 @@ output_size = 1024
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/' #this is where the saved graphs and .mat files end up
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval/' #this is where the saved graphs and .mat files end up
 
 net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Directstep_lead1.pt" #change this to use a different network
 
@@ -46,14 +46,11 @@ label_test = np.transpose(data[:,trainN+lead:])
 my_net_MLP = MLP_Net(input_size, hidden_layer_size, output_size)
 my_net_MLP.load_state_dict(torch.load(net_file_name))
 my_net_MLP.cuda()
+print('Model loaded')
 
 M = 99999
 net_pred = np.zeros([M,np.size(label_test,1)])
 
-
-
-
-print('Model loaded')
 
 for k in range(0,M):
     if (k==0):
