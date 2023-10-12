@@ -22,12 +22,12 @@ lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1.pt"
+net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1.pt"
 #change this to use a different network
 
-step_func = PECstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = Directstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-eval_output_name = 'predicted_PECstep_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_Directstep_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
     data = pickle.load(f)
@@ -118,8 +118,8 @@ matfiledata_output = {}
 matfiledata_output[u'prediction'] = net_pred
 matfiledata_output[u'Truth'] = label_test 
 matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test)
-matfiledata_output[u'Truth_FFT_dx'] = u_1d_fspec_tdim
-matfiledata_output[u'pred_FFT_dx'] = pred_1d_fspec_tdim
+matfiledata_output[u'Truth_FFT_x'] = u_1d_fspec_tdim
+matfiledata_output[u'pred_FFT_x'] = pred_1d_fspec_tdim
 matfiledata_output[u'Truth_FFT_dt'] = u_truth_difft_n2_fspec
 matfiledata_output[u'pred_FFT_dt'] = u_pred_difft_n2_fspec
 
@@ -132,8 +132,8 @@ if skip_factor: #check if not == 0
     matfiledata_output_skip[u'prediction'] = net_pred[0::skip_factor,:]
     matfiledata_output_skip[u'Truth'] = label_test[0::skip_factor,:]
     matfiledata_output_skip[u'RMSE'] = RMSE(net_pred, label_test)[0::skip_factor,:]
-    matfiledata_output_skip[u'Truth_FFT_dx'] = u_1d_fspec_tdim[0::skip_factor,:]
-    matfiledata_output_skip[u'pred_FFT_dx'] = pred_1d_fspec_tdim[0::skip_factor,:]
+    matfiledata_output_skip[u'Truth_FFT_x'] = u_1d_fspec_tdim[0::skip_factor,:]
+    matfiledata_output_skip[u'pred_FFT_x'] = pred_1d_fspec_tdim[0::skip_factor,:]
     matfiledata_output_skip[u'Truth_FFT_dt'] = u_truth_difft_n2_fspec[0::skip_factor,:]
     matfiledata_output_skip[u'pred_FFT_dt'] = u_pred_difft_n2_fspec[0::skip_factor,:]
 
