@@ -28,7 +28,7 @@ path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
 model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt"
 
-matfile_name = 'FNO_KS_PECstep_tendency_lead'+str(lead)+'_jacs.mat'
+matfile_name = 'FNO_KS_Directstep_tendency_lead'+str(lead)+'_jacs.mat'
 
 def RK4step(input_batch):
  output_1 = mynet(input_batch.cuda())
