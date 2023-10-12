@@ -28,7 +28,8 @@ skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller),
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Directstep_lead1.pt" #change this to use a different network
+net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/BNN_Spectral_Loss_lambda_reg0_PECstep_lead1.pt"
+# "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Directstep_lead1.pt" #change this to use a different network
 
 step_func = Directstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
