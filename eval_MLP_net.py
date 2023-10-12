@@ -26,7 +26,7 @@ output_size = 1024
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval/' #this is where the saved graphs and .mat files end up
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/' #this is where the saved graphs and .mat files end up
 
 net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/BNN_Spectral_Loss_lambda_reg0_PECstep_lead1.pt"
 # "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Directstep_lead1.pt" #change this to use a different network
