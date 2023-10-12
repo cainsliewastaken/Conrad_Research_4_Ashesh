@@ -26,10 +26,34 @@ from torch.profiler import profile, record_function, ProfilerActivity
 lead = 1
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_with_tendencyfft_lambda_reg5_Directstep_lead1.pt"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_with_tendencyfft_lambda_reg5_PECstep_lead1.pt"
 
-matfile_name = 'NN_KS_Directstep_tendency_lead'+str(lead)+'_jacs.mat'
+matfile_name = 'NN_KS_PECstep_tendency_lead'+str(lead)+'_jacs.mat'
 
+
+
+def RK4step(input_batch):
+ output_1 = mynet(input_batch.cuda())
+ output_2 = mynet(input_batch.cuda()+0.5*output_1)
+ output_3 = mynet(input_batch.cuda()+0.5*output_2)
+ output_4 = mynet(input_batch.cuda()+output_3)
+
+ return input_batch.cuda() + time_step*(output_1+2*output_2+2*output_3+output_4)/6
+
+def Eulerstep(input_batch):
+ output_1 = mynet(input_batch.cuda())
+ return input_batch.cuda() + time_step*(output_1) 
+  
+def directstep(input_batch):
+  output_1 = mynet(input_batch.cuda())
+  return output_1
+
+def PECstep(input_batch):
+ output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
+ return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
+
+
+step_func = PECstep
 
 print('loading data')
 
@@ -84,32 +108,6 @@ for k in (np.array([ int(1),  int(10000), int(20000), int(99999)])):
 
 
 
-
-
-
-def RK4step(input_batch):
- output_1 = mynet(input_batch.cuda())
- output_2 = mynet(input_batch.cuda()+0.5*output_1)
- output_3 = mynet(input_batch.cuda()+0.5*output_2)
- output_4 = mynet(input_batch.cuda()+output_3)
-
- return input_batch.cuda() + time_step*(output_1+2*output_2+2*output_3+output_4)/6
-
-def Eulerstep(input_batch):
- output_1 = mynet(input_batch.cuda())
- return input_batch.cuda() + time_step*(output_1) 
-  
-def directstep(input_batch):
-  output_1 = mynet(input_batch.cuda())
-  return output_1
-
-def PECstep(input_batch):
- output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
- return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
-
-
-
-
 mynet = MLP_Net(input_size, hidden_layer_size, output_size)
 # mynet = FNO1d(modes, width, time_future, time_history)
 mynet.load_state_dict(torch.load(model_path))
@@ -120,7 +118,7 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
 
-    ygrad [k,:,:] = torch.autograd.functional.jacobian(PECstep,x_torch[k,:]) #Use these 2 lines for MLP networks
+    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use these 2 lines for MLP networks
     ygrad [k,:,:] = torch.func.jacfwd(directstep)(x_torch[k,:])
 
     # temp_mat = torch.autograd.functional.jacobian(PECstep, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1))) #Use these for FNO
