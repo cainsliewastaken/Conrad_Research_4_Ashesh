@@ -1,5 +1,6 @@
 direct_step = load('predicted_Directstep_1024_lead1_skip100.mat');
 PEC_step = load('predicted_PECstep_1024_lead1_skip100.mat');
+direct_step_spectral = load('predicted_directstep_1024_lead1_lambda_reg5_tendency_skip100.mat');
 
 
 direct_step_FNO = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
@@ -48,7 +49,7 @@ PEC_step_FNO = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
 % 
 
 Truth = (direct_step.Truth);
-prediction = (direct_step.prediction);
+prediction = (direct_step_spectral.prediction);
 
 
 set(0, 'DefaultAxesFontSize', 20)
