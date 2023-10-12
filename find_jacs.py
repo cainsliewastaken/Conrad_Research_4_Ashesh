@@ -23,9 +23,16 @@ from nn_MLP import MLP_Net
 from torch.profiler import profile, record_function, ProfilerActivity
 
 
+lead = 1
+path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
+
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_with_tendencyfft_lambda_reg5_Directstep_lead1.pt"
+
+matfile_name = 'NN_KS_Directstep_tendency_lead'+str(lead)+'_jacs.mat'
+
 
 print('loading data')
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/'
+
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -104,8 +111,8 @@ def PECstep(input_batch):
 
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-mynet = FNO1d(modes, width, time_future, time_history)
-mynet.load_state_dict(torch.load("/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_with_tendencyfft_lambda_reg5_directstep_lead1.pt"))
+# mynet = FNO1d(modes, width, time_future, time_history)
+mynet.load_state_dict(torch.load(model_path))
 mynet.cuda()
 mynet.eval()
 
@@ -131,6 +138,6 @@ print(ygrad.shape)
 
 matfiledata = {}
 matfiledata[u'Jacobian_mats'] = ygrad
-scipy.io.savemat(path_outputs+'FNO_KS_PECstep_tendency_lead'+str(lead)+'_jacs.mat', matfiledata)
+scipy.io.savemat(path_outputs+matfile_name, matfiledata)
 
 print('Saved Predictions')

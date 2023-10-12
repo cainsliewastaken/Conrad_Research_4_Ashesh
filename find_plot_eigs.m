@@ -1,3 +1,5 @@
+
+
 direct_step_jacs = load('MLP_KS_Directstep_tendency_lead1_jacs.mat');
 PEC_step_jacs = load('MLP_KS_PECstep_tendency_lead1_jacs.mat');
 
@@ -46,6 +48,7 @@ h = histogram(abs(e_direct),50);
 p = histcounts(abs(e_direct),50,'Normalization','pdf');
 binCenters = h.BinEdges + (h.BinWidth/2);
 histogram(abs(e_direct))
+
 legend('Direct Eigvals',fontsize=10)
 
 
@@ -56,3 +59,26 @@ binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
 histogram(abs(e_PEC))
 legend('PEC Eigvals',fontsize=10)
+
+
+
+figure(5)
+clf
+h = histogram(abs(e_direct_FNO),50);
+p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
+binCenters = h.BinEdges + (h.BinWidth/2);
+histogram(abs(e_direct_FNO))
+
+legend('Direct Eigvals',fontsize=10)
+
+
+figure(6)
+h = histogram(real(e_PEC_FNO),50);
+p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
+binCenters = h.BinEdges + (h.BinWidth/2);
+%plot(binCenters(1:end-1), p)
+histogram(abs(e_PEC_FNO))
+legend('PEC Eigvals',fontsize=10)
+
+
+
