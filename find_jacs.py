@@ -26,9 +26,9 @@ from torch.profiler import profile, record_function, ProfilerActivity
 lead = 1
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_PECstep_lead1.pt"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Spectral_Loss_FNO_Directstep_tendency_lambda_reg5lead1.pt"
 
-matfile_name = 'MLP_KS_PECstep_lead'+str(lead)+'_jacs.mat'
+matfile_name = 'FNO_KS_PECstep_tendency_lead'+str(lead)+'_jacs.mat'
 
 def RK4step(input_batch):
  output_1 = mynet(input_batch.cuda())
@@ -50,7 +50,7 @@ def PECstep(input_batch):
  output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
-step_func = PECstep
+step_func = Directstep
 
 print('loading data')
 
@@ -105,8 +105,8 @@ for k in (np.array([ int(1),  int(10000), int(20000), int(99999)])):
 
 
 
-mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-# mynet = FNO1d(modes, width, time_future, time_history)
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+mynet = FNO1d(modes, width, time_future, time_history)
 mynet.load_state_dict(torch.load(model_path))
 mynet.cuda()
 mynet.eval()
@@ -115,10 +115,10 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
 
-    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use these 2 lines for MLP networks
+    # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use these 2 lines for MLP networks
 
-    # temp_mat = torch.autograd.functional.jacobian(PECstep, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1))) #Use these for FNO
-    # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+    temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1))) #Use these for FNO
+    ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
     # print(sum(sum(ygrad[k,:,:])))
 
