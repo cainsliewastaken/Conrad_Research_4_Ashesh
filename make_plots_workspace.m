@@ -26,7 +26,7 @@ loglog([0:511],direct_step.pred_FFT_x(1,1:512),'Linewidth',2,'DisplayName','Dire
 
 loglog([0:511],PEC_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2,'DisplayName','PEC FNO');
 
-loglog([0:511],direct_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2, 'DisplayName','Direct FNO');
+loglog([0:511],direct_step_FNO.pred_FFT_x(1,1:512),'Linewidth',2, 'DisplayName','Direct FNO');
 
 legend(Location='southwest')
 title('Fspec X')
@@ -50,11 +50,11 @@ plot(PEC_step.RMSE,'DisplayName','PEC Step');
 plot(direct_step_FNO.RMSE,'DisplayName','Direct Step FNO')
 plot(PEC_step_FNO.RMSE,'DisplayName','PEC Step FNO')
 legend(Location='northwest')
-axis([1 10 -.5 5])
+% axis([1 10 -.5 5])
 
 
 Truth = (direct_step.Truth);
-prediction = direct_step.prediction;
+prediction = PEC_step_FNO.prediction;
 
 
 set(0, 'DefaultAxesFontSize', 20)
@@ -83,4 +83,4 @@ subplot(2,2,4)
 plot(x,prediction(1000,:),'b','Linewidth',2);hold on
 plot(x,Truth(1000,:),'r','Linewidth',2)
 title(['Time Step ' num2str(100000)])
-fig4.Position = [550 250 1000 600]; 
+fig4.Position = [550 200 1000 600]; 

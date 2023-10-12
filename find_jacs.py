@@ -26,9 +26,9 @@ from torch.profiler import profile, record_function, ProfilerActivity
 lead = 1
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1.pt"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_PECstep_lead1.pt"
 
-matfile_name = 'FNO_KS_PECstep_lead'+str(lead)+'_jacs.mat'
+matfile_name = 'MLP_KS_PECstep_lead'+str(lead)+'_jacs.mat'
 
 def RK4step(input_batch):
  output_1 = mynet(input_batch.cuda())
@@ -50,7 +50,7 @@ def PECstep(input_batch):
  output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
-step_func = Directstep
+step_func = PECstep
 
 print('loading data')
 
@@ -99,7 +99,7 @@ num_workers = 0  #What does this do?
 x_torch = torch.zeros([eq_points,input_size])
 
 count=0
-for k in (np.array([ int(1),  int(10000), int(20000), int(99999)])):
+for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
  x_torch[count,:] = input_test_torch[k,:].requires_grad_(requires_grad=True)
  count=count+1
 
