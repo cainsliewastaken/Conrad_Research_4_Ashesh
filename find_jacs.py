@@ -28,7 +28,8 @@ path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
 model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1.pt"
 
-matfile_name = 'FNO_KS_PECstep_lead'+str(lead)+'_jacs.mat'
+matfile_name = 'FNO_KS_Directstep_tendency_lead1_UNTRAINED_jacs.mat'
+#'FNO_KS_Directstep_lead'+str(lead)+'_jacs_.mat'
 
 def RK4step(input_batch):
  output_1 = mynet(input_batch.cuda())
@@ -50,7 +51,7 @@ def PECstep(input_batch):
  output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
-step_func = PECstep
+step_func = Directstep
 
 print('loading data')
 
@@ -107,7 +108,7 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 
 # mynet = MLP_Net(input_size, hidden_layer_size, output_size)
 mynet = FNO1d(modes, width, time_future, time_history)
-mynet.load_state_dict(torch.load(model_path))
+#mynet.load_state_dict(torch.load(model_path))
 mynet.cuda()
 mynet.eval()
 
