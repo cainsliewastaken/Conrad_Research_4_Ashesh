@@ -18,7 +18,7 @@ import matplotlib.animation as anim
 
 from nn_FNO import FNO1d
 from nn_MLP import MLP_Net 
-from nn_step_methods import Directstep, Eulerstep, PECstep
+# from nn_step_methods import Directstep, Eulerstep, PECstep
 
 from torch.profiler import profile, record_function, ProfilerActivity
 
@@ -30,6 +30,26 @@ model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO
 
 matfile_name = 'FNO_KS_PECstep_tendency_lead1_UNTRAINED_jacs.mat'
 #'FNO_KS_Directstep_lead'+str(lead)+'_jacs.mat'
+
+def RK4step(input_batch):
+ output_1 = mynet(input_batch.cuda())
+ output_2 = mynet(input_batch.cuda()+0.5*output_1)
+ output_3 = mynet(input_batch.cuda()+0.5*output_2)
+ output_4 = mynet(input_batch.cuda()+output_3)
+
+ return input_batch.cuda() + time_step*(output_1+2*output_2+2*output_3+output_4)/6
+
+def Eulerstep(input_batch):
+ output_1 = mynet(input_batch.cuda())
+ return input_batch.cuda() + time_step*(output_1) 
+  
+def Directstep(input_batch):
+  output_1 = mynet(input_batch.cuda())
+  return output_1
+
+def PECstep(input_batch):
+ output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
+ return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
 step_func = PECstep
 
