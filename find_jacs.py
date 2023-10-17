@@ -64,7 +64,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 256 # number of Fourier modes to multiply
-width = 64 # input and output chasnnels to the FNO layer
+width = 2000 # input and output chasnnels to the FNO layer
 
 
 
@@ -116,7 +116,7 @@ for k in range(0,eq_points):
     temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1))) #Use these for FNO
     ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
-    print(sum(sum(ygrad[k,:,:])))
+    # print(sum(sum(np.abs(ygrad[k,:,:]))))
 
 
 

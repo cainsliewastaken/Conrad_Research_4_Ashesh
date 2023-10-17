@@ -81,11 +81,11 @@ class FNO1d(nn.Module):
         self.time_history = time_history
         self.fc0 = nn.Linear(self.time_history+1, self.width)
 
-        self.conv0 = SpectralConv1d(self.width, self.width, self.modes)
+        self.conv0 = SpectralConv1d(self.width, self.width, self.modes) #initializes with uniform distro from 1/width^2
         self.conv1 = SpectralConv1d(self.width, self.width, self.modes)
         self.conv2 = SpectralConv1d(self.width, self.width, self.modes)
         self.conv3 = SpectralConv1d(self.width, self.width, self.modes)
-        self.w0 = nn.Conv1d(self.width, self.width, 1)
+        self.w0 = nn.Conv1d(self.width, self.width, 1) #initializes with uniform distro from -+sqrt(1/width)
         self.w1 = nn.Conv1d(self.width, self.width, 1)
         self.w2 = nn.Conv1d(self.width, self.width, 1)
         self.w3 = nn.Conv1d(self.width, self.width, 1)
