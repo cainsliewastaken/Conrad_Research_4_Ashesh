@@ -1,15 +1,16 @@
 direct_step_jacs = load('MLP_KS_Directstep_lead1_jacs.mat');
 PEC_step_jacs = load('MLP_KS_PECstep_lead1_jacs.mat');
-% 
+
 direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_jacs.mat');
 PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_jacs.mat');
-% 
-% % 
+
+ 
 % direct_step_jacs = load('MLP_KS_Directstep_tendency_lead1_jacs.mat');
 % PEC_step_jacs = load('MLP_KS_PECstep_tendency_lead1_jacs.mat');
 % 
 % direct_step_jacs_FNO = load('FNO_KS_Directstep_tendency_lead1_jacs.mat');
 % PEC_step_jacs_FNO = load('FNO_KS_PECstep_tendency_lead1_jacs.mat');
+
 
 [v_direct, e_direct] = eig(squeeze(direct_step_jacs.Jacobian_mats(1,:,:)));
 [e_direct, ind_d] = sort(diag(e_direct));
@@ -47,19 +48,16 @@ PEC_step_jacs_FNO_untrained =load('Model_output\FNO_KS_PECstep_tendency_lead1_UN
 
 
 
-theta = linspace(-pi,pi,100);
-x=cos(theta)+1*1i*sin(theta);
-
-
 figure(1)
 clf
+theta = linspace(-pi,pi,100);
+x=cos(theta)+1*1i*sin(theta);
 set(0, 'DefaultAxesFontSize', 20)
 plot(x,'r','Linewidth',2);
 hold on;
 
 plot(e_direct,'co','MarkerSize',10,'MarkerFaceColor','c','DisplayName','Direct MLP');
 plot(e_PEC,'ro','MarkerSize',10,'MarkerFaceColor','r','DisplayName','PEC MLP');
-legend()
 plot(e_direct_FNO,'go','MarkerSize',10);
 plot(e_PEC_FNO,'ro','MarkerSize',10);
 
@@ -104,6 +102,24 @@ ylabel('$Im(\lambda)$','Interpreter','latex')
 
 
 
+figure(14)
+clf
+set(0, 'DefaultAxesFontSize', 20)
+plot(x,'r','Linewidth',2);
+hold on;
+
+plot(e_direct_FNO_un,'ro','MarkerSize',10,'MarkerFaceColor','r');
+
+plot(e_PEC_FNO_un,'bo','MarkerSize',10);
+
+legend('Unit Circle','Direct FNO Untrained','PEC FNO Untrained',fontsize=10)
+% legend('Direct FNO Untrained','PEC FNO Untrained',fontsize=10)
+
+xlabel('$Re(\lambda)$','Interpreter','latex')
+ylabel('$Im(\lambda)$','Interpreter','latex')
+
+
+
 
 figure(100)
 clf
@@ -111,11 +127,11 @@ clf
 % p = histcounts(abs(e_direct),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct))
+histogram(abs(e_direct), Normalization="pdf")
 hold on
-histogram(abs(e_direct_un))
-legend('Direct Eigvals','Direct untrained',fontsize=10)
-
+histogram(abs(e_direct_un), Normalization="pdf")
+MarchenkoPasturLaw(100, 1024, 1024)
+legend('Direct Eigvals','Direct untrained','Marchenko Pastur',fontsize=10)
 
 figure(101)
 clf
@@ -123,10 +139,11 @@ clf
 % p = histcounts(abs(e_PEC),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC-1)/1e-3)
+histogram(abs(e_PEC-1)/1e-3, Normalization="pdf")
 hold on
-histogram(abs(e_PEC_un-1)/1e-3)
-legend('PEC Eigvals','PEC untrained',fontsize=10)
+histogram(abs(e_PEC_un-1)/1e-3, Normalization="pdf")
+legend('PEC Eigvals','PEC untrained','Marchenko Pastur',fontsize=10)
+MarchenkoPasturLaw(101, 1024, 1024)
 
 
 
@@ -136,10 +153,11 @@ clf
 % p = histcounts(abs(e_direct),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct_FNO))
+histogram(abs(e_direct_FNO), Normalization="pdf")
 hold on
-histogram(abs(e_direct_FNO_un))
+histogram(abs(e_direct_FNO_un), Normalization="pdf")
 legend('Direct FNO Eigvals','Direct FNO untrained',fontsize=10)
+MarchenkoPasturLaw(102, 1024, 1024)
 
 
 figure(103)
@@ -148,66 +166,68 @@ clf
 % p = histcounts(abs(e_PEC),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_FNO-1)/1e-3)
+histogram(abs(e_PEC_FNO-1)/1e-3, Normalization="pdf")
 hold on
-histogram(abs(e_PEC_FNO_un-1)/1e-3)
-legend('PEC FNO Eigvals','PEC FNO untrained',fontsize=10)
+histogram(abs(e_PEC_FNO_un-1)/1e-3, Normalization="pdf")
+legend('PEC FNO Eigvals','PEC FNO untrained','Marchenko Pastur',fontsize=10)
+MarchenkoPasturLaw(103, 1024, 1024)
 
 
-
-
-
-figure(4)
-clf
-% h = histogram(real(e_PEC),50);
-% p = histcounts(real(e_PEC),50,'Normalization','pdf');
-% binCenters = h.BinEdges + (h.BinWidth/2);
-%plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC))
-legend('PEC Eigvals',fontsize=10)
-
-
-
-figure(5)
-clf
-% h = histogram(abs(e_direct_FNO),50);
-% p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
-% binCenters = h.BinEdges + (h.BinWidth/2);
-%plot(binCenters(1:end-1), p)
-histogram(abs(e_direct_FNO))
-
-legend('Direct Eigvals FNO',fontsize=10)
-
-
-figure(6)
-clf
-% h = histogram(real(e_PEC_FNO),50);
-% p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
-% binCenters = h.BinEdges + (h.BinWidth/2);
-%plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_FNO))
-legend('PEC Eigvals FNO',fontsize=10)
-
-
-figure(7)
-clf
-% h = histogram(abs(e_direct_FNO),50);
-% p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
-% binCenters = h.BinEdges + (h.BinWidth/2);
-%plot(binCenters(1:end-1), p)
-histogram(abs(e_direct_FNO_un))
-
-legend('Direct Eigvals FNO Untrained',fontsize=10)
-
-
-figure(8)
-clf
-% h = histogram(real(e_PEC_FNO),50);
-% p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
-% binCenters = h.BinEdges + (h.BinWidth/2);
-%plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_FNO_un))
-legend('PEC Eigvals FNO Untrained',fontsize=10)
-
+% 
+% 
+% 
+% 
+% figure(4)
+% clf
+% % h = histogram(real(e_PEC),50);
+% % p = histcounts(real(e_PEC),50,'Normalization','pdf');
+% % binCenters = h.BinEdges + (h.BinWidth/2);
+% %plot(binCenters(1:end-1), p)
+% histogram(abs(e_PEC))
+% legend('PEC Eigvals',fontsize=10)
+% 
+% 
+% 
+% figure(5)
+% clf
+% % h = histogram(abs(e_direct_FNO),50);
+% % p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
+% % binCenters = h.BinEdges + (h.BinWidth/2);
+% %plot(binCenters(1:end-1), p)
+% histogram(abs(e_direct_FNO))
+% 
+% legend('Direct Eigvals FNO',fontsize=10)
+% 
+% 
+% figure(6)
+% clf
+% % h = histogram(real(e_PEC_FNO),50);
+% % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
+% % binCenters = h.BinEdges + (h.BinWidth/2);
+% %plot(binCenters(1:end-1), p)
+% histogram(abs(e_PEC_FNO))
+% legend('PEC Eigvals FNO',fontsize=10)
+% 
+% 
+% figure(7)
+% clf
+% % h = histogram(abs(e_direct_FNO),50);
+% % p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
+% % binCenters = h.BinEdges + (h.BinWidth/2);
+% %plot(binCenters(1:end-1), p)
+% histogram(abs(e_direct_FNO_un))
+% 
+% legend('Direct Eigvals FNO Untrained',fontsize=10)
+% 
+% 
+% figure(8)
+% clf
+% % h = histogram(real(e_PEC_FNO),50);
+% % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
+% % binCenters = h.BinEdges + (h.BinWidth/2);
+% %plot(binCenters(1:end-1), p)
+% histogram(abs(e_PEC_FNO_un))
+% legend('PEC Eigvals FNO Untrained',fontsize=10)
+% 
 
 

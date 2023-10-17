@@ -28,29 +28,8 @@ path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
 model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1.pt"
 
-matfile_name = 'FNO_KS_Directstep_lead'+str(lead)+'_jacs.mat'
+matfile_name = 'FNO_KS_Directstep_lead'+str(lead)+'+UNTRAINED_jacs.mat'
 
-def RK4step(input_batch):
- output_1 = mynet(input_batch.cuda())
- output_2 = mynet(input_batch.cuda()+0.5*output_1)
- output_3 = mynet(input_batch.cuda()+0.5*output_2)
- output_4 = mynet(input_batch.cuda()+output_3)
-
- return input_batch.cuda() + time_step*(output_1+2*output_2+2*output_3+output_4)/6
-
-def Eulerstep(input_batch):
- output_1 = mynet(input_batch.cuda())
- return input_batch.cuda() + time_step*(output_1) 
-  
-def Directstep(input_batch):
-  output_1 = mynet(input_batch.cuda())
-  return output_1
-
-def PECstep(input_batch):
- output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
- return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
-
-step_func = Directstep
 
 print('loading data')
 
@@ -77,8 +56,6 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 eq_points = 4
-
-
 # FNO archetecture hyperparams
 
 time_history = 1 #time steps to be considered as input to the solver
@@ -89,10 +66,6 @@ device = 'cuda'  #change to cpu if no cuda available
 modes = 256 # number of Fourier modes to multiply
 width = 64 # input and output chasnnels to the FNO layer
 
-num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
-learning_rate = 0.0001
-lr_decay = 0.4
-num_workers = 0  #What does this do?
 
 
 
@@ -111,6 +84,29 @@ mynet = FNO1d(modes, width, time_future, time_history)
 mynet.cuda()
 mynet.eval()
 
+
+def RK4step(input_batch):
+ output_1 = mynet(input_batch.cuda())
+ output_2 = mynet(input_batch.cuda()+0.5*output_1)
+ output_3 = mynet(input_batch.cuda()+0.5*output_2)
+ output_4 = mynet(input_batch.cuda()+output_3)
+
+ return input_batch.cuda() + time_step*(output_1+2*output_2+2*output_3+output_4)/6
+
+def Eulerstep(input_batch):
+ output_1 = mynet(input_batch.cuda())
+ return input_batch.cuda() + time_step*(output_1) 
+  
+def Directstep(input_batch):
+  output_1 = mynet(input_batch.cuda())
+  return output_1
+
+def PECstep(input_batch):
+ output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
+ return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
+
+step_func = Directstep
+
 ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
@@ -120,7 +116,7 @@ for k in range(0,eq_points):
     temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1))) #Use these for FNO
     ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
-    # print(sum(sum(ygrad[k,:,:])))
+    print(sum(sum(ygrad[k,:,:])))
 
 
 
