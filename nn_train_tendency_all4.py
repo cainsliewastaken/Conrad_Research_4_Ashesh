@@ -204,9 +204,8 @@ for ep in range(0, epochs+1):
         
    #     epoch_loss = epoch_loss + loss
       if ep % 10 == 0:
-        #   print('step',step)
         print('Epoch', ep)
-        #   print ('Loss', loss)
+        print ('Loss', loss_direct)
 
 #save network
 torch.save(mynet_directstep.state_dict(),'NN_Directstep_lead'+str(lead)+'_tendeny.pt') 
