@@ -74,8 +74,10 @@ x_torch = torch.zeros([eq_points,input_size]).cuda()
 
 count=0
 for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
- x_torch[count,:] = input_test_torch[k,:].requires_grad_(requires_grad=True)
- count=count+1
+  print(k)
+  print(torch.cuda.memory_allocated())
+  x_torch[count,:] = input_test_torch[k,:].requires_grad_(requires_grad=True)
+  count=count+1
 
 
 
