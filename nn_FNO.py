@@ -80,7 +80,7 @@ class FNO1d(nn.Module):
         self.time_future = time_future
         self.time_history = time_history
         self.fc0 = nn.Linear(self.time_history+1, self.width)
-
+        torch.cuda.memory_allocated()
         self.conv0 = SpectralConv1d(self.width, self.width, self.modes) #initializes with uniform distro from 1/width^2
         self.conv1 = SpectralConv1d(self.width, self.width, self.modes)
         self.conv2 = SpectralConv1d(self.width, self.width, self.modes)
