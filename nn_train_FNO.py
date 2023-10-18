@@ -10,14 +10,15 @@ from count_trainable_params import count_parameters
 import pickle
 from nn_FNO import FNO1d
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
+from nn_spectral_loss import spectral_loss
 
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = Directstep
 
-net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency.pt'
 
 
 
@@ -35,6 +36,7 @@ output_size = 1024
 hidden_layer_size = 2000
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
+du_label_torch = input_train_torch - label_train_torch
 
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
@@ -62,21 +64,30 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 
 
 loss_fn = nn.MSELoss()
-epochs = 60
+epochs = 100
 batch_size = 100
+wavenum_init = 100
+lamda_reg = 5
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
-        input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
+        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
         label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
+        du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
+
         #pick a random boundary batch
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
-        loss = loss_fn(outputs, label_batch)
+        outputs_2 = step_func(mynet, outputs, time_step)
+
+        # loss = loss_fn(outputs, label_batch)
+        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
+        
+
         optimizer.step()
 
 

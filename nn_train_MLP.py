@@ -27,6 +27,7 @@ with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') 
 data=np.asarray(data[:,:250000])
 
 
+
 lead=1
 time_step = 1e-3
 trainN = 150000
