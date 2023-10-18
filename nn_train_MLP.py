@@ -10,7 +10,7 @@ from count_trainable_params import count_parameters
 import pickle
 from nn_MLP import MLP_Net
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
-# from nn_spectral_loss import spectral_loss
+from nn_spectral_loss import spectral_loss
 
 lead=1
 
@@ -57,26 +57,6 @@ wavenum_init = 100
 lamda_reg = 5
 
 
-def spectral_loss (output, output2, target, tendency):
-
-   loss1 = torch.mean((output-target)**2)
-   
-   out_fft = torch.fft.rfft(output,dim=1)
-   target_fft = torch.fft.rfft(target,dim=1)
-   
-   loss2 = torch.mean(torch.abs(out_fft[:,wavenum_init:] - target_fft[:,wavenum_init:]))
-
-
-   out_du_fft =torch.fft.rfft((output-output2)/time_step,dim=1)
-   target_du_fft =torch.fft.rfft(tendency/time_step,dim=1)
-
-   loss3 = torch.mean(torch.abs(out_du_fft[:,0:]-target_du_fft[:,0:]))
-
-   loss = loss1 + lamda_reg*loss3
-  
-   return loss
-
-
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
@@ -89,8 +69,7 @@ for ep in range(0, epochs+1):
 
         # loss = loss_fn(outputs, label_batch)
 
-        # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
-        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch)
+        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         optimizer.step()
