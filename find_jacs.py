@@ -124,9 +124,9 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 
 
-with profile(activities=[ProfilerActivity.CUDA],
-        profile_memory=True) as prof:
-    mynet(torch.reshape(input_test_torch[0,:],(1,input_size,1)))
+with profile(activities=[ProfilerActivity.CUDA], record_shapes=True, profile_memory=True) as prof:
+    with record_function("model_inference"):
+      mynet(torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)))
 
 print(prof.key_averages().table(sort_by="self_gpu_memory_usage", row_limit=10))
 
