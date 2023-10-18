@@ -48,7 +48,7 @@ class SpectralConv1d(nn.Module):
         """
         batchsize = x.shape[0]
         # Fourier transformation
-        x_ft = torch.fft.rfft(x) #y cant the weight matrix be complex?
+        x_ft = torch.fft.rfft(x) 
 
         # Multiply relevant Fourier modes
         out_ft = torch.zeros(batchsize, self.out_channels, x.size(-1)//2 + 1,  device=x.device, dtype=torch.cfloat)
