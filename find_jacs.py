@@ -51,8 +51,8 @@ output_size = 1024
 
 
 
-input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
-label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
+input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float()
+label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float()
 label_test = np.transpose(data[:,trainN+lead:])
 
 
@@ -70,7 +70,7 @@ width = 1000 # input and output chasnnels to the FNO layer
 
 
 
-x_torch = torch.zeros([eq_points,input_size])
+x_torch = torch.zeros([eq_points,input_size]).cuda()
 
 count=0
 for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
