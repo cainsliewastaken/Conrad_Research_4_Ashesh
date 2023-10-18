@@ -35,6 +35,7 @@ output_size = 1024
 hidden_layer_size = 2000
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
+du_label_torch = input_train_torch - label_train_torch
 
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
@@ -58,14 +59,14 @@ lamda_reg = 5
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
-        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], (input_train_torch - label_train_torch)[indices]
+        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
         #pick a random boundary batch
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
+        outputs_2 = step_func(mynet, outputs, time_step)
 
         # loss = loss_fn(outputs, label_batch)
 
-        outputs_2 = step_func(mynet, outputs, time_step)
         loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
