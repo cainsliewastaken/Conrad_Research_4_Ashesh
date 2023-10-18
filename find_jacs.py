@@ -126,7 +126,7 @@ with profile(activities=[ProfilerActivity.CUDA], record_shapes=True, profile_mem
     with record_function("model_inference"):
       mynet(torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)))
 
-print(prof.key_averages().table(sort_by="self_gpu_memory_usage", row_limit=10))
+print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
 
 
 for k in range(0,eq_points):
