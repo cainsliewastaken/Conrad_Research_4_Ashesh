@@ -29,7 +29,7 @@ step_func = PECstep #this determines the step funciton used in the eval step, ha
 
 eval_output_name = 'predicted_PECstep_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
-with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
+with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change based on eval data location.
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
