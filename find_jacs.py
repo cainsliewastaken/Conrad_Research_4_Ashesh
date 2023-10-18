@@ -114,7 +114,7 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 with profile(activities=[ProfilerActivity.CUDA],
         profile_memory=True) as prof:
-    PECstep(mynet,torch.reshape(input_test_torch[0,:],(1,input_size,1)), time_step)
+    mynet(torch.reshape(input_test_torch[0,:],(1,input_size,1)))
 
 print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
 
