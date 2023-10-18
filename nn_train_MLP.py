@@ -48,7 +48,7 @@ count_parameters(mynet)
 
 
 #use two optimizers.  learing rates seem to work.
-optimizer = optim.SGD(mynet.parameters(), lr=0.01)
+optimizer = optim.SGD(mynet.parameters(), lr=0.005)
 
 loss_fn = nn.MSELoss()
 epochs = 60
