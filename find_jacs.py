@@ -65,7 +65,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 256 # number of Fourier modes to multiply
-width = 2000 # input and output chasnnels to the FNO layer
+width = 1500 # input and output chasnnels to the FNO layer
 
 
 
@@ -74,8 +74,6 @@ x_torch = torch.zeros([eq_points,input_size]).cuda()
 
 count=0
 for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
-  print(k)
-  print(torch.cuda.memory_allocated())
   x_torch[count,:] = input_test_torch[k,:].requires_grad_(requires_grad=True)
   count=count+1
 
