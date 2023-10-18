@@ -10,14 +10,15 @@ from count_trainable_params import count_parameters
 import pickle
 from nn_MLP import MLP_Net
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
+from nn_spectral_loss import spectral_loss
 
 lead=1
 
 step_func = Directstep
 
-net_file_name = 'NN_Directstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_Directstep_lead'+str(lead)+'_tendeny.pt'
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
 
 
 
@@ -43,22 +44,29 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
 count_parameters(mynet)
-epochs = 60
+
 
 #use two optimizers.  learing rates seem to work.
 optimizer = optim.SGD(mynet.parameters(), lr=0.005)
 
 loss_fn = nn.MSELoss()
+epochs = 60
 batch_size = 100
+wavenum_init = 100
+lamda_reg = 5 
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
-        input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
+        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], (input_train_torch - label_train_torch)[indices]
         #pick a random boundary batch
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
-        loss = loss_fn(outputs, label_batch)
+
+        # loss = loss_fn(outputs, label_batch)
+
+        outputs_2 = step_func(mynet, outputs, time_step)
+        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         optimizer.step()
