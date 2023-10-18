@@ -85,6 +85,7 @@ class FNO1d(nn.Module):
         self.conv1 = SpectralConv1d(self.width, self.width, self.modes)
         self.conv2 = SpectralConv1d(self.width, self.width, self.modes)
         self.conv3 = SpectralConv1d(self.width, self.width, self.modes)
+        print(torch.cuda.memory_allocated())
         self.w0 = nn.Conv1d(self.width, self.width, 1) #initializes with uniform distro from -+sqrt(1/width)
         self.w1 = nn.Conv1d(self.width, self.width, 1)
         self.w2 = nn.Conv1d(self.width, self.width, 1)
@@ -94,8 +95,13 @@ class FNO1d(nn.Module):
         self.fc2 = nn.Linear(128, self.time_future)
 
     def forward(self, u):
+
         grid = self.get_grid(u.shape, u.device)
+        print("pre concat mem=")
+        print(torch.cuda.memory_allocated())
         x = torch.cat((u, grid), dim=-1)
+        print("post concat mem=")
+        print(torch.cuda.memory_allocated())
         x = self.fc0(x)
         x = x.permute(0, 2, 1)
 
