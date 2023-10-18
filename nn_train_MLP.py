@@ -51,10 +51,10 @@ count_parameters(mynet)
 optimizer = optim.SGD(mynet.parameters(), lr=0.005)
 
 loss_fn = nn.MSELoss()
-epochs = 60
+epochs = 100
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 10
+lamda_reg = 5
 
 
 def spectral_loss (output, output2, target, tendency):
