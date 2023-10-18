@@ -14,9 +14,9 @@ from nn_spectral_loss import spectral_loss
 
 lead=1
 
-step_func = Directstep
+step_func = PECstep
 
-net_file_name = 'NN_Directstep_lead'+str(lead)+'_tendeny.pt'
+net_file_name = 'NN_PECstep_lead'+str(lead)+'_tendency.pt'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
 
