@@ -84,7 +84,12 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 # mynet = MLP_Net(input_size, hidden_layer_size, output_size)
 mynet = FNO1d(modes, width, time_future, time_history)
 # mynet.load_state_dict(torch.load(model_path))
+print('model defined')
+print(torch.cuda.memory_allocated())
 mynet.cuda()
+print('model cuda')
+print(torch.cuda.memory_allocated())
+
 mynet.eval()
 
 
@@ -108,7 +113,10 @@ def PECstep(input_batch):
  output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
+print(torch.cuda.memory_allocated())
 step_func = Directstep
+
+print(torch.cuda.memory_allocated())
 
 ygrad = torch.zeros([eq_points,input_size,input_size])
 
@@ -131,6 +139,7 @@ for k in range(0,eq_points):
   #       pass
     # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use these 2 lines for MLP networks
     print(k)
+    print(torch.cuda.memory_allocated())
     temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
     ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
