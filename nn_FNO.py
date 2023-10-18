@@ -144,5 +144,5 @@ class FNO1d(nn.Module):
         batchsize, size_x = shape[0], shape[1]
         gridx = torch.tensor(np.linspace(0, 1, size_x), dtype=torch.float)
         gridx = gridx.reshape(1, size_x, 1).repeat([batchsize, 1, 1])
-        return gridx.to(device)
+        return gridx
 
