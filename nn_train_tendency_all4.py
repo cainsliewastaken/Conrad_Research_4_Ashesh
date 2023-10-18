@@ -14,7 +14,7 @@ import sys
 import pickle
 
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -209,7 +209,7 @@ for ep in range(0, epochs+1):
         #   print ('Loss', loss)
 
 #save network
-torch.save(mynet_directstep.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_directstep_lead'+str(lead)+'.pt') 
+torch.save(mynet_directstep.state_dict(),'NN_Directstep_lead'+str(lead)+'_tendeny.pt') 
 # torch.save(mynet_Eulerstep.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_Eulerstep_lead'+str(lead)+'.pt') 
 # torch.save(mynet_RK4step.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_RK4step_lead'+str(lead)+'.pt') 
 # torch.save(mynet_PECstep.state_dict(),'NN_Spectral_Loss_with_tendencyfft_'+'lambda_reg'+str(lamda_reg)+'_PECstep_lead'+str(lead)+'.pt') 
