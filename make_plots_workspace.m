@@ -24,9 +24,9 @@ loglog([0:511],PEC_step.pred_FFT_x(1,1:512),'Linewidth',2, 'DisplayName','PEC Ne
 
 loglog([0:511],direct_step.pred_FFT_x(1,1:512),'Linewidth',2,'DisplayName','Direct Net');
 
-loglog([0:511],PEC_step_FNO.pred_FFT_x(1,1:512),'Linewidth',2,'DisplayName','PEC FNO');
+loglog([0:511],PEC_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2,'DisplayName','PEC FNO');
 
-loglog([0:511],direct_step_FNO.pred_FFT_x(1,1:512),'Linewidth',2, 'DisplayName','Direct FNO');
+loglog([0:511],direct_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2, 'DisplayName','Direct FNO');
 xticks(xticks*100)
 
 legend(Location='southwest')
