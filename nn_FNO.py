@@ -75,22 +75,31 @@ class FNO1d(nn.Module):
         output: the solution of a later timestep
         output shape: (batchsize, x=s, c=1)
         """
+        print("starting init")
+        print(torch.cuda.memory_allocated())
         self.modes = modes
         self.width = width
         self.time_future = time_future
         self.time_history = time_history
         self.fc0 = nn.Linear(self.time_history+1, self.width)
+        print('After linear')
         print(torch.cuda.memory_allocated())
         self.conv0 = SpectralConv1d(self.width, self.width, self.modes) #initializes with uniform distro from 1/width^2
+        print('single spectral conv1d')
+        print(torch.cuda.memory_allocated())
         self.conv1 = SpectralConv1d(self.width, self.width, self.modes)
         self.conv2 = SpectralConv1d(self.width, self.width, self.modes)
         self.conv3 = SpectralConv1d(self.width, self.width, self.modes)
+        print('all spectral convs')
         print(torch.cuda.memory_allocated())
         self.w0 = nn.Conv1d(self.width, self.width, 1) #initializes with uniform distro from -+sqrt(1/width)
+        print('single conv1d')
+        print(torch.cuda.memory_allocated())
         self.w1 = nn.Conv1d(self.width, self.width, 1)
         self.w2 = nn.Conv1d(self.width, self.width, 1)
         self.w3 = nn.Conv1d(self.width, self.width, 1)
-
+        print('all convd1s')
+        print(torch.cuda.memory_allocated())
         self.fc1 = nn.Linear(self.width, 128) #I dont understand why this and fc2 are here, also the 128 seems like a hyperparameter
         self.fc2 = nn.Linear(128, self.time_future)
 
