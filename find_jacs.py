@@ -21,6 +21,7 @@ from nn_MLP import MLP_Net
 # from nn_step_methods import Directstep, Eulerstep, PECstep
 
 from torch.profiler import profile, record_function, ProfilerActivity
+import gc
 
 
 lead = 1
@@ -110,7 +111,12 @@ step_func = Directstep
 ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
-
+  for obj in gc.get_objects():
+    try:
+        if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
+            print(type(obj), obj.size())
+    except:
+        pass
     # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use these 2 lines for MLP networks
 
     temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(torch.tensor(x_torch[k,:]),(1,input_size,1))) #Use these for FNO
