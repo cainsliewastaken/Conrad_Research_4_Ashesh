@@ -54,7 +54,7 @@ loss_fn = nn.MSELoss()
 epochs = 60
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 5
+lamda_reg = 10
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
