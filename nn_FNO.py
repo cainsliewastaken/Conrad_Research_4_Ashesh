@@ -51,8 +51,8 @@ class SpectralConv1d(nn.Module):
         x_ft = torch.fft.rfft(x) 
 
         # Multiply relevant Fourier modes
-        out_ft = torch.zeros(batchsize, self.out_channels, x.size(-1)//2 + 1,  device=x.device, dtype=torch.cfloat)
-        out_ft[:, :, :self.modes] = self.compl_mul1d(x_ft[:, :, :self.modes], self.weights)
+        out_ft = torch.zeros(batchsize, self.out_channels, self.modes,  device=x.device, dtype=torch.cfloat)
+        out_ft[:, :, :] = self.compl_mul1d(x_ft[:, :, :], self.weights)
 
         #Return to physical space
         x = torch.fft.irfft(out_ft, n=x.size(-1))
@@ -144,5 +144,9 @@ class FNO1d(nn.Module):
         batchsize, size_x = shape[0], shape[1]
         gridx = torch.tensor(np.linspace(0, 1, size_x), dtype=torch.float)
         gridx = gridx.reshape(1, size_x, 1).repeat([batchsize, 1, 1])
-        return gridx.cuda()
+        return gridx.to(device)
+
+
+
+
 
