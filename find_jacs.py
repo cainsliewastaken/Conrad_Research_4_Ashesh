@@ -126,7 +126,9 @@ with profile(activities=[ProfilerActivity.CPU ,ProfilerActivity.CUDA],  with_sta
     with record_function("model_inference"):
       mynet(torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)))
 
-print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cpu_memory_usage", row_limit=10))
+# print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cpu_memory_usage", row_limit=10))
+print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=2))
+
 
 
 for k in range(0,eq_points):
@@ -156,7 +158,6 @@ matfiledata[u'Jacobian_mats'] = ygrad
 scipy.io.savemat(path_outputs+matfile_name, matfiledata)
 
 print('Saved Predictions')
-
 
 
 
