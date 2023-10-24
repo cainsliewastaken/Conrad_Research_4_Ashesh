@@ -131,7 +131,7 @@ input = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1))
 
 with profile(
     activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
-    with_stack=True,
+    with_stack=True, profile_memory=True
 ) as prof:
     mynet(input)
 
@@ -166,5 +166,4 @@ matfiledata[u'Jacobian_mats'] = ygrad
 scipy.io.savemat(path_outputs+matfile_name, matfiledata)
 
 print('Saved Predictions')
-
 
