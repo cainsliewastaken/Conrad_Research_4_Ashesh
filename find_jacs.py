@@ -127,7 +127,7 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 # # print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cpu_memory_usage", row_limit=10))
 # print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=10))
-input = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1))
+input = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)).cuda()
 
 with profile(
     activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
@@ -166,4 +166,14 @@ matfiledata[u'Jacobian_mats'] = ygrad
 scipy.io.savemat(path_outputs+matfile_name, matfiledata)
 
 print('Saved Predictions')
+
+g
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg       CPU Mem  Self CPU Mem      CUDA Mem  Self CUDA Mem    # of Calls
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                            aten::copy_         0.25%     904.000us         0.88%       3.201ms     133.375us     202.869ms        93.31%     202.869ms       8.453ms           0 b           0 b           0 b           0 b            24
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us     202.793ms        93.28%     202.793ms       2.668ms           0 b           0 b           0 b           0 b            76
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+Self CPU time total: 362.746ms
+Self CUDA time total: 217.408ms
 
