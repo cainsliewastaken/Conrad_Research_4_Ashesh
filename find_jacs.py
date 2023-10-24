@@ -79,8 +79,8 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 
 
 
-mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-# mynet = FNO1d(modes, width, time_future, time_history)
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+mynet = FNO1d(modes, width, time_future, time_history)
 mynet.load_state_dict(torch.load(model_path))
 print('model defined')
 print(torch.cuda.memory_allocated())
@@ -122,11 +122,11 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 
 
-# with profile(activities=[ProfilerActivity.CPU ,ProfilerActivity.CUDA], record_shapes=True, profile_memory=True) as prof:
-#     with record_function("model_inference"):
-#       mynet(torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)))
+with profile(activities=[ProfilerActivity.CPU ,ProfilerActivity.CUDA], record_shapes=True, profile_memory=True, with_stack=True) as prof:
+    with record_function("model_inference"):
+      mynet(torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)))
 
-# print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
+print(prof.key_averages().table(sort_by="self_cpu_memory_usage", row_limit=10))
 
 
 for k in range(0,eq_points):
@@ -136,10 +136,10 @@ for k in range(0,eq_points):
   #           print(type(obj), obj.size())
   #   except:
   #       pass
-    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use these 2 lines for MLP networks
+    # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use these 2 lines for MLP networks
     
-    # temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-    # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+    temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
+    ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
     # print(sum(sum(np.abs(ygrad[k,:,:]))))
 
