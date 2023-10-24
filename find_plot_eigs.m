@@ -28,7 +28,7 @@ PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_jacs.mat');
 
 
 direct_step_jacs_untrained = load('Model_output\MLP_KS_Directstep_tendency_lead1_UNTRAINED_jacs.mat');
-PEC_step_jacs_untrained = load('Model_output\MLP_KS_PECstep_tendency_lead1_UNTRAINED_jacs.mat');
+PEC_step_jacs_untrained = load('MLP_KS_PECstep_lead1_UNTRAINED_jacs.mat');
  
 direct_step_jacs_FNO_untrained = load('Model_output\FNO_KS_Directstep_lead1_UNTRAINED_jacs.mat');
 PEC_step_jacs_FNO_untrained =load('Model_output\FNO_KS_PECstep_tendency_lead1_UNTRAINED_jacs.mat');

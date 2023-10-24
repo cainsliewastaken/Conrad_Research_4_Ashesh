@@ -68,6 +68,7 @@ epochs = 100
 batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
+lamda_reg = 0
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
