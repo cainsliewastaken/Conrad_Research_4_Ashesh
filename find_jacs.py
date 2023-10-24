@@ -123,8 +123,7 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 # record_shapes=True, profile_memory=True,
 
 with profile(activities=[ProfilerActivity.CPU ,ProfilerActivity.CUDA],  with_stack=True) as prof:
-    with record_function("model_inference"):
-      mynet(torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)))
+  mynet(torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)))
 
 # print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cpu_memory_usage", row_limit=10))
 print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=10))
@@ -160,5 +159,22 @@ scipy.io.savemat(path_outputs+matfile_name, matfiledata)
 print('Saved Predictions')
 
 
+
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                                   Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg    # of Calls
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+                                            aten::copy_         0.11%     410.000us         0.77%       2.870ms     114.800us     202.888ms        93.67%     202.890ms       8.116ms            25
+void at::native::elementwise_kernel<128, 2, at::nati...         0.00%       0.000us         0.00%       0.000us       0.000us     202.811ms        93.64%     202.811ms       2.669ms            76
+                                              aten::bmm         0.14%     533.000us        60.83%     225.509ms      45.102ms      12.943ms         5.98%     215.695ms      43.139ms             5
+std::enable_if<!(false), void>::type internal::gemvx...         0.00%       0.000us         0.00%       0.000us       0.000us      12.905ms         5.96%      12.905ms       3.226ms             4
+                       Memcpy HtoD (Pageable -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us     244.000us         0.11%     244.000us      40.667us             6
+                                aten::cudnn_convolution        20.57%      76.241ms        26.23%      97.227ms      24.307ms     197.000us         0.09%     197.000us      49.250us             4
+void cutlass::Kernel<cutlass_80_tensorop_s1688gemm_1...         0.00%       0.000us         0.00%       0.000us       0.000us     193.000us         0.09%     193.000us      48.250us             4
+                                            aten::fill_         0.02%      78.000us         1.16%       4.291ms     536.375us      59.000us         0.03%      59.000us       7.375us             8
+void at::native::vectorized_elementwise_kernel<4, at...         0.00%       0.000us         0.00%       0.000us       0.000us      59.000us         0.03%      59.000us       7.375us             8
+                         Memcpy DtoD (Device -> Device)         0.00%       0.000us         0.00%       0.000us       0.000us      52.000us         0.02%      52.000us      13.000us             4
+-------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------
+Self CPU time total: 370.729ms
+Self CUDA time total: 216.588ms
 
 
