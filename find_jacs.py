@@ -130,13 +130,12 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 input = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)).cuda()
 
 with profile(
-    activities=[ProfilerActivity.CPU, ProfilerActivity.CUDA],
     with_stack=True, profile_memory=True
 ) as prof:
     mynet(input)
 
 # Print aggregated stats
-print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=2))
+print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=10))
 
 
 for k in range(0,eq_points):
@@ -166,4 +165,5 @@ matfiledata[u'Jacobian_mats'] = ygrad
 scipy.io.savemat(path_outputs+matfile_name, matfiledata)
 
 print('Saved Predictions')
+
 
