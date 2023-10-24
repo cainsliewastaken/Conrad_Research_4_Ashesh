@@ -127,15 +127,15 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 # # print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cpu_memory_usage", row_limit=10))
 # print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=10))
-input = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)).cuda()
+input_test = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1))
 
 with profile(
     with_stack=True, profile_memory=True
 ) as prof:
-    mynet(input)
+    mynet(input_test)
 
 # Print aggregated stats
-print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=10))
+print(prof.key_averages(group_by_stack_n=50).table(sort_by="self_cuda_time_total", row_limit=10))
 
 
 for k in range(0,eq_points):
