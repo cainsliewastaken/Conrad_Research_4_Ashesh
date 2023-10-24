@@ -147,6 +147,3 @@ class FNO1d(nn.Module):
         return gridx.to(device)
 
 
-
-
-
