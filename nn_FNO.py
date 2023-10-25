@@ -23,7 +23,11 @@ class SpectralConv1d(nn.Module):
         self.out_channels = out_channels
         self.modes = modes
         self.scale = (1 / (in_channels*out_channels))
+        print('pre weights memeory')
+        print(torch.cuda.memory_allocated())
         self.weights = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes, dtype=torch.cfloat))
+        print('post weights memeory')
+        print(torch.cuda.memory_allocated())
 
     # Complex multiplication
     def compl_mul1d(self, input, weights):
@@ -51,6 +55,7 @@ class SpectralConv1d(nn.Module):
         x_ft = torch.fft.rfft(x) 
 
         # Multiply relevant Fourier modes
+        
         out_ft = torch.zeros(batchsize, self.out_channels, self.modes,  device=x.device, dtype=torch.cfloat)
         out_ft[:, :, :] = self.compl_mul1d(x_ft[:, :, :self.modes], self.weights)
 
