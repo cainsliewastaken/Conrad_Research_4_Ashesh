@@ -25,7 +25,7 @@ class SpectralConv1d(nn.Module):
         self.scale = (1 / (in_channels*out_channels))
         print('pre weights memeory')
         print(torch.cuda.memory_allocated())
-        self.weights = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes, dtype=torch.cfloat))
+        self.weights = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes, dtype=torch.cfloat)).cuda()
         print('post weights memeory')
         print(torch.cuda.memory_allocated())
 
