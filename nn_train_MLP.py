@@ -46,8 +46,8 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 num_layers = 3
 
-mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
-# mynet = Cascade_MLP_Net(input_size, hidden_layer_size, output_size, num_layers).cuda()
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
+mynet = Cascade_MLP_Net(input_size, hidden_layer_size, output_size, num_layers).cuda()
 count_parameters(mynet)
 
 
