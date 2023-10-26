@@ -16,8 +16,8 @@ class Cascade_MLP_Net(nn.Module):
         torch.nn.init.xavier_uniform_(self.ol.weight)
 
         self.layers = nn.ModuleList()
-        for i in range(1,num_layers+1): # each hidden layer has size of last + hidden_size
-            self.layers.append((nn.Linear(hidden_layer_size*(i), hidden_layer_size)))
+        for i in range(0,num_layers): # each hidden layer has size of last + hidden_size
+            self.layers.append((nn.Linear(hidden_layer_size*(i+1), hidden_layer_size)))
             torch.nn.init.xavier_uniform_(self.layers[i].weight)
 
         self.tanh = nn.Tanh()
