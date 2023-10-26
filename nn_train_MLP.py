@@ -15,9 +15,9 @@ from nn_Cascade_MLP import Cascade_MLP_Net
 
 lead=1
 
-step_func = PECstep
+step_func = Directstep
 
-net_file_name = 'NN_PECstep_lead'+str(lead)+'_cascade.pt'
+net_file_name = 'NN_Directstep_lead'+str(lead)+'_cascade.pt'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_cascadeMLP/'
 
@@ -52,7 +52,7 @@ count_parameters(mynet)
 
 
 #use two optimizers.  learing rates seem to work.
-optimizer = optim.SGD(mynet.parameters(), lr=0.1)
+optimizer = optim.SGD(mynet.parameters(), lr=0.01)
 
 loss_fn = nn.MSELoss()
 epochs = 100
