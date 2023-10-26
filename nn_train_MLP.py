@@ -44,7 +44,7 @@ label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().
 label_test = np.transpose(data[:,trainN+lead:])
 
 
-num_layers = 4
+num_layers = 3
 
 # mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
 mynet = Cascade_MLP_Net(input_size, hidden_layer_size, output_size, num_layers).cuda()
