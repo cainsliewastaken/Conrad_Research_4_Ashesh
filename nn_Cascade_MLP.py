@@ -27,7 +27,7 @@ class Cascade_MLP_Net(nn.Module):
         x_state = self.tanh(self.il(x))
         for i in range(0,self.num_layers-1):
             x_out = self.tanh(self.layers[i](x_state))#concatenate each new hidden layer with all previous layers
-            x_state = torch.cat(x_state, x_out, dim=-1) #dont do this for last hidden layer
+            x_state = torch.cat([x_state, x_out], dim=-1) #dont do this for last hidden layer
         x_out = self.tanh(self.layers[-1](x_state))
         out =self.ol(x_out)
         return out
