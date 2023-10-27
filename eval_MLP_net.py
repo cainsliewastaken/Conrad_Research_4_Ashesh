@@ -21,7 +21,7 @@ lead=1
 time_step = 1e-3
 trainN=150000 #dont explicitly need this as no training is done in file, here to help separate training data from eval data
 input_size = 1024
-hidden_layer_size = 2000
+hidden_layer_size = 1500
 output_size = 1024
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
@@ -43,7 +43,7 @@ input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda(
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
 label_test = np.transpose(data[:,trainN+lead:])
 
-num_layers = 3
+num_layers = 4
 
 # my_net_MLP = MLP_Net(input_size, hidden_layer_size, output_size)
 my_net_MLP = Cascade_MLP_Net(input_size, hidden_layer_size, output_size, num_layers).cuda()
