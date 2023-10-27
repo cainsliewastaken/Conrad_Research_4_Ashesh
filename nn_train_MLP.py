@@ -19,7 +19,7 @@ step_func = PECstep
 
 net_file_name = 'NN_PECstep_lead'+str(lead)+'.pt'
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_CascadeMLP/'
 
 
 
@@ -49,8 +49,8 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 
-mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
-# mynet = Cascade_MLP_Net(input_size, hidden_layer_size_cascade, output_size, num_layers).cuda()
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
+mynet = Cascade_MLP_Net(input_size, hidden_layer_size_cascade, output_size, num_layers).cuda()
 count_parameters(mynet)
 
 
