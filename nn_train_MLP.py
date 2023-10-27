@@ -55,7 +55,7 @@ count_parameters(mynet)
 optimizer = optim.SGD(mynet.parameters(), lr=0.1)
 
 loss_fn = nn.MSELoss()
-epochs = 100
+epochs = 200
 batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
