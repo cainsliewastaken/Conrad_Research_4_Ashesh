@@ -15,7 +15,7 @@ import pickle
 import matplotlib.pyplot as plt
 from nn_MLP import MLP_Net
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
-
+from nn_Cascade_MLP import Cascade_MLP_Net
 
 lead=1
 time_step = 1e-3
@@ -26,13 +26,13 @@ output_size = 1024
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/' #this is where the saved graphs and .mat files end up
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_cascadeMLP/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_PECstep_lead1_tendency.pt" #change this to use a different network
+net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_PECstep_lead1_cascade.pt" #change this to use a different network
 
 step_func = PECstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-eval_output_name = 'predicted_PECstep_1024_tendency_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_PECstep_1024_cascade_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
     data = pickle.load(f)
@@ -43,7 +43,10 @@ input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda(
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
 label_test = np.transpose(data[:,trainN+lead:])
 
+num_layers = 3
+
 my_net_MLP = MLP_Net(input_size, hidden_layer_size, output_size)
+mynet = Cascade_MLP_Net(input_size, hidden_layer_size, output_size, num_layers).cuda()
 my_net_MLP.load_state_dict(torch.load(net_file_name))
 my_net_MLP.cuda()
 print('Model loaded')
