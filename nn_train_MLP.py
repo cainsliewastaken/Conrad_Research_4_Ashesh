@@ -17,7 +17,7 @@ lead=1
 
 step_func = PECstep
 
-net_file_name = 'NN_PECstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_PECstep_lead'+str(lead)+'_cascade.pt'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_CascadeMLP/'
 
