@@ -55,7 +55,14 @@ count_parameters(mynet)
 
 
 #use two optimizers.  learing rates seem to work.
-optimizer = optim.SGD(mynet.parameters(), lr=0.1)
+# optimizer = optim.SGD(mynet.parameters(), lr=0.005)
+
+learning_rate = 0.0001
+lr_decay = 0.4
+optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate)
+scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15], gamma=lr_decay)
+
+
 
 loss_fn = nn.MSELoss()
 epochs = 200
