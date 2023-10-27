@@ -17,9 +17,9 @@ lead=1
 
 step_func = PECstep
 
-net_file_name = 'NN_PECstep_lead'+str(lead)+'_cascade.pt'
+net_file_name = 'NN_PECstep_lead'+str(lead)+'.pt'
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_cascadeMLP/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
 
 
@@ -34,7 +34,11 @@ time_step = 1e-3
 trainN = 150000
 input_size = 1024
 output_size = 1024
-hidden_layer_size = 1024
+hidden_layer_size = 2000
+hidden_layer_size_cascade = 1024
+num_layers = 6
+
+
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
 du_label_torch = input_train_torch - label_train_torch
@@ -44,10 +48,9 @@ label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().
 label_test = np.transpose(data[:,trainN+lead:])
 
 
-num_layers = 6
 
-# mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
-mynet = Cascade_MLP_Net(input_size, hidden_layer_size, output_size, num_layers).cuda()
+mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
+# mynet = Cascade_MLP_Net(input_size, hidden_layer_size_cascade, output_size, num_layers).cuda()
 count_parameters(mynet)
 
 
