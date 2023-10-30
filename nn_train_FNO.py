@@ -67,7 +67,6 @@ epochs = 60
 batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
-lamda_reg = 0
 
 # loss_fn = nn.MSELoss().cuda()
 loss_fc = spectral_loss
