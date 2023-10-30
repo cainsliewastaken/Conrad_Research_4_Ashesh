@@ -36,7 +36,7 @@ input_size = 1024
 output_size = 1024
 hidden_layer_size = 2000
 hidden_layer_size_cascade = 1024
-num_layers = 6
+num_layers = 8
 
 
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
