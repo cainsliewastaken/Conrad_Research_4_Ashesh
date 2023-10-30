@@ -92,6 +92,7 @@ for ep in range(0, epochs+1):
         
 
         optimizer.step()
+        print(step)
 
 
     if ep % 10 == 0:
