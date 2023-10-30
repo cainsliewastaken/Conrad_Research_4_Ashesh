@@ -70,6 +70,7 @@ lamda_reg = 5
 
 # loss_fn = nn.MSELoss().cuda()
 loss_fc = spectral_loss
+torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
@@ -98,3 +99,4 @@ for ep in range(0, epochs+1):
         print ('Loss', loss)
 
 torch.save(mynet.state_dict(), net_file_name)
+torch.set_printoptions(precision=4)
