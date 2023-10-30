@@ -22,8 +22,8 @@ time_step = 1e-3
 trainN = 150000 #dont explicitly need this as no training is done in file, here to help separate training data from eval data
 input_size = 1024
 hidden_layer_size = 2000
-num_layers = 12
-hidden_layer_size_cascade = 256
+num_layers = 6
+hidden_layer_size_cascade = 1024
 output_size = 1024
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
