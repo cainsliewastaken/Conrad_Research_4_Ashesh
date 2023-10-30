@@ -29,7 +29,7 @@ path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
 model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1_tendency.pt"
 
-matfile_name = 'FNO_KS_PECstep_tendency_lead'+str(lead)+'_UNTRAINED_jacs.mat'
+matfile_name = 'FNO_KS_Directstep_tendency_lead'+str(lead)+'_UNTRAINED_jacs.mat'
 
 
 print('loading data')
@@ -81,7 +81,7 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 
 # mynet = MLP_Net(input_size, hidden_layer_size, output_size)
 mynet = FNO1d(modes, width, time_future, time_history)
-# mynet.load_state_dict(torch.load(model_path))
+mynet.load_state_dict(torch.load(model_path))
 print('model defined')
 print(torch.cuda.memory_allocated())
 mynet.cuda()
@@ -127,15 +127,15 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 # # print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cpu_memory_usage", row_limit=10))
 # print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=10))
-input_test = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1))
+# input_test = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1))
 
-with profile(
-    with_stack=True, profile_memory=True
-) as prof:
-    mynet(input_test)
+# with profile(
+#     with_stack=True, profile_memory=True
+# ) as prof:
+#     mynet(input_test)
 
-# Print aggregated stats
-print(prof.key_averages(group_by_stack_n=50).table(sort_by="self_cuda_time_total", row_limit=10))
+# # Print aggregated stats
+# print(prof.key_averages(group_by_stack_n=50).table(sort_by="self_cuda_time_total", row_limit=10))
 
 
 for k in range(0,eq_points):
