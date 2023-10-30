@@ -70,7 +70,7 @@ lamda_reg = 5
 lamda_reg = 0
 
 # loss_fn = nn.MSELoss().cuda()
-loss_fc = spectral_loss.cuda()
+loss_fc = spectral_loss
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
