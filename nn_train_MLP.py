@@ -35,7 +35,7 @@ trainN = 150000
 input_size = 1024
 output_size = 1024
 hidden_layer_size = 2000
-hidden_layer_size_cascade = 512
+hidden_layer_size_cascade = 700
 num_layers = 10
 
 
