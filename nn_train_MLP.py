@@ -17,9 +17,9 @@ lead=1
 
 step_func = PECstep
 
-net_file_name = 'NN_PECstep_lead'+str(lead)+'_cascade.pt'
+net_file_name = 'NN_PECstep_lead'+str(lead)+'_tendency.pt'
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_CascadeMLP/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
 
 
 
@@ -49,8 +49,8 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 
-# mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
-mynet = Cascade_MLP_Net(input_size, hidden_layer_size_cascade, output_size, num_layers).cuda()
+mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
+# mynet = Cascade_MLP_Net(input_size, hidden_layer_size_cascade, output_size, num_layers).cuda()
 count_parameters(mynet)
 
 
@@ -81,9 +81,9 @@ for ep in range(0, epochs+1):
         outputs = step_func(mynet, input_batch, time_step)
         outputs_2 = step_func(mynet, outputs, time_step)
 
-        loss = loss_fn(outputs, label_batch)
+        # loss = loss_fn(outputs, label_batch)
 
-        # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         optimizer.step()
