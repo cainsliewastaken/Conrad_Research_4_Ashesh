@@ -23,7 +23,7 @@ trainN = 150000 #dont explicitly need this as no training is done in file, here 
 input_size = 1024
 hidden_layer_size = 2000
 num_layers = 12
-hidden_layer_size_cascade = 512
+hidden_layer_size_cascade = 256
 output_size = 1024
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
