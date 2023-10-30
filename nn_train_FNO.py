@@ -63,12 +63,14 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 
 
 
-loss_fn = nn.MSELoss()
 epochs = 100
 batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
 lamda_reg = 0
+
+# loss_fn = nn.MSELoss().cuda()
+loss_fc = spectral_loss.cuda()
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
@@ -84,7 +86,7 @@ for ep in range(0, epochs+1):
         outputs_2 = step_func(mynet, outputs, time_step)
 
         # loss = loss_fn(outputs, label_batch)
-        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         
