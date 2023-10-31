@@ -1,17 +1,17 @@
-direct_step = load('predicted_Directstep_1024_lead1_skip100.mat');
-direct_step = load('predicted_PECstep_1024_cascade_lead1_skip100.mat');
-PEC_step = load('predicted_PECstep_1024_lead1_skip100.mat');
-
-
-direct_step_FNO = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
-PEC_step_FNO = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
-
-% direct_step = load('predicted_Directstep_1024_tendency_lead1_skip100.mat');
-% PEC_step = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
+% direct_step = load('predicted_Directstep_1024_lead1_skip100.mat');
+% % direct_step = load('predicted_PECstep_1024_cascade_lead1_skip100.mat');
+% PEC_step = load('predicted_PECstep_1024_lead1_skip100.mat');
 % 
 % 
-% direct_step_FNO = load('predicted_Directstep_1024_FNO_tendency_lead1_skip100.mat');
-% PEC_step_FNO = load('predicted_PECstep_1024_FNO_tendency_lead1_skip100.mat');
+% direct_step_FNO = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
+% PEC_step_FNO = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
+
+direct_step = load('predicted_Directstep_1024_tendency_lead1_skip100.mat');
+PEC_step = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
+
+
+direct_step_FNO = load('predicted_Directstep_1024_FNO_tendency_lead1_skip100.mat');
+PEC_step_FNO = load('predicted_PECstep_1024_FNO_tendency_lead1_skip100.mat');
 
 
 
@@ -27,7 +27,7 @@ loglog([0:511],direct_step.pred_FFT_x(1,1:512),'Linewidth',2,'DisplayName','Dire
 
 loglog([0:511],PEC_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2,'DisplayName','PEC FNO');
 
-loglog([0:511],direct_step_FNO.pred_FFT_x(1,1:512),'Linewidth',2, 'DisplayName','Direct FNO');
+loglog([0:511],direct_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2, 'DisplayName','Direct FNO');
 xticks(xticks*100)
 
 legend(Location='southwest')
