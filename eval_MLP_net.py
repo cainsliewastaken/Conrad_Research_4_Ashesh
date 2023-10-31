@@ -46,8 +46,8 @@ label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().
 label_test = np.transpose(data[:,trainN+lead:])
 
 
-# my_net_MLP = MLP_Net(input_size, hidden_layer_size, output_size)
-my_net_MLP = Cascade_MLP_Net(input_size, hidden_layer_size_cascade, output_size, num_layers).cuda()
+my_net_MLP = MLP_Net(input_size, hidden_layer_size, output_size)
+# my_net_MLP = Cascade_MLP_Net(input_size, hidden_layer_size_cascade, output_size, num_layers).cuda()
 my_net_MLP.load_state_dict(torch.load(net_file_name))
 my_net_MLP.cuda()
 print('Model loaded')
