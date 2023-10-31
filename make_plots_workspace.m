@@ -27,7 +27,7 @@ loglog([0:511],direct_step.pred_FFT_x(1,1:512),'Linewidth',2,'DisplayName','Dire
 
 loglog([0:511],PEC_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2,'DisplayName','PEC FNO');
 
-loglog([0:511],direct_step_FNO.pred_FFT_dx(1,1:512),'Linewidth',2, 'DisplayName','Direct FNO');
+loglog([0:511],direct_step_FNO.pred_FFT_x(1,1:512),'Linewidth',2, 'DisplayName','Direct FNO');
 xticks(xticks*100)
 
 legend(Location='southwest')
@@ -56,7 +56,7 @@ legend(Location='northwest')
 
 
 Truth = (direct_step.Truth);
-prediction = direct_step.prediction;
+prediction = direct_step_FNO.prediction;
 
 
 set(0, 'DefaultAxesFontSize', 20)
