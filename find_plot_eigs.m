@@ -98,8 +98,6 @@ PEC_step_jacs_FNO_untrained =load('FNO_KS_PECstep_tendency_lead1_UNTRAINED_jacs.
 % xlabel('$Re(\lambda)$','Interpreter','latex')
 % ylabel('$Im(\lambda)$','Interpreter','latex')
 % 
-% 
-% 
 % figure(14)
 % clf
 % set(0, 'DefaultAxesFontSize', 20)
@@ -115,7 +113,7 @@ PEC_step_jacs_FNO_untrained =load('FNO_KS_PECstep_tendency_lead1_UNTRAINED_jacs.
 % 
 % xlabel('$Re(\lambda)$','Interpreter','latex')
 % ylabel('$Im(\lambda)$','Interpreter','latex')
-% 
+
 
 
 
@@ -125,9 +123,9 @@ clf
 % p = histcounts(abs(e_direct),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct), Normalization="pdf")
+histogram(abs(e_direct),100, Normalization="pdf")
 hold on
-histogram(abs(e_direct_un), Normalization="pdf")
+histogram(abs(e_direct_un), 100,Normalization="pdf")
 MarchenkoPasturLaw(100, 1024, 1024, abs(e_direct_un))
 legend('Direct Eigvals','Direct untrained','Marchenko Pastur',fontsize=10)
 
@@ -137,9 +135,9 @@ clf
 % p = histcounts(abs(e_PEC),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC-1)/1e-3, Normalization="pdf")
+histogram(abs(e_PEC-1)/1e-3100, Normalization="pdf")
 hold on
-histogram(abs(e_PEC_un-1)/1e-3, Normalization="pdf")
+histogram(abs(e_PEC_un-1)/1e-3,100, Normalization="pdf")
 MarchenkoPasturLaw(101, 1024, 1024, abs(e_PEC_un-1)/1e-3)
 legend('PEC Eigvals','PEC untrained','Marchenko Pastur',fontsize=10)
 
@@ -149,9 +147,9 @@ clf
 % p = histcounts(abs(e_direct),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct_FNO), Normalization="pdf")
+histogram(abs(e_direct_FNO), 100,Normalization="pdf")
 hold on
-histogram(abs(e_direct_FNO_un), Normalization="pdf")
+histogram(abs(e_direct_FNO_un),100, Normalization="pdf")
 MarchenkoPasturLaw(102, 1024, 1024, abs(e_direct_FNO_un))
 legend('Direct FNO Eigvals','Direct FNO untrained','Marchenko Pastur',fontsize=10)
 
@@ -162,9 +160,9 @@ clf
 % p = histcounts(abs(e_PEC),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_FNO-1)/1e-3, Normalization="pdf")
+histogram(abs(e_PEC_FNO-1)/1e-3,100, Normalization="pdf")
 hold on
-histogram(abs(e_PEC_FNO_un-1)/1e-3, Normalization="pdf")
+histogram(abs(e_PEC_FNO_un-1)/1e-3, 100,Normalization="pdf")
 MarchenkoPasturLaw(103, 1024, 1024, abs(e_PEC_FNO_un-1)/1e-3)
 legend('PEC FNO Eigvals','PEC FNO untrained','Marchenko Pastur',fontsize=10)
 
@@ -174,7 +172,7 @@ clf
 % p = histcounts(real(e_PEC),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct), Normalization="pdf")
+histogram(abs(e_direct),100,Normalization="pdf")
 MarchenkoPasturLaw(3, 1024, 1024, abs(e_direct_un))
 legend('Direct Eigvals','Marchenko Pastur',fontsize=10)
 
@@ -184,7 +182,7 @@ clf
 % p = histcounts(real(e_PEC),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC-1)/1e-3, Normalization="pdf")
+histogram(abs(e_PEC-1)/1e-3, 100, Normalization="pdf")
 MarchenkoPasturLaw(4, 1024, 1024, abs(e_PEC_un-1)/1e-3)
 
 legend('PEC Eigvals','Marchenko Pastur',fontsize=10)
@@ -197,7 +195,7 @@ clf
 % p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct_FNO), Normalization="pdf")
+histogram(abs(e_direct_FNO),100, Normalization="pdf")
 MarchenkoPasturLaw(5, 1024, 1024, abs(e_direct_FNO_un))
 
 legend('Direct Eigvals FNO','Marchenko Pastur',fontsize=10)
@@ -209,7 +207,7 @@ clf
 % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_FNO-1)/1e-3, Normalization="pdf")
+histogram(abs(e_PEC_FNO-1)/1e-3, 100, Normalization="pdf")
 MarchenkoPasturLaw(6, 1024, 1024, abs(e_PEC_FNO_un-1)/1e-3)
 
 legend('PEC Eigvals FNO','Marchenko Pastur',fontsize=10)
@@ -221,7 +219,7 @@ clf
 % p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct_FNO_un), Normalization="pdf")
+histogram(abs(e_direct_FNO_un), 100, Normalization="pdf")
 MarchenkoPasturLaw(7, 1024, 1024, abs(e_direct_FNO_un))
 
 legend('Direct Eigvals FNO Untrained','Marchenko Pastur',fontsize=10)
@@ -233,7 +231,7 @@ clf
 % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_FNO_un-1)/1e-3, Normalization="pdf")
+histogram(abs(e_PEC_FNO_un-1)/1e-3, 100, Normalization="pdf")
 MarchenkoPasturLaw(8, 1024, 1024, abs(e_PEC_FNO_un-1)/1e-3)
 
 legend('PEC Eigvals FNO Untrained','Marchenko Pastur',fontsize=10)
@@ -245,7 +243,7 @@ clf
 % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct_un), Normalization="pdf")
+histogram(abs(e_direct_un),100, Normalization="pdf")
 MarchenkoPasturLaw(9, 1024, 1024, abs(e_direct_un))
 
 legend('Direct MLP Eigvals Untrained','Marchenko Pastur',fontsize=10)
@@ -257,7 +255,7 @@ clf
 % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_un-1)/1e-3, Normalization="pdf")
+histogram(abs(e_PEC_un-1)/1e-3, 100, Normalization="pdf")
 MarchenkoPasturLaw(10, 1024, 1024, abs(e_PEC_un-1)/1e-3)
 legend('PEC MLP Eigvals Untrained','Marchenko Pastur',fontsize=10)
 
