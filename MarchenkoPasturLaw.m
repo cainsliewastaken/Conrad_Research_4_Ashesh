@@ -23,13 +23,13 @@ Q=N/T;
 % number of points for measurement.
 n=2500;
 
-
-sigma = sqrt(var(eigs));
-print(sigma)
-
+% sigma = 1;
+% sigma = sqrt(var(eigs));
+% sprintf("%d",sigma)
+% 
 lmax = max(eigs);
-sigma = sqrt(lmax/(1 + 1/sqrt(Q))^2);
-print(sigma)
+sigma = sqrt(lmax/(1 + (1/sqrt(Q)))^2);
+% sprintf("%d",sigma)
 
 a=(sigma*(1-sqrt(Q))).^2;
 b=(sigma*(1+sqrt(Q))).^2;
