@@ -27,9 +27,9 @@ import gc
 lead = 1
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1.pt"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1.pt"
 
-matfile_name = 'FNO_KS_Directstep_lead'+str(lead)+'_jacs.mat'
+matfile_name = 'FNO_KS_PECstep_lead'+str(lead)+'_jacs.mat'
 
 
 print('loading data')
@@ -112,7 +112,7 @@ def PECstep(input_batch):
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
 # print(torch.cuda.memory_allocated())
-step_func = Directstep
+step_func = PECstep
 
 # print(torch.cuda.memory_allocated())
 
