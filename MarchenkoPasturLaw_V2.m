@@ -1,4 +1,4 @@
-function MarchenkoPasturLaw(fig, N, T, eigs)
+function MarchenkoPasturLaw_V2(fig, N, T, jac_mat)
 % Marchenko Pastur Distribution
 
 % In Random Matrix Theory, MP law gives the probability density function
@@ -13,7 +13,7 @@ function MarchenkoPasturLaw(fig, N, T, eigs)
 
 % Ref :
 % Marchenko,V. A., Pastur, L. A. (1967) "Distribution of eigenvalues for some sets of
-% random matrices", Mat. Sb. (N.S.), 72(114):4, 507–536
+% random matrices", Mat. Sb. (N.S.), 72(114):4, 507â€“536
 
 % (c) Youssef KHMOU, Applied Mathematics ,30 January,2015.
 
@@ -22,23 +22,17 @@ Q=N/T;
 
 % number of points for measurement.
 n=2500;
+sigma = var(jac_mat);
 
 
-sigma = sqrt(var(eigs));
-print(sigma)
-
-lmax = max(eigs);
-sigma = sqrt(lmax/(1 + 1/sqrt(Q))^2);
-print(sigma)
-
-a=(sigma*(1-sqrt(Q))).^2;
-b=(sigma*(1+sqrt(Q))).^2;
+a=sigma*(1-sqrt(Q)).^2;
+b=sigma*(1+sqrt(Q)).^2;
 
 
 lambda=linspace(a,b,n);
 % Normalization
 % Theoretical pdf
-ft=@(lambda,a,b,c) sqrt((b-lambda).*(lambda-a))./(2*pi*lambda*Q*sigma.^2);
+ft=@(lambda,a,b,c) sqrt(max(b-lambda,0).*max(lambda-a,0))./(2*pi*lambda*Q*sigma.^2);
 F=ft(lambda,a,b,Q);
 % Processing numerical pdf
 F(isnan(F))=0;
