@@ -62,12 +62,12 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 
 
 
-epochs = 60
+epochs = 2
 batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
 
-loss_fn = nn.MSELoss().cuda()
+loss_fn = nn.MSELoss()
 # loss_fc = spectral_loss
 torch.set_printoptions(precision=10)
 
