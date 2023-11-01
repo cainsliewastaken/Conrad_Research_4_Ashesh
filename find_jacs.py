@@ -27,9 +27,9 @@ import gc
 lead = 1
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Directstep_lead1_tendency.pt"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1.pt"
 
-matfile_name = 'MLP_KS_Directstep_tendency_lead'+str(lead)+'_UNTRAINED_jacs.mat'
+matfile_name = 'FNO_KS_Directstep_tendency_lead'+str(lead)+'_jacs.mat'
 
 
 print('loading data')
@@ -79,9 +79,9 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 
 
 
-mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-# mynet = FNO1d(modes, width, time_future, time_history)
-# mynet.load_state_dict(torch.load(model_path))
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+mynet = FNO1d(modes, width, time_future, time_history)
+mynet.load_state_dict(torch.load(model_path))
 print('model defined')
 print(torch.cuda.memory_allocated())
 mynet.cuda()
@@ -120,35 +120,12 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 
 
-# record_shapes=True, profile_memory=True,
-
-# with profile(activities=[ProfilerActivity.CPU ,ProfilerActivity.CUDA],  with_stack=True) as prof:
-#   mynet(torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1)))
-
-# # print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cpu_memory_usage", row_limit=10))
-# print(prof.key_averages(group_by_stack_n=5).table(sort_by="self_cuda_time_total", row_limit=10))
-# input_test = torch.reshape(input_test_torch[0,:].cuda(),(1,input_size,1))
-
-# with profile(
-#     with_stack=True, profile_memory=True
-# ) as prof:
-#     mynet(input_test)
-
-# # Print aggregated stats
-# print(prof.key_averages(group_by_stack_n=50).table(sort_by="self_cuda_time_total", row_limit=10))
-
-
 for k in range(0,eq_points):
-  # for obj in gc.get_objects():
-  #   try:
-  #       if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
-  #           print(type(obj), obj.size())
-  #   except:
-  #       pass
-    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use these 2 lines for MLP networks
+
+    # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
     
-    # temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-    # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+    temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
+    ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
     # print(sum(sum(np.abs(ygrad[k,:,:]))))
 
