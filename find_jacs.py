@@ -27,9 +27,9 @@ import gc
 lead = 1
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1_tendency.pt"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Directstep_lead1_tendency.pt"
 
-matfile_name = 'FNO_KS_PECstep_lead'+str(lead)+'_UNTRAINED_jacs.mat'
+matfile_name = 'MLP_KS_Directstep_lead'+str(lead)+'_tendency_jacs.mat'
 
 
 print('loading data')
@@ -79,11 +79,11 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 
 
 
-# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-mynet = FNO1d(modes, width, time_future, time_history)
-# mynet.load_state_dict(torch.load(model_path))
-# print('model defined')
-# print(torch.cuda.memory_allocated())
+mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+# mynet = FNO1d(modes, width, time_future, time_history)
+mynet.load_state_dict(torch.load(model_path))
+print('model defined')
+print(torch.cuda.memory_allocated())
 mynet.cuda()
 print('model cuda')
 print(torch.cuda.memory_allocated())
@@ -112,7 +112,7 @@ def PECstep(input_batch):
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
 # print(torch.cuda.memory_allocated())
-step_func = PECstep
+step_func = Directstep
 
 # print(torch.cuda.memory_allocated())
 
@@ -122,10 +122,10 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
 
-    # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
+    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
     
-    temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-    ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+    # temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
+    # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
     # print(sum(sum(np.abs(ygrad[k,:,:]))))
 
