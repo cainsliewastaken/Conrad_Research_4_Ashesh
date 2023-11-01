@@ -17,9 +17,9 @@ lead=1
 
 step_func = Directstep
 
-net_file_name = 'NN_Directstep_lead'+str(lead)+'_tendency.pt'
+net_file_name = 'NN_Directstep_lead'+str(lead)+'.pt'
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
 
 
@@ -81,9 +81,9 @@ for ep in range(0, epochs+1):
         outputs = step_func(mynet, input_batch, time_step)
         outputs_2 = step_func(mynet, outputs, time_step)
 
-        # loss = loss_fn(outputs, label_batch)
+        loss = loss_fn(outputs, label_batch)
 
-        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         optimizer.step()
