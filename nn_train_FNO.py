@@ -14,11 +14,11 @@ from nn_spectral_loss import spectral_loss
 
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/'
 
-step_func = Directstep
+step_func = PECstep
 
-net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_FNO_PECstep_lead'+str(lead)+'.pt'
 
 
 
