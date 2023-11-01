@@ -18,7 +18,7 @@ path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = Directstep
 
-net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency.pt'
+net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'.pt'
 
 
 
@@ -68,8 +68,8 @@ batch_size = 100
 wavenum_init = 100
 lamda_reg = 1
 
-# loss_fn = nn.MSELoss().cuda()
-loss_fc = spectral_loss
+loss_fn = nn.MSELoss().cuda()
+# loss_fc = spectral_loss
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
@@ -85,8 +85,8 @@ for ep in range(0, epochs+1):
         outputs = step_func(mynet, input_batch, time_step)
         outputs_2 = step_func(mynet, outputs, time_step)
 
-        # loss = loss_fn(outputs, label_batch)
-        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        loss = loss_fn(outputs, label_batch)
+        # loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         
