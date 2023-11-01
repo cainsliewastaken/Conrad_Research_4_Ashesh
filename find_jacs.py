@@ -65,7 +65,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 512 # number of Fourier modes to multiply
-width = 32 # input and output chasnnels to the FNO layer
+width = 64 # input and output chasnnels to the FNO layer
 
 
 
