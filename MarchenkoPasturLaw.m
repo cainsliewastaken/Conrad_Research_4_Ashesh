@@ -36,6 +36,7 @@ b=(sigma*(1+sqrt(Q))).^2;
 
 
 lambda=linspace(a,b,n);
+lambda = lambda(2:end);
 % Normalization
 % Theoretical pdf
 ft=@(lambda,a,b,c) sqrt((b-lambda).*(lambda-a))./(2*pi*lambda*Q*sigma.^2);
