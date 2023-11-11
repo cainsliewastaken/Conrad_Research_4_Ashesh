@@ -94,14 +94,8 @@ class FNO1d(nn.Module):
         self.fc2 = nn.Linear(128, self.time_future).cuda()
 
     def forward(self, u):
-        # print('pre grid mem')
-        # print(torch.cuda.memory_allocated())
         grid = self.get_grid(u.shape, u.device)
-        # print("pre concat /post grid mem=")
-        # print(torch.cuda.memory_allocated())
         x = torch.cat((u, grid), dim=-1)
-        # print("post concat mem=")
-        # print(torch.cuda.memory_allocated())
         x = self.fc0(x)
         x = x.permute(0, 2, 1)
 

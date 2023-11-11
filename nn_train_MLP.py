@@ -79,10 +79,11 @@ for ep in range(0, epochs+1):
         #pick a random boundary batch
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
-        outputs_2 = step_func(mynet, outputs, time_step)
-
+        
         # loss = loss_fn(outputs, label_batch)
 
+        
+        outputs_2 = step_func(mynet, outputs, time_step)
         loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)

@@ -4,12 +4,12 @@ PEC_step_jacs = load('MLP_KS_PECstep_lead1_jacs.mat');
 direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_jacs.mat');
 PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_jacs.mat');
 
-% 
-% direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
-% PEC_step_jacs = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
-% 
-% direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
-% PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
+
+direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
+PEC_step_jacs = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
+
+direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
+PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
 
 
 [v_direct, e_direct] = eig(squeeze(direct_step_jacs.Jacobian_mats(1,:,:)));

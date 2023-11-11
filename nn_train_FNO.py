@@ -67,8 +67,8 @@ batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
 
-loss_fn = nn.MSELoss()
-# loss_fc = spectral_loss
+# loss_fn = nn.MSELoss()
+loss_fc = spectral_loss
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
@@ -77,15 +77,16 @@ for ep in range(0, epochs+1):
         input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
         label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
-        du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
+        # du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
 
         #pick a random boundary batch
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
-        # outputs_2 = step_func(mynet, outputs, time_step)
+        
+        # loss = loss_fn(outputs, label_batch)
 
-        loss = loss_fn(outputs, label_batch)
-        # loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        outputs_2 = step_func(mynet, outputs, time_step)
+        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         
