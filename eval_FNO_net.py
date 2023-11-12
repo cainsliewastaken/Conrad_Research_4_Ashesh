@@ -22,10 +22,10 @@ lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1.pt"
+net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1.pt"
 #change this to use a different network
 
-step_func = Directstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = PECstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
 eval_output_name = 'predicted_Directstep_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
