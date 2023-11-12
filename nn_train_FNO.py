@@ -94,7 +94,7 @@ for ep in range(0, epochs+1):
         optimizer.step()
 
 
-    if ep % 10 == 0:
+    if ep % 5 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
 
