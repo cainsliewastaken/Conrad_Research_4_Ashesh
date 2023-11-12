@@ -77,7 +77,7 @@ for ep in range(0, epochs+1):
         input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
         label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
-        # du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
+        du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
 
         #pick a random boundary batch
         optimizer.zero_grad()
