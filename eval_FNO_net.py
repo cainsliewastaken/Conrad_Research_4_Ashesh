@@ -21,14 +21,14 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/' #this is where the saved graphs and .mat files end up
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1.pt"
+net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1_tendency.pt"
 #change this to use a different network
 
 step_func = Directstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-eval_output_name = 'predicted_Directstep_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_Directstep_1024_FNO_tendency_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change based on eval data location.
     data = pickle.load(f)
@@ -74,7 +74,7 @@ for k in range(0,M):
 
         net_output = step_func(my_net_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)), time_step)
         net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
-        print(sum(net_pred))
+        print(sum(sum(net_pred)))
 
     else:
 
