@@ -41,7 +41,10 @@ loglog([0:511],PEC_step.Truth_FFT_dt(1,1:512),'-r','Linewidth',4);
 hold on;
 loglog([0:511],PEC_step.pred_FFT_dt(1,1:512),'Linewidth',2);
 loglog([0:511],direct_step.pred_FFT_dt(1,1:512),'-k','Linewidth',2);
-legend('Truth','PEC Net','Direct Net', Location='southwest')
+loglog([0:511],direct_step_FNO.pred_FFT_dt(1,1:512),'-r','Linewidth',2);
+loglog([0:511],PEC_step_FNO.pred_FFT_dt(1,1:512),'-b','Linewidth',2);
+
+legend('Truth','PEC Net','Direct Net','Direct FNO','PEC FNO', Location='southwest')
 title('Fspec dt')
 
 figure(3)
@@ -55,8 +58,8 @@ legend(Location='northwest')
 % axis([1 10 -.5 5])
 
 
-Truth = direct_step_FNO.Truth;
-prediction = direct_step_FNO.prediction;
+Truth = direct_step.Truth;
+prediction = PEC_step_FNO.prediction;
 
 
 set(0, 'DefaultAxesFontSize', 20)
