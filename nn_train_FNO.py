@@ -100,3 +100,4 @@ for ep in range(0, epochs+1):
 
 torch.save(mynet.state_dict(), net_file_name)
 torch.set_printoptions(precision=4)
+print("Model Saved")
