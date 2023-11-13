@@ -10,6 +10,7 @@ direct_step = load('predicted_Directstep_1024_tendency_lead1_skip100.mat');
 PEC_step = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
 
 direct_step_FNO = load('predicted_Directstep_1024_FNO_tendency_lead1_skip100.mat');
+
 PEC_step_FNO = load('predicted_PECstep_1024_FNO_tendency_lead1_skip100.mat');
 
 
