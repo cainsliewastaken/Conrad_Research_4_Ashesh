@@ -76,23 +76,28 @@ for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.arange(start=step, step=1,stop=step+batch_size) #use a block of training data
         input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
-        input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
-        label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
-        du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
+        # input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
+        # label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
+        # du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
 
-        #pick a random boundary batch
-        optimizer.zero_grad()
-        outputs = step_func(mynet, input_batch, time_step)
-        
-        # loss = loss_fn(outputs, label_batch)
+        for time_step in range(0, batch_size):
+            
 
-        outputs_2 = step_func(mynet, outputs, time_step)
-        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
-        loss.backward(retain_graph=True)
-        
 
-        optimizer.step()
+            #pick a random boundary batch
+            optimizer.zero_grad()
+            outputs = step_func(mynet, input_batch, time_step)
+            
+            # loss = loss_fn(outputs, label_batch)
+
+            outputs_2 = step_func(mynet, outputs, time_step)
+            loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+
+            loss.backward(retain_graph=True)
+            
+
+            optimizer.step()
 
 
     if ep % 5 == 0:
