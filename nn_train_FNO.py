@@ -65,7 +65,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 epochs = 60
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 0
+lamda_reg = 0.1
 
 # loss_fn = nn.MSELoss()
 loss_fc = spectral_loss
