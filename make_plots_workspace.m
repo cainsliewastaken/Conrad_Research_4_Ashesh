@@ -59,7 +59,7 @@ legend(Location='northwest')
 
 
 Truth = direct_step.Truth;
-prediction = PEC_step_FNO.prediction;
+prediction = direct_step.prediction;
 
 
 set(0, 'DefaultAxesFontSize', 20)
