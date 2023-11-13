@@ -14,11 +14,11 @@ from nn_spectral_loss import spectral_loss
 
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = Directstep
 
-net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency.pt'
 
 
 
@@ -48,7 +48,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 512 # number of Fourier modes to multiply
-width = 65  # input and output chasnnels to the FNO layer
+width = 64  # input and output chasnnels to the FNO layer
 
 learning_rate = 0.0001
 lr_decay = 0.4
@@ -65,10 +65,10 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 epochs = 60
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 5
+lamda_reg = 0.5
 
-loss_fn = nn.MSELoss()
-# loss_fc = spectral_loss
+# loss_fn = nn.MSELoss()
+loss_fc = spectral_loss
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
@@ -83,10 +83,10 @@ for ep in range(0, epochs+1):
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
         
-        loss = loss_fn(outputs, label_batch)
+        # loss = loss_fn(outputs, label_batch)
 
-        # outputs_2 = step_func(mynet, outputs, time_step)
-        # loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        outputs_2 = step_func(mynet, outputs, time_step)
+        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         
