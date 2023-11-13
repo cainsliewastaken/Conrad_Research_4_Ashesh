@@ -1,98 +1,103 @@
-import time
 import numpy as np
 import torch
-# print(torch.__version__)
+print(torch.__version__)
+
 import torch.nn as nn
 import torch.nn.functional as F
+import torch.optim as optim
+#from torchinfo import summary
+from count_trainable_params import count_parameters
+import pickle
+from nn_FNO import FNO1d
+from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
+from nn_spectral_loss import spectral_loss
 
+lead=1
 
-class TBPTT():
-    def __init__(self, one_step_module, loss_module, k1, k2, optimizer):
-        self.one_step_module = one_step_module
-        self.loss_module = loss_module
-        self.k1 = k1
-        self.k2 = k2
-        self.retain_graph = k1 < k2
-        # You can also remove all the optimizer code here, and the
-        # train function will just accumulate all the gradients in
-        # one_step_module parameters
-        self.optimizer = optimizer
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
-    def train(self, input_sequence, init_state):
-        states = [(None, init_state)]
-        for j, (inp, target) in enumerate(input_sequence):
+step_func = Directstep
 
-            state = states[-1][1].detach()
-            state.requires_grad=True
-            output, new_state = self.one_step_module(inp, state)
-            states.append((state, new_state))
-
-            while len(states) > self.k2:
-                # Delete stuff that is too old
-                del states[0]
-
-            if (j+1)%self.k1 == 0:
-                loss = self.loss_module(output, target)
-
-                optimizer.zero_grad()
-                # backprop last module (keep graph only if they ever overlap)
-                start = time.time()
-                loss.backward(retain_graph=self.retain_graph)
-                for i in range(self.k2-1):
-                    # if we get all the way back to the "init_state", stop
-                    if states[-i-2][0] is None:
-                        break
-                    curr_grad = states[-i-1][0].grad
-                    states[-i-2][1].backward(curr_grad, retain_graph=self.retain_graph)
-                print("bw: {}".format(time.time()-start))
-                optimizer.step()
+net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency.pt'
 
 
 
-seq_len = 20
-layer_size = 50
-
-idx = 0
-
-class MyMod(nn.Module):
-    def __init__(self, sub_module):
-        super(MyMod, self).__init__()
-        self.sub_module = sub_module
-        self.param_data = []
-        def trans_grad(source, other):
-            def trans_fn(grad):
-                other.grad = grad + 0 if source.grad is None else source.grad
-            return trans_fn
-
-        for p in self.parameters():
-            d = p.data.requires_grad_()
-            self.param_data.append(d)
-            p.register_hook(trans_grad(p, d))
-
-    def forward(self, inp, state):
-        global idx
-        full_out = self.lin(torch.cat([inp, state], 1))
-        # out, new_state = full_out.chunk(2, dim=1)
-        out = full_out.narrow(1, 0, layer_size)
-        new_state = full_out.narrow(1, layer_size, layer_size)
-        def get_pr(idx_val):
-            def pr(*args):
-                print("doing backward {}".format(idx_val))
-            return pr
-        new_state.register_hook(get_pr(idx))
-        out.register_hook(get_pr(idx))
-        print("doing fw {}".format(idx))
-        idx += 1
-        return out, new_state
+with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
+    data = pickle.load(f)
+data=np.asarray(data[:,:250000])
 
 
-one_step_module = MyMod()
-loss_module = nn.MSELoss()
-input_sequence = [(torch.rand(200, layer_size), torch.rand(200, layer_size))] * seq_len
+lead=1
+time_step = 1e-3
+trainN = 150000
+input_size = 1024
+output_size = 1024
+hidden_layer_size = 2000
+input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
+label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
+du_label_torch = input_train_torch - label_train_torch
 
-optimizer = torch.optim.SGD(one_step_module.param_data, lr=1e-3)
+input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
+label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
+label_test = np.transpose(data[:,trainN+lead:])
 
-runner = TBPTT(one_step_module, loss_module, 5, 7, optimizer)
 
-runner.train(input_sequence, torch.zeros(200, layer_size))
-print("done")
+time_history = 1 #time steps to be considered as input to the solver
+time_future = 1 #time steps to be considered as output of the solver
+device = 'cuda'  #change to cpu if no cuda available
+
+#model parameters
+modes = 512 # number of Fourier modes to multiply
+width = 64 # input and output chasnnels to the FNO layer
+
+learning_rate = 0.0001
+lr_decay = 0.4
+
+
+mynet = FNO1d(modes, width, time_future, time_history).cuda()
+count_parameters(mynet)
+
+optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate)
+scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15], gamma=lr_decay)
+
+
+
+epochs = 60
+batch_size = 100
+wavenum_init = 100
+lamda_reg = 5
+
+# loss_fn = nn.MSELoss()
+loss_fc = spectral_loss
+torch.set_printoptions(precision=10)
+
+for ep in range(0, epochs+1):
+    #init starting hidden state
+    for step in range(0,trainN,batch_size):
+        indices = np.arange(start=step, step=1,stop=step+batch_size) #use a block of training data
+        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
+        input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
+        label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
+        du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
+
+        #pick a random boundary batch
+        optimizer.zero_grad()
+        outputs = step_func(mynet, input_batch, time_step)
+        
+        # loss = loss_fn(outputs, label_batch)
+
+        outputs_2 = step_func(mynet, outputs, time_step)
+        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+
+        loss.backward(retain_graph=True)
+        
+
+        optimizer.step()
+
+
+    if ep % 5 == 0:
+        print('Epoch', ep)
+        print ('Loss', loss)
+
+torch.save(mynet.state_dict(), net_file_name)
+torch.set_printoptions(precision=4)

@@ -17,6 +17,7 @@ from nn_FNO import FNO1d
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 
+
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 lead=1
 
