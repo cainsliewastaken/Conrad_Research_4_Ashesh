@@ -55,8 +55,8 @@ legend(Location='northwest')
 % axis([1 10 -.5 5])
 
 
-Truth = direct_step.Truth;
-prediction = PEC_step_FNO.prediction;
+Truth = direct_step_FNO.Truth;
+prediction = direct_step_FNO.prediction;
 
 
 set(0, 'DefaultAxesFontSize', 20)

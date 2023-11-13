@@ -74,7 +74,7 @@ for k in range(0,M):
 
         net_output = step_func(my_net_FNO,torch.reshape(input_test_torch[0,:],(1,input_size,1)), time_step)
         net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
-        print(sum(sum(net_pred)))
+        print(sum(sum(abs(net_pred))))
 
     else:
 
@@ -139,4 +139,4 @@ if skip_factor: #check if not == 0
     matfiledata_output_skip[u'pred_FFT_dt'] = u_pred_difft_n2_fspec[0::skip_factor,:]
 
     scipy.io.savemat(path_outputs+eval_output_name+'_skip'+str(skip_factor)+'.mat', matfiledata_output_skip)
-print('Data saved')
+    print('Data saved')
