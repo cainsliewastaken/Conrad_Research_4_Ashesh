@@ -27,9 +27,9 @@ import gc
 lead = 1
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Directstep_lead1_tendency_new.pt"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_Directstep_lead1_tendency.pt"
 
-matfile_name = 'MLP_KS_Directstep_lead'+str(lead)+'_tendency_jacs_new.mat'
+matfile_name = 'FNO_KS_Directstep_lead'+str(lead)+'_tendency_jacs.mat'
 
 
 print('loading data')
