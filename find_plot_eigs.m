@@ -8,7 +8,7 @@ PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_jacs.mat');
 direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
 PEC_step_jacs = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
 
-direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_lambda0_jacs.mat');
+direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
 PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
 
 
