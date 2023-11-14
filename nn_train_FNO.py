@@ -18,7 +18,7 @@ path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = Directstep
 
-net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency.pt'
+net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency_lambda0.pt'
 
 
 
@@ -65,7 +65,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 epochs = 60
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 10
+lamda_reg = 0
 
 # loss_fn = nn.MSELoss()
 loss_fc = spectral_loss
