@@ -68,7 +68,7 @@ loss_fn = nn.MSELoss()
 epochs = 60
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 5
+lamda_reg = .5
 
 torch.set_printoptions(precision=10)
 

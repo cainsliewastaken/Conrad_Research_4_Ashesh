@@ -4,11 +4,11 @@ PEC_step_jacs = load('MLP_KS_PECstep_lead1_jacs.mat');
 direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_jacs.mat');
 PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_jacs.mat');
 
-% 
-direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
+
+% direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
 PEC_step_jacs = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
 
-direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
+% direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs_lambda0.mat');
 PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
 
 
@@ -45,26 +45,26 @@ PEC_step_jacs_FNO_untrained =load('FNO_KS_PECstep_lead1_UNTRAINED_jacs.mat');
 [e_PEC_FNO_un, ind_FNO_p] = sort(diag(e_PEC_FNO_un));
 
 
-% 
-% figure(1)
-% clf
-% theta = linspace(-pi,pi,100);
-% x=cos(theta)+1*1i*sin(theta);
-% set(0, 'DefaultAxesFontSize', 20)
-% plot(x,'r','Linewidth',2);
-% hold on;
-% 
-% plot(e_direct,'co','MarkerSize',10,'MarkerFaceColor','c','DisplayName','Direct MLP');
-% plot(e_PEC,'ro','MarkerSize',10,'MarkerFaceColor','r','DisplayName','PEC MLP');
-% plot(e_direct_FNO,'ro','MarkerSize',10);
-% plot(e_PEC_FNO,'go','MarkerSize',10);
-% 
-% legend('Unit Circle','Direct MLP','PEC MLP','Direct FNO','PEC FNO',fontsize=10)
-% xlabel('$Re(\lambda)$','Interpreter','latex')
-% ylabel('$Im(\lambda)$','Interpreter','latex')
-% 
-% 
-% 
+
+figure(1)
+clf
+theta = linspace(-pi,pi,100);
+x=cos(theta)+1*1i*sin(theta);
+set(0, 'DefaultAxesFontSize', 20)
+plot(x,'r','Linewidth',2);
+hold on;
+
+plot(e_direct,'co','MarkerSize',10,'MarkerFaceColor','c','DisplayName','Direct MLP');
+plot(e_PEC,'ro','MarkerSize',10,'MarkerFaceColor','r','DisplayName','PEC MLP');
+plot(e_direct_FNO,'ro','MarkerSize',10);
+plot(e_PEC_FNO,'go','MarkerSize',10);
+
+legend('Unit Circle','Direct MLP','PEC MLP','Direct FNO','PEC FNO',fontsize=10)
+xlabel('$Re(\lambda)$','Interpreter','latex')
+ylabel('$Im(\lambda)$','Interpreter','latex')
+
+
+
 % figure(12)
 % clf
 % set(0, 'DefaultAxesFontSize', 20)
