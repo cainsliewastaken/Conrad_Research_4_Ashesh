@@ -18,7 +18,7 @@ path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = Directstep
 
-net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency_lambda0.pt'
+net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency_mode256.pt'
 
 
 
@@ -47,8 +47,8 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 512 # number of Fourier modes to multiply
-width = 64  # input and output chasnnels to the FNO layer
+modes = 256 # number of Fourier modes to multiply
+width = 128  # input and output chasnnels to the FNO layer
 
 learning_rate = 0.0001
 lr_decay = 0.4
@@ -65,7 +65,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 epochs = 60
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 0
+lamda_reg = 5
 
 # loss_fn = nn.MSELoss()
 loss_fc = spectral_loss
