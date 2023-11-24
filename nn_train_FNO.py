@@ -33,13 +33,13 @@ trainN = 150000
 input_size = 1024
 output_size = 1024
 hidden_layer_size = 2000
-input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
-label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
-du_label_torch = input_train_torch - label_train_torch
+input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).cuda()
+label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).cuda()
+du_label_torch = (input_train_torch - label_train_torch).cuda()
 
-input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
-label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
-label_test = np.transpose(data[:,trainN+lead:])
+input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).cuda()
+label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).cuda()
+# label_test = np.transpose(data[:,trainN+lead:])
 
 
 time_history = 1 #time steps to be considered as input to the solver
