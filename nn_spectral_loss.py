@@ -17,4 +17,4 @@ def spectral_loss (output, output2, target, tendency, wavenum_init, lamda_reg, t
 
    loss = loss1 + lamda_reg*loss3
   
-   return loss
+   return loss.cuda()

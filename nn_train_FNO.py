@@ -57,8 +57,8 @@ lr_decay = 0.4
 mynet = FNO1d(modes, width, time_future, time_history).cuda()
 count_parameters(mynet)
 
-optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate).cuda()
-scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15], gamma=lr_decay).cuda()
+optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate)
+scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15], gamma=lr_decay)
 
 
 
