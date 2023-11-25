@@ -14,11 +14,11 @@ from nn_spectral_loss import spectral_loss
 
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = PECstep
 
-net_file_name = 'NN_FNO_PECstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_FNO_PECstep_lead'+str(lead)+'_tendency.pt'
 
 
 
@@ -47,8 +47,8 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 256 # number of Fourier modes to multiply
-width = 64  # input and output chasnnels to the FNO layer
+modes = 512 # number of Fourier modes to multiply
+width = 128  # input and output chasnnels to the FNO layer
 
 learning_rate = 0.01
 lr_decay = 0.4
@@ -67,8 +67,8 @@ batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
 
-loss_fn = nn.MSELoss()
-# loss_fc = spectral_loss
+# loss_fn = nn.MSELoss()
+loss_fc = spectral_loss
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
@@ -83,10 +83,10 @@ for ep in range(0, epochs+1):
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step).cuda()
         
-        loss = loss_fn(outputs, label_batch)  # use this loss function for mse loss
+        # loss = loss_fn(outputs, label_batch)  # use this loss function for mse loss
 
-        # outputs_2 = step_func(mynet, outputs, time_step).cuda() #use this line and line below for spectral loss
-        # loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        outputs_2 = step_func(mynet, outputs, time_step).cuda() #use this line and line below for spectral loss
+        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         
