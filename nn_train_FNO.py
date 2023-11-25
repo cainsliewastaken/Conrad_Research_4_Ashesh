@@ -16,7 +16,7 @@ lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
-step_func = Directstep
+step_func = Directstep.cuda()
 
 net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency_mode256.pt'
 
