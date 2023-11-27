@@ -4,11 +4,11 @@ model_two = load('predicted_PECstep_1024_lead1_skip100.mat');
 model_three = load('predicted_Directstep_1024_tendency_lead1_skip100.mat');
 model_four = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
 
-% model_one = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
-% model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
-% 
-% model_three = load('predicted_Directstep_1024_FNO_lead1_tendency_skip100.mat');
-% model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_lambda10_skip100.mat');
+model_one = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
+model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
+
+model_three = load('predicted_Directstep_1024_FNO_lead1_tendency_skip100.mat');
+model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_lambda10_skip100.mat');
 
 
 
@@ -28,7 +28,7 @@ loglog([0:511],model_three.pred_FFT_x(1,1:512),'Linewidth',2, 'DisplayName','Dir
 legend(Location='southwest')
 title('Fspec X')
 
-temp = fft((model_three.prediction(2:end,:)-model_three.prediction(1:end-1,:))/1e-3);
+% temp = fft((model_three.prediction(2:end,:)-model_three.prediction(1:end-1,:))/1e-3);
 
 figure(2)
 clf
