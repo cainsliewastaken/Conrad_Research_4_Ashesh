@@ -47,7 +47,7 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 512 # number of Fourier modes to multiply
+modes = 256 # number of Fourier modes to multiply
 width = 1024  # input and output chasnnels to the FNO layer
 
 learning_rate = 0.001
@@ -65,7 +65,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 epochs = 60
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 10
+lamda_reg = 5
 
 # loss_fn = nn.MSELoss()
 loss_fc = spectral_loss
