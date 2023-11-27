@@ -63,7 +63,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=2*[0, 5, 10, 15
 
 
 epochs = 120
-batch_size = 10
+batch_size = 5
 wavenum_init = 100
 lamda_reg = 5
 
