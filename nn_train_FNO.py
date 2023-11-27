@@ -58,12 +58,12 @@ mynet = FNO1d(modes, width, time_future, time_history).cuda()
 count_parameters(mynet)
 
 optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate)
-scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=2*[0, 5, 10, 15], gamma=lr_decay)
+scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15], gamma=lr_decay)
 
 
 
-epochs = 120
-batch_size = 1
+epochs = 60
+batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
 
