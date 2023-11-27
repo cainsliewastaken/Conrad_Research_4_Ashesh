@@ -1,14 +1,14 @@
-% model_one = load('predicted_Directstep_1024_lead1_skip100.mat');
-% model_two = load('predicted_PECstep_1024_lead1_skip100.mat');
+model_one = load('predicted_Directstep_1024_lead1_skip100.mat');
+model_two = load('predicted_PECstep_1024_lead1_skip100.mat');
 
-% model_three = load('predicted_Directstep_1024_tendency_lead1_skip100.mat');
-% model_four = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
+model_three = load('predicted_Directstep_1024_tendency_lead1_skip100.mat');
+model_four = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
 
-model_one = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
-model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
-
-model_three = load('predicted_Directstep_1024_FNO_lead1_tendency_skip100.mat');
-model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_skip100.mat');
+% model_one = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
+% model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
+% 
+% model_three = load('predicted_Directstep_1024_FNO_lead1_tendency_skip100.mat');
+% model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_skip100.mat');
 
 
 
@@ -56,7 +56,7 @@ legend(Location='northwest')
 
 
 Truth = model_one.Truth;
-prediction = model_four.prediction;
+prediction = model_three.prediction;
 
 
 set(0, 'DefaultAxesFontSize', 20)

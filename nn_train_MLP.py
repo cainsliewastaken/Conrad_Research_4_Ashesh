@@ -17,7 +17,7 @@ lead=1
 
 step_func = Directstep
 
-net_file_name = 'NN_Directstep_lead'+str(lead)+'_tendency_new.pt'
+net_file_name = 'NN_Directstep_lead'+str(lead)+'_tendency.pt'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
 
