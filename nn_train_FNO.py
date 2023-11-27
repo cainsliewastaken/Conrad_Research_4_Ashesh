@@ -18,7 +18,7 @@ path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = PECstep
 
-net_file_name = 'NN_FNO_PECstep_lead'+str(lead)+'_tendency_lambda10.pt'
+net_file_name = 'NN_FNO_PECstep_lead'+str(lead)+'_tendency.pt'
 
 
 
@@ -48,7 +48,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 512 # number of Fourier modes to multiply
-width = 1  # input and output chasnnels to the FNO layer
+width = 2048  # input and output chasnnels to the FNO layer
 
 learning_rate = 0.001
 lr_decay = 0.4
