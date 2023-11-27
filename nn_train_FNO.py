@@ -47,7 +47,7 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 512 # number of Fourier modes to multiply
+modes = 256 # number of Fourier modes to multiply
 width = 1024  # input and output chasnnels to the FNO layer
 
 learning_rate = 0.001
@@ -73,6 +73,8 @@ torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
+        if ep==0:
+            print(step)
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1)).float()
