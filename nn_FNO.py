@@ -23,8 +23,7 @@ class SpectralConv1d(nn.Module):
         self.out_channels = out_channels
         self.modes = modes
         self.scale = (1 / (in_channels*out_channels))
-        self.weights = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes, dtype=torch.cfloat)).cuda()
-
+        self.weights = nn.Parameter(self.scale * torch.rand(in_channels, out_channels, self.modes, dtype=torch.cfloat))
     # Complex multiplication
     def compl_mul1d(self, input, weights):
         """
@@ -81,17 +80,17 @@ class FNO1d(nn.Module):
         self.width = width
         self.time_future = time_future
         self.time_history = time_history
-        self.fc0 = nn.Linear(self.time_history+1, self.width).cuda()
-        self.conv0 = SpectralConv1d(self.width, self.width, self.modes).cuda() #initializes with uniform distro from 1/width^2
-        self.conv1 = SpectralConv1d(self.width, self.width, self.modes).cuda()
-        self.conv2 = SpectralConv1d(self.width, self.width, self.modes).cuda()
-        self.conv3 = SpectralConv1d(self.width, self.width, self.modes).cuda()
-        self.w0 = nn.Conv1d(self.width, self.width, 1).cuda() #initializes with uniform distro from -+sqrt(1/width)
-        self.w1 = nn.Conv1d(self.width, self.width, 1).cuda()
-        self.w2 = nn.Conv1d(self.width, self.width, 1).cuda()
-        self.w3 = nn.Conv1d(self.width, self.width, 1).cuda()
-        self.fc1 = nn.Linear(self.width, 128).cuda() #I dont understand why this and fc2 are here, also the 128 seems like a hyperparameter
-        self.fc2 = nn.Linear(128, self.time_future).cuda()
+        self.fc0 = nn.Linear(self.time_history+1, self.width)
+        self.conv0 = SpectralConv1d(self.width, self.width, self.modes) #initializes with uniform distro from 1/width^2
+        self.conv1 = SpectralConv1d(self.width, self.width, self.modes)
+        self.conv2 = SpectralConv1d(self.width, self.width, self.modes)
+        self.conv3 = SpectralConv1d(self.width, self.width, self.modes)
+        self.w0 = nn.Conv1d(self.width, self.width, 1) #initializes with uniform distro from -+sqrt(1/width)
+        self.w1 = nn.Conv1d(self.width, self.width, 1)
+        self.w2 = nn.Conv1d(self.width, self.width, 1)
+        self.w3 = nn.Conv1d(self.width, self.width, 1)
+        self.fc1 = nn.Linear(self.width, 128) #I dont understand why this and fc2 are here, also the 128 seems like a hyperparameter
+        self.fc2 = nn.Linear(128, self.time_future)
 
     def forward(self, u):
         grid = self.get_grid(u.shape, u.device)
