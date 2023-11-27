@@ -21,14 +21,14 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/' #this is where the saved graphs and .mat files end up
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1.pt"
+net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1_tendency.pt"
 #change this to use a different network
 
 step_func = PECstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-eval_output_name = 'predicted_PECstep_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_PECstep_1024_FNO_lead'+str(lead)+'_tendency'  # what to name the output file, .mat ending not needed
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change based on eval data location.
     data = pickle.load(f)
@@ -53,7 +53,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 512 # number of Fourier modes to multiply
-width = 256  # input and output chasnnels to the FNO layer
+width = 1  # input and output chasnnels to the FNO layer
 
 num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
 learning_rate = 0.0001
