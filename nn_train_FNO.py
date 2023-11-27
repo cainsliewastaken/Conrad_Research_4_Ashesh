@@ -59,7 +59,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 
 
 epochs = 60
-batch_size = 80
+batch_size = 50
 wavenum_init = 100
 lamda_reg = 5
 
@@ -69,8 +69,6 @@ torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
-        if ep==0:
-            print(step)
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1)).float()
