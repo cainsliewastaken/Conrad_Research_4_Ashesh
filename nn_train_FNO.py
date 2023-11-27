@@ -50,7 +50,7 @@ device = 'cuda'  #change to cpu if no cuda available
 modes = 512 # number of Fourier modes to multiply
 width = 1  # input and output chasnnels to the FNO layer
 
-learning_rate = 0.01
+learning_rate = 0.001
 lr_decay = 0.4
 
 
@@ -78,8 +78,9 @@ for ep in range(0, epochs+1):
         input_batch = torch.reshape(input_batch,(batch_size,input_size,1)).float()
         label_batch = torch.reshape(label_batch,(batch_size,input_size,1)).float()
         du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1)).float()
-
         #pick a random boundary batch
+        
+        
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step).cuda()
         
