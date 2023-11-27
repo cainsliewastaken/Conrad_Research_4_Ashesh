@@ -4,11 +4,11 @@ model_two = load('predicted_PECstep_1024_lead1_skip100.mat');
 model_three = load('predicted_Directstep_1024_tendency_lead1_skip100.mat');
 model_four = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
 
-model_one = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
-model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
-
-model_three = load('predicted_Directstep_1024_FNO_lead1_tendency_skip100.mat');
-model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_lambda10_skip100.mat');
+% model_one = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
+% model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
+% 
+% model_three = load('predicted_Directstep_1024_FNO_lead1_tendency_skip100.mat');
+% model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_lambda10_skip100.mat');
 
 
 

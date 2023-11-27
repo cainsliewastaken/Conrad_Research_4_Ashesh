@@ -5,11 +5,11 @@ direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_jacs.mat');
 PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_jacs.mat');
 
 
-direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
-PEC_step_jacs = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
-
-direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
-PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
+% direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
+% PEC_step_jacs = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
+% 
+% direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
+% PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
 
 
 [v_direct, e_direct] = eig(squeeze(direct_step_jacs.Jacobian_mats(1,:,:)));
@@ -203,16 +203,16 @@ legend('Direct MLP Eigvals','Marchenko Pastur',fontsize=10)
 % legend('Direct Eigvals FNO','Marchenko Pastur',fontsize=10)
 
 
-% figure(6)
-% clf
-% % h = histogram(real(e_PEC_FNO),50);
-% % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
-% % binCenters = h.BinEdges + (h.BinWidth/2);
-% %plot(binCenters(1:end-1), p)
-% histogram(abs(e_PEC_FNO-1)/1e-3, 100, Normalization="pdf")
-% MarchenkoPasturLaw(6, 1024, 1024, abs(e_PEC_FNO_un-1)/1e-3)
-% 
-% legend('PEC Eigvals FNO','Marchenko Pastur',fontsize=10)
+figure(6)
+clf
+% h = histogram(real(e_PEC_FNO),50);
+% p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
+% binCenters = h.BinEdges + (h.BinWidth/2);
+%plot(binCenters(1:end-1), p)
+histogram(abs(e_PEC_FNO-1)/1e-3, 100, Normalization="pdf")
+MarchenkoPasturLaw(6, 1024, 1024, abs(e_PEC_FNO_un-1)/1e-3)
+
+legend('PEC Eigvals FNO','Marchenko Pastur',fontsize=10)
 
 
 % figure(7)
