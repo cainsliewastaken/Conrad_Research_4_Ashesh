@@ -1,14 +1,23 @@
+% Use these 6 models to compare MLP models
 model_one = load('MLP_KS_Directstep_lead1_jacs.mat');
 model_two = load('MLP_KS_PECstep_lead1_jacs.mat');
 
 model_three = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
 model_four = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
 
-model_one = load('FNO_KS_Directstep_lead1_jacs.mat');
-model_two = load('FNO_KS_PECstep_lead1_jacs.mat');
+model_five = load('MLP_KS_Directstep_lead1_UNTRAINED_jacs.mat');
+model_six = load('MLP_KS_PECstep_lead1_UNTRAINED_jacs.mat');
 
-model_three = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
-model_four = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
+
+% Use these 6 models to compare FNO models
+% model_one = load('FNO_KS_Directstep_lead1_jacs.mat');
+% model_two = load('FNO_KS_PECstep_lead1_jacs.mat');
+% 
+% model_three = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
+% model_four = load('FNO_KS_PECstep_lead1_tendency_lambda10_jacs.mat');
+% 
+% model_five = load('FNO_KS_Directstep_lead1_UNTRAINED_jacs.mat');
+% model_six = load('FNO_KS_PECstep_lead1_UNTRAINED_jacs.mat');
 
 
 [v_direct, e_direct] = eig(squeeze(model_one.Jacobian_mats(1,:,:)));
@@ -18,30 +27,18 @@ model_four = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
 [e_PEC, ind_p] = sort(diag(e_PEC));
 
 [v_direct_sl, e_direct_sl] = eig(squeeze(model_three.Jacobian_mats(1,:,:)));
-[e_direct_sl, ind_d_FNO] = sort(diag(e_direct_sl));
+[e_direct_sl, ind_d_sl] = sort(diag(e_direct_sl));
 
-[v_PEC_FNO, e_PEC_FNO] = eig(squeeze(model_four.Jacobian_mats(1,:,:)));
-[e_PEC_FNO, ind_p_FNO] = sort(diag(e_PEC_FNO));
-
-
-direct_step_jacs_untrained = load('MLP_KS_Directstep_lead1_UNTRAINED_jacs.mat');
-PEC_step_jacs_untrained = load('MLP_KS_PECstep_lead1_UNTRAINED_jacs.mat');
- 
-direct_step_jacs_FNO_untrained = load('FNO_KS_Directstep_lead1_UNTRAINED_jacs.mat');
-PEC_step_jacs_FNO_untrained =load('FNO_KS_PECstep_lead1_UNTRAINED_jacs.mat');
+[v_PEC_sl, e_PEC_sl] = eig(squeeze(model_four.Jacobian_mats(1,:,:)));
+[e_PEC_sl, ind_p_sl] = sort(diag(e_PEC_sl));
 
 
-[v_direct_un, e_direct_un] = eig(squeeze(direct_step_jacs_untrained.Jacobian_mats(1,:,:)));
+
+[v_direct_un, e_direct_un] = eig(squeeze(model_five.Jacobian_mats(1,:,:)));
 [e_direct_un, ind_d_un] = sort(diag(e_direct_un));
 
-[v_PEC_un, e_PEC_un] = eig(squeeze(PEC_step_jacs_untrained.Jacobian_mats(1,:,:)));
+[v_PEC_un, e_PEC_un] = eig(squeeze(model_six.Jacobian_mats(1,:,:)));
 [e_PEC_un, ind_p_un] = sort(diag(e_PEC_un));
-
-[v_direct_FNO_un, e_direct_FNO_un] = eig(squeeze(direct_step_jacs_FNO_untrained.Jacobian_mats(1,:,:)));
-[e_direct_FNO_un, ind_FNO_d] = sort(diag(e_direct_FNO_un));
-
-[v_PEC_FNO_un, e_PEC_FNO_un] = eig(squeeze(PEC_step_jacs_FNO_untrained.Jacobian_mats(1,:,:)));
-[e_PEC_FNO_un, ind_FNO_p] = sort(diag(e_PEC_FNO_un));
 
 
 
@@ -56,7 +53,7 @@ hold on;
 plot(e_direct,'co','MarkerSize',10,'MarkerFaceColor','c','DisplayName','Direct MLP');
 plot(e_PEC,'ro','MarkerSize',10,'MarkerFaceColor','r','DisplayName','PEC MLP');
 plot(e_direct_sl,'ro','MarkerSize',10);
-plot(e_PEC_FNO,'go','MarkerSize',10);
+plot(e_PEC_sl,'go','MarkerSize',10);
 
 legend('Unit Circle','Direct Basic','PEC Basic','Direct Spectral loss','PEC Spectral loss',fontsize=10)
 xlabel('$Re(\lambda)$','Interpreter','latex')
@@ -89,7 +86,7 @@ hold on;
 
 plot(e_PEC,'ro','MarkerSize',10,'MarkerFaceColor','r');
 
-plot(e_PEC_FNO,'bo','MarkerSize',10);
+plot(e_PEC_sl,'bo','MarkerSize',10);
 
 % legend('Unit Circle','PEC Basic','PEC Spectral loss',fontsize=10)
 legend('PEC Basic','PEC Spectral loss',fontsize=10)
@@ -148,8 +145,8 @@ clf
 %plot(binCenters(1:end-1), p)
 histogram(abs(e_direct_sl), 10,Normalization="pdf")
 hold on
-histogram(abs(e_direct_FNO_un),10, Normalization="pdf")
-MarchenkoPasturLaw(102, 1024, 1024, abs(e_direct_FNO_un))
+histogram(abs(e_direct_un),10, Normalization="pdf")
+MarchenkoPasturLaw(102, 1024, 1024, abs(e_direct_un))
 legend('Direct Spectral loss Eigvals','Direct untrained','Marchenko Pastur',fontsize=10)
 
 
@@ -159,10 +156,10 @@ clf
 % p = histcounts(abs(e_PEC),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_FNO-1)/1e-3,100, Normalization="pdf")
+histogram(abs(e_PEC_sl-1)/1e-3,100, Normalization="pdf")
 hold on
-histogram(abs(e_PEC_FNO_un-1)/1e-3, 100,Normalization="pdf")
-MarchenkoPasturLaw(103, 1024, 1024, abs(e_PEC_FNO_un-1)/1e-3)
+histogram(abs(e_PEC_un-1)/1e-3, 100,Normalization="pdf")
+MarchenkoPasturLaw(103, 1024, 1024, abs(e_PEC_un-1)/1e-3)
 legend('PEC Spectral loss Eigvals','PEC untrained','Marchenko Pastur',fontsize=10)
 
 figure(3)
@@ -196,34 +193,41 @@ legend('Direct Basic Eigvals','Marchenko Pastur',fontsize=10)
 % % p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
 % % binCenters = h.BinEdges + (h.BinWidth/2);
 % %plot(binCenters(1:end-1), p)
-% histogram(abs(e_direct_FNO),100, Normalization="pdf")
-% MarchenkoPasturLaw(5, 1024, 1024, abs(e_direct_FNO_un))
+% histogram(abs(e_direct_sl),100, Normalization="pdf")
+% MarchenkoPasturLaw(5, 1024, 1024, abs(e_direct_un))
 % 
 % legend('Direct Spectral loss Eigvals','Marchenko Pastur',fontsize=10)
 
 
 figure(6)
 clf
+hold on
 % h = histogram(real(e_PEC_FNO),50);
 % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC_FNO-1)/1e-3, 100, Normalization="pdf")
-MarchenkoPasturLaw(6, 1024, 1024, abs(e_PEC_FNO_un-1)/1e-3)
+histogram(abs(e_PEC-1)/1e-3, 100, Normalization="pdf")
+histogram(abs(e_PEC_sl-1)/1e-3, 100, Normalization="pdf")
+histogram(abs(e_PEC_un-1)/1e-3, 100, Normalization="pdf")
+MarchenkoPasturLaw(6, 1024, 1024, abs(e_PEC_un-1)/1e-3)
 
-legend('PEC Spectral loss Eigvals','Marchenko Pastur',fontsize=10)
+legend('PEC Basic Eigvals','PEC Spectral loss Eigvals','PEC Untrained Eigvals','Marchenko Pastur',fontsize=10)
+hold off
 
+figure(7)
+clf
+% h = histogram(abs(e_direct_FNO),50);
+% p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
+% binCenters = h.BinEdges + (h.BinWidth/2);
+%plot(binCenters(1:end-1), p)
+histogram(abs(e_direct), 100, Normalization="pdf")
 
-% figure(7)
-% clf
-% % h = histogram(abs(e_direct_FNO),50);
-% % p = histcounts(abs(e_direct_FNO),50,'Normalization','pdf');
-% % binCenters = h.BinEdges + (h.BinWidth/2);
-% %plot(binCenters(1:end-1), p)
-% histogram(abs(e_direct_FNO_un), 100, Normalization="pdf")
-% MarchenkoPasturLaw(7, 1024, 1024, abs(e_direct_FNO_un))
-% 
-% legend('Direct Untrained Eigvals','Marchenko Pastur',fontsize=10)
+histogram(abs(e_direct_sl), 100, Normalization="pdf")
+histogram(abs(e_direct_sl_un), 100, Normalization="pdf")
+
+MarchenkoPasturLaw(7, 1024, 1024, abs(e_direct_un))
+
+legend('Direct Untrained Eigvals','Marchenko Pastur',fontsize=10)
 
 
 % figure(8)
@@ -232,8 +236,8 @@ legend('PEC Spectral loss Eigvals','Marchenko Pastur',fontsize=10)
 % % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
 % % binCenters = h.BinEdges + (h.BinWidth/2);
 % %plot(binCenters(1:end-1), p)
-% histogram(abs(e_PEC_FNO_un-1)/1e-3, 100, Normalization="pdf")
-% MarchenkoPasturLaw(8, 1024, 1024, abs(e_PEC_FNO_un-1)/1e-3)
+% histogram(abs(e_PEC_un-1)/1e-3, 100, Normalization="pdf")
+% MarchenkoPasturLaw(8, 1024, 1024, abs(e_PEC_un-1)/1e-3)
 % 
 % legend('PEC Untrained Eigvals','Marchenko Pastur',fontsize=10)
 
