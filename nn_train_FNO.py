@@ -14,11 +14,11 @@ from nn_spectral_loss import spectral_loss
 
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = PECstep
 
-net_file_name = 'NN_FNO_PECstep_lead'+str(lead)+'.pt'
+net_file_name = 'NN_FNO_PECstep_lead'+str(lead)+'_tendency_lambda10.pt'
 
 
 
@@ -65,10 +65,10 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 epochs = 60
 batch_size = 100
 wavenum_init = 100
-lamda_reg = 5
+lamda_reg = 10
 
-loss_fn = nn.MSELoss()
-# loss_fc = spectral_loss
+# loss_fn = nn.MSELoss()
+loss_fc = spectral_loss
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
@@ -86,8 +86,8 @@ for ep in range(0, epochs+1):
         
         loss = loss_fn(outputs, label_batch)  # use this loss function for mse loss
 
-        # outputs_2 = step_func(mynet, outputs, time_step).cuda() #use this line and line below for spectral loss
-        # loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        outputs_2 = step_func(mynet, outputs, time_step).cuda() #use this line and line below for spectral loss
+        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         
