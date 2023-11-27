@@ -84,11 +84,11 @@ for ep in range(0, epochs+1):
         
         
         optimizer.zero_grad()
-        outputs = step_func(mynet, input_batch, time_step).cuda()
+        outputs = step_func(mynet, input_batch, time_step)
         
         # loss = loss_fn(outputs, label_batch)  # use this loss function for mse loss
 
-        outputs_2 = step_func(mynet, outputs, time_step).cuda() #use this line and line below for spectral loss
+        outputs_2 = step_func(mynet, outputs, time_step) #use this line and line below for spectral loss
         loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
