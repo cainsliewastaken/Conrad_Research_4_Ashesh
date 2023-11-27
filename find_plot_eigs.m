@@ -5,10 +5,10 @@ direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_jacs.mat');
 PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_jacs.mat');
 
 
-% direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
+direct_step_jacs = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
 PEC_step_jacs = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
 
-% direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs_lambda0.mat');
+direct_step_jacs_FNO = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
 PEC_step_jacs_FNO = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
 
 
@@ -65,23 +65,22 @@ ylabel('$Im(\lambda)$','Interpreter','latex')
 
 
 
-% figure(12)
-% clf
-% set(0, 'DefaultAxesFontSize', 20)
-% % plot(x,'r','Linewidth',2);
-% hold on;
-% 
-% 
-% plot(e_direct,'co','MarkerSize',10,'MarkerFaceColor','c');
-% plot(e_direct_FNO,'ro','MarkerSize',10);
-% legend('Direct MLP','Direct FNO',fontsize=10)
-% 
-% % legend('Unit Circle','Direct MLP','Direct FNO',fontsize=10)
-% xlabel('$Re(\lambda)$','Interpreter','latex')
-% ylabel('$Im(\lambda)$','Interpreter','latex')
-% 
-% % % 
-% % 
+figure(12)
+clf
+set(0, 'DefaultAxesFontSize', 20)
+% plot(x,'r','Linewidth',2);
+hold on;
+
+
+plot(e_direct,'co','MarkerSize',10,'MarkerFaceColor','c');
+plot(e_direct_FNO,'ro','MarkerSize',10);
+legend('Direct MLP','Direct FNO',fontsize=10)
+
+% legend('Unit Circle','Direct MLP','Direct FNO',fontsize=10)
+xlabel('$Re(\lambda)$','Interpreter','latex')
+ylabel('$Im(\lambda)$','Interpreter','latex')
+
+
 
 figure(13)
 clf
