@@ -71,25 +71,30 @@ lamda_reg = 5
 loss_fc = spectral_loss
 torch.set_printoptions(precision=10)
 
+init_state =   #make this a vector of zeros, random numbers, or trainable params
+
 for ep in range(0, epochs+1):
     #init starting hidden state
-    for step in range(0,trainN,batch_size):
-        indices = np.arange(start=step, step=1,stop=step+batch_size) #use a block of training data
-        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
+    states = [(None, init_state)]
+    for step in range(0,trainN):
+        input_train_torch, label_train_torch, du_label_torch
         # input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
         # label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
         # du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
         #create batch
+        state = states[-1][1].detach() #detach the last hidden state from all previous hidden states
+        state.requires_grad=True
+        output, new_state = 
 
         loss = 0
         optimizer.zero_grad()
         for current_time_step in range(0, batch_size):
-            outputs = step_func(mynet, input_batch[current_time_step], time_step)
+            outputs = step_func(mynet, input_train_torch[current_time_step], time_step)
             
             # loss = loss_fn(outputs, label_batch)
 
             outputs_2 = step_func(mynet, outputs, time_step)
-            loss = loss_fc(outputs, outputs_2, label_batch[current_time_step], du_label_batch[current_time_step], wavenum_init, lamda_reg, time_step)
+            loss = loss_fc(outputs, outputs_2, label_train_torch[current_time_step], du_label_torch[current_time_step], wavenum_init, lamda_reg, time_step)
             #compute loss in relation to all elements in batch
         loss.backward(retain_graph=True)
         optimizer.step()
