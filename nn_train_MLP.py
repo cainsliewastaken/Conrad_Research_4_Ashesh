@@ -17,11 +17,11 @@ lead=1
 
 step_func = Directstep
 
-net_file_name = 'NN_Directstep_lead'+str(lead)+'_tendency.pt'
+net_name = 'NN_Directstep_lead'+str(lead)+'_tendency'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
 
-
+#comment and uncomment code in training for loop below to change from mse to spectral loss in tendency
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -80,18 +80,20 @@ for ep in range(0, epochs+1):
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
         
-        # loss = loss_fn(outputs, label_batch)
+        # loss = loss_fn(outputs, label_batch) #use this for basic mse loss 
 
         
-        outputs_2 = step_func(mynet, outputs, time_step)
+        outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
         loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         optimizer.step()
-    if ep % 10 == 0:
+    if ep % 5 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
+        torch.save(mynet.state_dict(), '/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
 
-torch.save(mynet.state_dict(), net_file_name)
+
+torch.save(mynet.state_dict(), net_name+'.pt')
 torch.set_printoptions(precision=4)
 print("Model Saved")

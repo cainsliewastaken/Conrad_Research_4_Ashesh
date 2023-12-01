@@ -18,9 +18,9 @@ path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
 
 step_func = PECstep
 
-net_file_name = 'NN_FNO_PECstep_lead'+str(lead)+'_tendency.pt'
+net_name = 'NN_FNO_PECstep_lead'+str(lead)+'_tendency'
 
-
+# to changfe from normal loss to spectral loss scroll down 2 right above train for loop
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -63,8 +63,8 @@ batch_size = 50
 wavenum_init = 100
 lamda_reg = 5
 
-# loss_fn = nn.MSELoss()
-loss_fc = spectral_loss
+# loss_fn = nn.MSELoss()  #for basic loss func
+loss_fc = spectral_loss #for spectral loss in tendency, also change loss code inside for loop below
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
@@ -94,7 +94,9 @@ for ep in range(0, epochs+1):
     if ep % 5 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
+        # torch.save(mynet.state_dict(), '/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
 
-torch.save(mynet.state_dict(), net_file_name)
+
+torch.save(mynet.state_dict(), net_name+'.pt')
 torch.set_printoptions(precision=4)
 print("Model Saved")
