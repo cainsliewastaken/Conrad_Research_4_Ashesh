@@ -17,8 +17,8 @@ class LTC_Concat_net(nn.Module):
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         x_true = x[0:self.true_x_size-1]
         hx = x[self.true_x_size:]
-        #x is a tensor of size (sequence length (timesteps), num features)
-        #hx is a tensor of size (hidden state)
+        #x is a vector of size (num features)
+        #hx is a vector of size (hidden state)
         new_x, hidden_state = self.LTC_net(x_true, hx)
         x = torch.cat(new_x, hidden_state)
         return x
