@@ -6,7 +6,7 @@ import torch.nn.functional as F
 from ncps.torch import LTC
 
 class LTC_Concat_net(nn.Module):
-    def __init__(self, rnn_net, true_x_size: int, hidden_size: int):
+    def __init__(self, true_x_size: int, hidden_size: int):
         super(LTC_Concat_net, self).__init__()
 
         self.LTC_net = LTC(true_x_size, hidden_size) #This cannont have mized memory, also it must not have batched inputs or predict multiple timesteps

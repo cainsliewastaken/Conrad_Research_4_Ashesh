@@ -8,7 +8,7 @@ import torch.optim as optim
 #from torchinfo import summary
 from count_trainable_params import count_parameters
 import pickle
-from nn_LTC_wrapper import 
+from nn_LTC_wrapper import LTC_Concat_net
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_spectral_loss import spectral_loss
 
@@ -33,6 +33,9 @@ trainN = 150000
 input_size = 1024
 output_size = 1024
 hidden_layer_size = 2000
+num_hidden_neurons = 6
+
+
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
 du_label_torch = input_train_torch - label_train_torch
@@ -54,7 +57,7 @@ learning_rate = 0.0001
 lr_decay = 0.4
 
 
-mynet = FNO1d(modes, width, time_future, time_history).cuda()
+mynet = LTC_Concat_net(input_size, num_hidden_neurons).cuda()
 count_parameters(mynet)
 
 optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate)
@@ -63,7 +66,6 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 
 
 epochs = 60
-batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
 
@@ -79,11 +81,6 @@ for ep in range(0, epochs+1):
     states = [(None, init_state)]
     for current_step in range(0,trainN):
         input_train_torch, label_train_torch, du_label_torch
-        # input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
-        # label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
-        # du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
-        #create batch
-
 
         state = states[-1][1].detach() 
         state.requires_grad=True
@@ -99,7 +96,7 @@ for ep in range(0, epochs+1):
         #trim the stored previous states
 
         if (current_step+1)%backprop_every_n==0:
-            # loss = loss_fn(outputs, label_train_torch[current_step])
+            # loss = loss_fn(x_out_true, label_train_torch[current_step])
 
             outputs_2 = step_func(mynet, outputs, time_step)
             x_out_true_2 = outputs_2[0:mynet.true_x_size-1]
