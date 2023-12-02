@@ -8,17 +8,17 @@ import torch.optim as optim
 #from torchinfo import summary
 from count_trainable_params import count_parameters
 import pickle
-from nn_FNO import FNO1d
+from nn_LTC_wrapper import 
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_spectral_loss import spectral_loss
 
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval_LTC_tendency/'
 
 step_func = Directstep
 
-net_file_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency.pt'
+net_file_name = 'NN_LTC_Directstep_lead'+str(lead)+'_tendency.pt'
 
 
 
@@ -71,32 +71,48 @@ lamda_reg = 5
 loss_fc = spectral_loss
 torch.set_printoptions(precision=10)
 
-init_state =   #make this a vector of zeros, random numbers, or trainable params
-
+state_buffer_len = 20
+backprop_every_n = 10
 for ep in range(0, epochs+1):
     #init starting hidden state
+    init_state =  mynet.init_hidden_state #make this currently a vector of trainable params
     states = [(None, init_state)]
-    for step in range(0,trainN):
+    for current_step in range(0,trainN):
         input_train_torch, label_train_torch, du_label_torch
         # input_batch = torch.reshape(input_batch,(batch_size,input_size,1))
         # label_batch = torch.reshape(label_batch,(batch_size,input_size,1))
         # du_label_batch = torch.reshape(du_label_batch,(batch_size,input_size,1))
         #create batch
-        state = states[-1][1].detach() #detach the last hidden state from all previous hidden states
-        state.requires_grad=True
-        output, new_state = 
 
-        loss = 0
-        optimizer.zero_grad()
-        for current_time_step in range(0, batch_size):
-            outputs = step_func(mynet, input_train_torch[current_time_step], time_step)
-            
-            # loss = loss_fn(outputs, label_batch)
+
+        state = states[-1][1].detach() 
+        state.requires_grad=True
+        #detach the last hidden state from all previous hidden states
+
+        outputs = step_func(mynet, input_train_torch[current_step], time_step)
+        x_out_true = outputs[0:mynet.true_x_size-1]
+        new_state = outputs[mynet.true_x_size:]
+
+        states.append((state, new_state))
+        while len(states) > state_buffer_len:
+            del states[0]
+        #trim the stored previous states
+
+        if (current_step+1)%backprop_every_n==0:
+            # loss = loss_fn(outputs, label_train_torch[current_step])
 
             outputs_2 = step_func(mynet, outputs, time_step)
-            loss = loss_fc(outputs, outputs_2, label_train_torch[current_time_step], du_label_torch[current_time_step], wavenum_init, lamda_reg, time_step)
-            #compute loss in relation to all elements in batch
-        loss.backward(retain_graph=True)
+            x_out_true_2 = outputs_2[0:mynet.true_x_size-1]
+            loss = loss_fc(x_out_true, x_out_true_2, label_train_torch[current_step], du_label_torch[current_step], wavenum_init, lamda_reg, time_step)
+
+            optimizer.zero_grad()
+
+            for i in range(0, state_buffer_len-1):
+                if states[-i-1][0] is None:
+                    break
+                    #this stops us from backproping past the init state
+                current_grad = states[-i-1][0].grad
+                states[-i-2][1].backward(current_grad, retain_graph=True)
         optimizer.step()
 
 
