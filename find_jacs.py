@@ -63,8 +63,8 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 512 # number of Fourier modes to multiply
-width = 1 # input and output chasnnels to the FNO layer
+modes = 256 # number of Fourier modes to multiply
+width = 512 # input and output chasnnels to the FNO layer
 
 
 
