@@ -94,18 +94,25 @@ clf
 histogram(model_one.prediction(:,:), Normalization="pdf")
 histogram(model_one.Truth(:,:), Normalization="pdf")
 title("Direct step output PDF")
+legend("Prediction","Truth")
 
 figure(6);
 clf
 histogram(model_two.prediction(:,:), Normalization="pdf")
+histogram(model_two.prediction(:,:), Normalization="pdf")
 title("PEC step output PDF")
+legend("Prediction","Truth")
 
 figure(7);
 clf
 histogram(model_three.prediction(:,:), Normalization="pdf")
+histogram(model_three.prediction(:,:), Normalization="pdf")
 title("Direct step spectral loss output PDF")
+legend("Prediction","Truth")
 
 figure(8);
 clf
 histogram(model_four.prediction(:,:), Normalization="pdf")
+histogram(model_four.prediction(:,:), Normalization="pdf")
 title("PEC step spectral loss output PDF")
+legend("Prediction","Truth")

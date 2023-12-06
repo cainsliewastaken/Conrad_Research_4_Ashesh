@@ -1,15 +1,15 @@
 model_one = load('MLP_KS_Directstep_lead1_jacs.mat');
 model_two = load('MLP_KS_PECstep_lead1_jacs.mat');
 
-model_one = load('FNO_KS_Directstep_lead1_jacs.mat');
-model_two = load('FNO_KS_PECstep_lead1_jacs.mat');
+model_three = load('FNO_KS_Directstep_lead1_large_jacs.mat');
+model_four = load('FNO_KS_PECstep_lead1_large_jacs.mat');
 
 
-model_three = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
-model_four = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
-
-model_three = load('FNO_KS_Directstep_lead1_tendency_jacs.mat');
-model_four = load('FNO_KS_PECstep_lead1_tendency_jacs.mat');
+% model_one = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
+% model_two = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
+% 
+% model_three = load('FNO_KS_Directstep_lead1_tendency_large_jacs.mat');
+% model_four = load(    'FNO_KS_PECstep_lead1_tendency_large_jacs.mat');
 
 
 [v_direct, e_direct] = eig(squeeze(model_one.Jacobian_mats(1,:,:)));
