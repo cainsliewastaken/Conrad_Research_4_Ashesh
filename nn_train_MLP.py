@@ -17,9 +17,9 @@ lead=1
 
 step_func = Directstep
 
-net_name = 'NN_Directstep_lead'+str(lead)+'_tendency'
+net_name = 'NN_Directstep_lead'+str(lead)+''
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_tendency/'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval'
 
 #comment and uncomment code in training for loop below to change from mse to spectral loss in tendency
 
@@ -91,7 +91,7 @@ for ep in range(0, epochs+1):
     if ep % 5 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
-        torch.save(mynet.state_dict(), '/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
+        torch.save(mynet.state_dict(), '/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
 
 
 torch.save(mynet.state_dict(), net_name+'.pt')

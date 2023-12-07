@@ -5,11 +5,11 @@ model_three = load('FNO_KS_Directstep_lead1_large_jacs.mat');
 model_four = load('FNO_KS_PECstep_lead1_large_jacs.mat');
 
 
-% model_one = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
-% model_two = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
-% 
-% model_three = load('FNO_KS_Directstep_lead1_tendency_large_jacs.mat');
-% model_four = load(    'FNO_KS_PECstep_lead1_tendency_large_jacs.mat');
+model_one = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
+model_two = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
+
+model_three = load('FNO_KS_Directstep_lead1_tendency_large_jacs.mat');
+model_four = load('FNO_KS_PECstep_lead1_tendency_large_jacs.mat');
 
 
 [v_direct, e_direct] = eig(squeeze(model_one.Jacobian_mats(1,:,:)));
@@ -97,6 +97,7 @@ legend('PEC MLP','PEC FNO',fontsize=10)
 
 xlabel('$Re(\lambda)$','Interpreter','latex')
 ylabel('$Im(\lambda)$','Interpreter','latex')
+
 
 % figure(14)
 % clf
