@@ -15,7 +15,7 @@ from nn_spectral_loss import spectral_loss
 lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
-
+ 
 step_func = Directstep
 
 net_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency'
