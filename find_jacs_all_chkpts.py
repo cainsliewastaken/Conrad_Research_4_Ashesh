@@ -117,10 +117,10 @@ for epoch_num in range(0,13):
 
     for k in range(0,eq_points):
 
-        # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
+        ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
         
-        temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-        ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+        # temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
+        # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
         # print(sum(sum(np.abs(ygrad[k,:,:]))))
 
