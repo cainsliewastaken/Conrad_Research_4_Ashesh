@@ -27,9 +27,9 @@ import gc
 lead = 1
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/NN_Directstep_lead1/chkpt_NN_Directstep_lead1"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/NN_PECstep_lead1/chkpt_NN_PECstep_lead1"
 
-matfile_name = 'MLP_KS_Directstep_lead'+str(lead)+'_jacs_all_chkpts.mat'
+matfile_name = 'MLP_KS_PECstep_lead'+str(lead)+'_jacs_all_chkpts.mat'
 
 
 print('loading data')
@@ -102,7 +102,7 @@ def PECstep(input_batch):
  output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
-step_func = Directstep
+step_func = PECstep
 
 print("step function is "+str(step_func))
 
