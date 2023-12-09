@@ -55,7 +55,7 @@ label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float()
 label_test = np.transpose(data[:,trainN+lead:])
 
 
-eq_points = 4
+eq_points = 1
 # FNO archetecture hyperparams
 
 time_history = 1 #time steps to be considered as input to the solver
@@ -72,7 +72,7 @@ width = 512 # input and output chasnnels to the FNO layer
 x_torch = torch.zeros([eq_points,input_size]).cuda()
 
 count=0
-for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
+for k in (np.array([ int(0)])):
   x_torch[count,:] = input_test_torch[k,:].requires_grad_(requires_grad=True)
   count=count+1
 
