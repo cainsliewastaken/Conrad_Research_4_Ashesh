@@ -19,7 +19,7 @@ step_func = Directstep
 
 net_name = 'NN_Directstep_lead'+str(lead)+''
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval'
+path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
 #comment and uncomment code in training for loop below to change from mse to spectral loss in tendency
 
