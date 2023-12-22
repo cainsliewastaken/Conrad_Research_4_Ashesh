@@ -11,6 +11,7 @@ class LTC_Concat_net(nn.Module):
 
         self.LTC_net = LTC(true_x_size, hidden_size) #This cannont have mized memory, also it must not have batched inputs or predict multiple timesteps
         self.true_x_size = true_x_size #size of the actuall input/output
+        print(torch.rand(hidden_size))
         self.init_hidden_state = torch.nn.parameter(torch.rand(hidden_size))
 
 
