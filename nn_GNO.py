@@ -9,7 +9,7 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_spectral_loss import spectral_loss
 
 
-from torch_geometric import Data
+import torch_geometric
 from graph_pde.graph_neural_operator.UAI1_full_resolution import KernelNN
 from graph_pde.graph_neural_operator.nn_conv import NNConv_old
 
@@ -59,6 +59,46 @@ edge_attr[:, 1, :] = np.repeat(x_vals[edge_index[1,:]], trainN, axis=1) #y
 edge_attr[:, 2, :] = input_train_torch[edge_index[0,:],:] #f(x)
 edge_attr[:, 3, :] = input_train_torch[edge_index[1,:],:] #f(y)
 
+
+class GNO_net(torch.nn.Module):
+    def __init__(self, width, ker_width, depth, edge_size, in_width=1, out_width=1):
+        self.depth = depth
+
+        self.fc1 = torch.nn.Linear(in_width, width)
+
+        self.conv1 = GNO_conv(width, width, ker_width, edge_size)
+
+
+
+class GNO_conv(torch_geometric.nn.conv.MessagePassing):
+    def __init__(self, in_size, out_size, ker_width, edge_size,aggr='mean'):
+        super(GNO_conv, self).__init__(aggr=aggr)
+
+        self.in_size = in_size
+        self.out_size = out_size
+        self.aggr = aggr
+
+        self.ker_1 = torch.nn.Linear(edge_size, ker_width)
+        self.ker_2 = torch.nn.Linear(ker_width, ker_width)
+        self.ker_3 = torch.nn.Linear(ker_width, width**2)
+
+        self.root = torch.nn.Parameter(torch.Tensor(in_size, out_size))
+        self.bias = torch.nn.Parameter(torch.Tensor(out_size))
+
+    def forward(self, x, edge_index, edge_attr):
+        return self.propagate(edge_index, x=x, edge_attr=edge_attr)
+
+    def message(self, x_j, edge_attr):
+        hidden_val = self.ker_1(edge_attr)
+        hidden_val = F.relu(hidden_val)
+        hidden_val = self.ker_2(hidden_val)
+        hidden_val = F.relu(hidden_val)
+        weight_mat = self.ker_3(hidden_val).view(-1, self.in_size, self.out_size)
+
+        return torch.matmul(x_j, weight_mat)
+    
+    def update(self, aggr_out, x):
+        return aggr_out + torch.mm(x, self.root) + self.bias
 
 
 model = KernelNN(width, ker_width, depth, edge_features, node_features).cuda()
