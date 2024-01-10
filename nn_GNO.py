@@ -256,13 +256,12 @@ for j in range(trainN):
     edge_attr = meshgenerator.attributes(theta = input_train_torch[j,:])
     data_train.append(torch_geometric.data.Data(x = input_train_torch[j,:], 
                         y = label_train_torch[j,:], edge_index = edge_index, edge_attr = edge_attr))
-
+print('loaded graph data')
 loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
-        print(ep)
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = data_train[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
 
