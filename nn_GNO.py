@@ -16,7 +16,7 @@ path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
  
 step_func = Directstep
 
-net_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency'
+net_name = 'NN_GNO_Directstep_lead'+str(lead)+''
 
 # to changfe from normal loss to spectral loss scroll down 2 right above train for loop
 
@@ -258,6 +258,7 @@ for j in range(trainN):
                         y = label_train_torch[j,:], edge_index = edge_index, edge_attr = edge_attr))
 
 loss_func = nn.MSELoss()
+torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
