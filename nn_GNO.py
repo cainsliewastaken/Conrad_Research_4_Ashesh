@@ -208,7 +208,7 @@ class SquareMeshGenerator(object):
                 edge_attr = np.zeros((self.n_edges, 3*self.d))
                 edge_attr[:,0:2*self.d] = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
                 edge_attr[:, 2 * self.d] = theta[self.edge_index[0]]
-                print(torch.size(edge_attr[:,:]), self.d)
+                print(torch.Tensor.size(edge_attr[:,:]), self.d)
                 edge_attr[:, 2 * self.d +1] = theta[self.edge_index[1]]
         else:
             xy = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
