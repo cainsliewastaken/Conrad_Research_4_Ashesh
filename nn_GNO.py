@@ -238,7 +238,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 
-meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes(num_nodes-1))
+meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1))
 
 adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes)
 edge_index = adj_matrix.nonzero().t().contiguous()
