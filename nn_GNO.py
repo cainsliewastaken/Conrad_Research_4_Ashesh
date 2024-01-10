@@ -252,7 +252,7 @@ wavenum_init = 100
 lamda_reg = 5
 
 data_train = []
-for j in range(trainN):
+for j in range(trainN-1):
     edge_attr = meshgenerator.attributes(theta = input_train_torch[:,j])
     data_train.append(torch_geometric.data.Data(x = input_train_torch[:,j], 
                         y = label_train_torch[:,j], edge_index = edge_index, edge_attr = edge_attr))
