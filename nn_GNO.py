@@ -175,11 +175,12 @@ class DenseNet(torch.nn.Module):
         return x
 
 class SquareMeshGenerator(object):
-    def __init__(self, real_space, mesh_size):
+    def __init__(self, real_space, mesh_size, num_edges):
         super(SquareMeshGenerator, self).__init__()
 
         self.d = len(real_space)
         self.s = mesh_size[0]
+        self.n_edges = num_edges
 
         assert len(mesh_size) == self.d
 
@@ -237,7 +238,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 
-meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024])
+meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes(num_nodes-1))
 
 adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes)
 edge_index = adj_matrix.nonzero().t().contiguous()
