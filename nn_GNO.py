@@ -27,9 +27,9 @@ data=np.asarray(data[:,:250000])
 
 time_step = 1e-3
 trainN = 150000
-input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).cuda()
-label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).cuda()
-du_label_torch = (input_train_torch - label_train_torch).cuda()
+input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN]))
+label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN]))
+du_label_torch = (input_train_torch - label_train_torch)
 device = 'cuda'  
 
 
@@ -262,7 +262,7 @@ loss_func = nn.MSELoss()
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
-        input_batch, label_batch, du_label_batch = data_train[indices], label_train_torch[indices], du_label_torch[indices]
+        input_batch, label_batch, du_label_batch = data_train[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
 
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
