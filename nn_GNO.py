@@ -131,18 +131,18 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         pseudo = edge_attr.unsqueeze(-1) if edge_attr.dim() == 1 else edge_attr
-        return self.propagate(edge_index, x=x, pseudo=pseudo)
+        return self.propagate(edge_index, x=x, pseudo=pseudo).float()
 
     def message(self, x_j, pseudo):
         weight = self.nn(pseudo).view(-1, self.in_channels, self.out_channels)
-        return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
+        return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1).float()
 
     def update(self, aggr_out, x):
         if self.root is not None:
             aggr_out = aggr_out + torch.mm(x, self.root)
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
-        return aggr_out
+        return aggr_out.float()
 
 class DenseNet(torch.nn.Module):
     def __init__(self, layers, nonlinearity, out_nonlinearity=None, normalize=False):
@@ -170,7 +170,7 @@ class DenseNet(torch.nn.Module):
         for _, l in enumerate(self.layers):
             x = l(x)
 
-        return x
+        return x.float()
 
 class SquareMeshGenerator(object):
     def __init__(self, real_space, mesh_size, num_edges, edge_index):
@@ -185,7 +185,7 @@ class SquareMeshGenerator(object):
 
         if self.d == 1:
             self.n = mesh_size[0]
-            self.grid = np.linspace(real_space[0][0], real_space[0][1], self.n).reshape((self.n, 1))
+            self.grid = np.linspace(real_space[0][0], real_space[0][1], self.n).reshape((self.n, 1)).float()
         else:
             self.n = 1
             grids = []
