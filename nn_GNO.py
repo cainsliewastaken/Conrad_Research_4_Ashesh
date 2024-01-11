@@ -290,20 +290,22 @@ for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
-        graph_batch = []
+        optimizer.zero_grad()
+        loss = 0
         for j in range(batch_size):
             edge_attr = meshgenerator.attributes(theta = input_batch[j,:])
-            graph_batch.append(torch_geometric.data.Data(x = input_batch[j,:].cuda(), y = label_batch[j,:], edge_index = edge_index, edge_attr = edge_attr))
-        label_batch.cuda(), du_label_batch.cuda()
+            graph_single = torch_geometric.data.Data(x = input_batch[j,:].cuda(), 
+                    y = label_batch[j,:], 
+                    edge_index = edge_index, 
+                    edge_attr = edge_attr, 
+                    )
+            output = step_func(mynet, graph_single, time_step)
+            loss += loss_func(output, label_batch[j,:])  # use this loss function for mse loss
 
-        print(graph_batch)
-        optimizer.zero_grad()
-        outputs = step_func(mynet, graph_batch, time_step)
-        
-        loss = loss_func(outputs, label_batch)  # use this loss function for mse loss
-
-        # outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
-        # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+            # new_edge_attr = meshgenerator.attributes(theta = output)
+            # new_graph = torch_geometric.data.Data(x = output, edge_index = edge_index, edge_attr = new_edge_attr)
+            # outputs_2 = step_func(mynet, label_batch[j,:], time_step) #use these two lines for spectral loss in tendency
+            # loss = spectral_loss(outputs, outputs_2, label_batch[j,:], du_label_batch[j,:], wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         
