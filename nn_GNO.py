@@ -299,7 +299,7 @@ for ep in range(0, epochs+1):
                     y = label_batch[j,:], 
                     edge_index = edge_index, 
                     edge_attr = edge_attr)
-            print(graph_single.x.dtype)
+            graph_single.to(device)
             
             output = step_func(mynet, graph_single, time_step)
             loss += loss_func(output, label_batch[j,:])  # use this loss function for mse loss
