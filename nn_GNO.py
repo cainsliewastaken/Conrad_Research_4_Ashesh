@@ -46,7 +46,7 @@ class KernelNN(torch.nn.Module):
 
         self.fc1 = torch.nn.Linear(in_width, width)
 
-        kernel = DenseNet([ker_in, ker_width, ker_width, width**2], torch.nn.ReLU)
+        kernel = DenseNet([ker_in, ker_width, ker_width, width**2], torch.nn.ReLU).cuda()
         self.conv1 = NNConv_old(width, width, kernel, aggr='mean')
 
         self.fc2 = torch.nn.Linear(width, out_width)
@@ -177,7 +177,7 @@ class DenseNet(torch.nn.Module):
         for _, l in enumerate(self.layers):
             x = l(x)
 
-        return x.float()
+        return x
 
 class SquareMeshGenerator(object):
     def __init__(self, real_space, mesh_size, num_edges, edge_index):
