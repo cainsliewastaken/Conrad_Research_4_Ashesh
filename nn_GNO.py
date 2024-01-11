@@ -295,10 +295,10 @@ for ep in range(0, epochs+1):
         loss = 0
         for j in range(batch_size):
             edge_attr = meshgenerator.attributes(theta = input_batch[j,:])
-            graph_single = torch_geometric.data.Data(x = input_batch[j,:].T.cuda(), 
-                    y = label_batch[j,:].T, 
+            graph_single = torch_geometric.data.Data(x = input_batch[j,:].reshape(-1,1).cuda(), 
+                    y = label_batch[j,:], 
                     edge_index = edge_index, 
-                    edge_attr = edge_attr, )
+                    edge_attr = edge_attr)
             output = step_func(mynet, graph_single, time_step)
             loss += loss_func(output, label_batch[j,:])  # use this loss function for mse loss
 
