@@ -268,7 +268,7 @@ scheduler_step = 50
 scheduler_gamma = 0.8
 
 adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes) #define graph edges
-edge_index = adj_matrix.nonzero().t().contiguous()
+edge_index = adj_matrix.nonzero().t().contiguous().cuda()
 meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1), edge_index) #define function to find graph edges
 
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, meshgenerator.attributes, edge_index).cuda()
