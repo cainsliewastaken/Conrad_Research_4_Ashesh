@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from count_trainable_params import count_parameters
 import pickle
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
+from nn_spectral_loss import spectral_loss
 import torch_geometric
 
 
@@ -37,9 +38,11 @@ Following code taken from: https://github.com/neuraloperator/graph-pde.git
 """
 
 class KernelNN(torch.nn.Module):
-    def __init__(self, width, ker_width, depth, ker_in, in_width=1, out_width=1):
+    def __init__(self, width, ker_width, depth, ker_in, in_width, out_width, find_attr_func, edge_index):
         super(KernelNN, self).__init__()
         self.depth = depth
+        self.find_attr_func = find_attr_func
+        self.edge_index = edge_index
 
         self.fc1 = torch.nn.Linear(in_width, width)
 
@@ -48,14 +51,14 @@ class KernelNN(torch.nn.Module):
 
         self.fc2 = torch.nn.Linear(width, out_width)
 
-    def forward(self, data):
-        x, edge_index, edge_attr = data.x, data.edge_index, data.edge_attr
+    def forward(self, x):
+        edge_attr = self.find_attr_func(theta = x) #create edge values using current x
         x = self.fc1(x)
         for k in range(self.depth):
-            x = F.relu(self.conv1(x, edge_index, edge_attr))
+            x = F.relu(self.conv1(x, self.edge_index, edge_attr))
 
         x = self.fc2(x)
-        return x.float()
+        return x
 
 class NNConv_old(torch_geometric.nn.conv.MessagePassing):
     r"""The continuous kernel-based convolutional operator from the
@@ -259,17 +262,15 @@ learning_rate = 0.0001
 scheduler_step = 50
 scheduler_gamma = 0.8
 
-mynet = KernelNN(width, ker_width, depth, edge_features, node_features).cuda()
+adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes) #define graph edges
+edge_index = adj_matrix.nonzero().t().contiguous()
+meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1), edge_index) #define function to find graph edges
+
+mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, meshgenerator.attributes, edge_index).cuda()
 
 optimizer = torch.optim.Adam(mynet.parameters(), lr=learning_rate, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step, gamma=scheduler_gamma)
 
-
-adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes)
-edge_index = adj_matrix.nonzero().t().contiguous()
-meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1), edge_index)
-
-grid = meshgenerator.get_grid()
 
 
 epochs = 60
@@ -280,34 +281,41 @@ lamda_reg = 5
 
 step_func = Directstep
 
-    
 loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
-        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
+        input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
         optimizer.zero_grad()
-        loss = 0
-        for j in range(batch_size):
-            edge_attr = meshgenerator.attributes(theta = input_batch[j,:])
-            graph_single = torch_geometric.data.Data(x = torch.Tensor(input_batch[j,:]).float().reshape(-1,1).cuda(), 
-                    y = label_batch[j,:], 
-                    edge_index = edge_index, 
-                    edge_attr = edge_attr)
-            graph_single.to(device)
+        # loss = 0
+        # for j in range(batch_size):
             
-            output = step_func(mynet, graph_single, time_step)
-            loss += loss_func(output, label_batch[j,:].float()).float()  # use this loss function for mse loss
+        #     output = step_func(mynet, graph_single, time_step)
+        #     loss += loss_func(output, label_batch[j,:].float()).float()  # use this loss function for mse loss
 
-            # new_edge_attr = meshgenerator.attributes(theta = output)
-            # new_graph = torch_geometric.data.Data(x = output, edge_index = edge_index, edge_attr = new_edge_attr)
-            # outputs_2 = step_func(mynet, label_batch[j,:], time_step) #use these two lines for spectral loss in tendency
-            # loss = spectral_loss(outputs, outputs_2, label_batch[j,:], du_label_batch[j,:], wavenum_init, lamda_reg, time_step)
+        #     # new_edge_attr = meshgenerator.attributes(theta = output)
+        #     # new_graph = torch_geometric.data.Data(x = output, edge_index = edge_index, edge_attr = new_edge_attr)
+        #     # outputs_2 = step_func(mynet, label_batch[j,:], time_step) #use these two lines for spectral loss in tendency
+        #     # loss = spectral_loss(outputs, outputs_2, label_batch[j,:], du_label_batch[j,:], wavenum_init, lamda_reg, time_step)
 
-        loss.backward()
+        # loss.backward()
         
+        # optimizer.step()
+
+
+
+        optimizer.zero_grad()
+        outputs = step_func(mynet, input_batch, time_step)
+        
+        loss = loss_func(outputs, label_batch) #use this for basic mse loss 
+
+        
+        # outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
+        # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+
+        loss.backward(retain_graph=True)
         optimizer.step()
 
 
