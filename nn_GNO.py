@@ -219,39 +219,6 @@ class SquareMeshGenerator(object):
 
 
 
-width = 32
-ker_width = 256
-num_nodes = 1024
-depth = 1
-edge_features = 4
-node_features = 1
-L = 100
-
-learning_rate = 0.0001
-scheduler_step = 50
-scheduler_gamma = 0.8
-
-mynet = KernelNN(width, ker_width, depth, edge_features, node_features).cuda()
-
-optimizer = torch.optim.Adam(mynet.parameters(), lr=learning_rate, weight_decay=5e-4)
-scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step, gamma=scheduler_gamma)
-
-
-adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes)
-edge_index = adj_matrix.nonzero().t().contiguous()
-meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1), edge_index)
-
-grid = meshgenerator.get_grid()
-
-
-
-epochs = 60
-batch_size = 50
-wavenum_init = 100
-lamda_reg = 5
-
-
-
 def Eulerstep(net, input_batch, time_step):
  output_1 = net(input_batch)
  return input_batch + time_step*(output_1) 
@@ -279,6 +246,38 @@ def PEC4step(net, input_batch, time_step):
  output_2 = input_batch + time_step*0.5*(net(input_batch)+net(output_1))
  output_3 = input_batch + time_step*0.5*(net(input_batch)+net(output_2))
  return input_batch + time_step*0.5*(net(input_batch)+net(output_3))
+
+
+width = 32
+ker_width = 256
+num_nodes = 1024
+depth = 1
+edge_features = 4
+node_features = 1
+L = 100
+
+learning_rate = 0.0001
+scheduler_step = 50
+scheduler_gamma = 0.8
+
+mynet = KernelNN(width, ker_width, depth, edge_features, node_features).cuda()
+
+optimizer = torch.optim.Adam(mynet.parameters(), lr=learning_rate, weight_decay=5e-4)
+scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step, gamma=scheduler_gamma)
+
+
+adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes)
+edge_index = adj_matrix.nonzero().t().contiguous()
+meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1), edge_index)
+
+grid = meshgenerator.get_grid()
+
+
+epochs = 60
+batch_size = 10
+wavenum_init = 100
+lamda_reg = 5
+
 
 step_func = Directstep
 
