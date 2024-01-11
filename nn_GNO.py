@@ -208,10 +208,10 @@ class SquareMeshGenerator(object):
                 edge_attr = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
             else:
                 edge_attr = torch.zeros((self.n_edges, 4))
-                print(edge_attr[:, 2 * self.d].shape, theta[self.edge_index[0]].squeeze(-1).shape)
+                # print(edge_attr[:, 2 * self.d].shape, theta[self.edge_index[0]].squeeze(-1).shape)
                 edge_attr[:,0:2*self.d] = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
-                edge_attr[:, 2 * self.d] = theta[self.edge_index[0]]
-                edge_attr[:, 2 * self.d +1] = theta[self.edge_index[1]]
+                edge_attr[:, 2 * self.d] = theta[self.edge_index[0]].squeeze(-1)
+                edge_attr[:, 2 * self.d +1] = theta[self.edge_index[1]].squeeze(-1)
         else:
             xy = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
             if theta is None:
