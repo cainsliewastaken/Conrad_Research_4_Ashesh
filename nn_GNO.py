@@ -185,7 +185,7 @@ class SquareMeshGenerator(object):
 
         if self.d == 1:
             self.n = mesh_size[0]
-            self.grid = np.linspace(real_space[0][0], real_space[0][1], self.n).reshape((self.n, 1)).float()
+            self.grid = np.linspace(real_space[0][0], real_space[0][1], self.n).reshape((self.n, 1))
         else:
             self.n = 1
             grids = []
