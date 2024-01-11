@@ -289,12 +289,13 @@ for ep in range(0, epochs+1):
     print(ep)
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
-        input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
+        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
         graph_batch = []
         for j in range(batch_size):
             edge_attr = meshgenerator.attributes(theta = input_batch[j,:])
             graph_batch.append(torch_geometric.data.Data(x = input_batch[j,:], 
                 y = label_batch[j,:], edge_index = edge_index, edge_attr = edge_attr))
+        input_batch.cuda(), label_batch.cuda(), du_label_batch.cuda()
 
         optimizer.zero_grad()
         outputs = step_func(mynet, graph_batch, time_step)
