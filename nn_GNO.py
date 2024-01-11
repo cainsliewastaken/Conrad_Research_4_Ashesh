@@ -52,16 +52,17 @@ class KernelNN(torch.nn.Module):
         self.fc2 = torch.nn.Linear(width, out_width)
 
     def forward(self, x):
-        print(x.shape)
+        batch_size = x.shape[0]
         x = x.unsqueeze(-1)
-        print(x.shape)
-        edge_attr = self.find_attr_func(theta = x) #create edge values using current x
-        x = self.fc1(x)
-        for k in range(self.depth):
-            x = F.relu(self.conv1(x, self.edge_index, edge_attr))
+        x_new = self.fc1(x)
 
-        x = self.fc2(x)
-        return x
+        for j in range(batch_size):
+            edge_attr = self.find_attr_func(theta = x[j]) #create edge values using each x in batch
+            for k in range(self.depth):
+                x_new[j] = F.relu(self.conv1(x_new[j], self.edge_index, edge_attr))
+
+        x_new = self.fc2(x_new)
+        return x_new
 
 class NNConv_old(torch_geometric.nn.conv.MessagePassing):
     r"""The continuous kernel-based convolutional operator from the
@@ -210,7 +211,7 @@ class SquareMeshGenerator(object):
                 edge_attr = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
             else:
                 edge_attr = torch.zeros((self.n_edges, 4))
-                # print(edge_attr[:, 2 * self.d].shape, theta[self.edge_index[0]].squeeze(-1).shape)
+
                 edge_attr[:,0:2*self.d] = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
                 edge_attr[:, 2 * self.d] = theta[self.edge_index[0]].squeeze(-1)
                 edge_attr[:, 2 * self.d +1] = theta[self.edge_index[1]].squeeze(-1)
