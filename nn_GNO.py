@@ -241,8 +241,9 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes)
 edge_index = adj_matrix.nonzero().t().contiguous()
 meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1), edge_index)
-
+print('getting grid')
 grid = meshgenerator.get_grid()
+print('gotted grid')
 
 
 
