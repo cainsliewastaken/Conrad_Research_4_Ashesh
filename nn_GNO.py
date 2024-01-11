@@ -55,7 +55,7 @@ class KernelNN(torch.nn.Module):
             x = F.relu(self.conv1(x, edge_index, edge_attr))
 
         x = self.fc2(x)
-        return x
+        return x.float()
 
 class NNConv_old(torch_geometric.nn.conv.MessagePassing):
     r"""The continuous kernel-based convolutional operator from the
