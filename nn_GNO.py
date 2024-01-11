@@ -270,7 +270,7 @@ for ep in range(0, epochs+1):
             edge_attr = meshgenerator.attributes(theta = input_batch[j,:])
             graph_batch.append(torch_geometric.data.Data(x = input_batch[j,:], 
                 y = label_batch[j,:], edge_index = edge_index, edge_attr = edge_attr))
-        graph_batch.cuda(), label_batch.cuda(), du_label_batch.cuda()
+        print(graph_batch)
 
         optimizer.zero_grad()
         outputs = step_func(mynet, graph_batch, time_step)
