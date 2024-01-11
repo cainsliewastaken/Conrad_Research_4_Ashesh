@@ -295,7 +295,7 @@ for ep in range(0, epochs+1):
         loss = 0
         for j in range(batch_size):
             edge_attr = meshgenerator.attributes(theta = input_batch[j,:])
-            graph_single = torch_geometric.data.Data(x = input_batch[j,:].reshape(-1,1).cuda(), 
+            graph_single = torch_geometric.data.Data(x = torch.Tensor(input_batch[j,:]).reshape(-1,1).cuda(), 
                     y = label_batch[j,:], 
                     edge_index = edge_index, 
                     edge_attr = edge_attr)
