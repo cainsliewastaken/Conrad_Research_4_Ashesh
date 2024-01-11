@@ -241,9 +241,8 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes)
 edge_index = adj_matrix.nonzero().t().contiguous()
 meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1), edge_index)
-print('getting grid')
+
 grid = meshgenerator.get_grid()
-print('gotted grid')
 
 
 
@@ -255,6 +254,7 @@ lamda_reg = 5
 data_train = []
 for j in range(trainN):
     edge_attr = meshgenerator.attributes(theta = input_train_torch[j,:])
+    print('gotten attributes')
     data_train.append(torch_geometric.data.Data(x = input_train_torch[j,:], 
                         y = label_train_torch[j,:], edge_index = edge_index, edge_attr = edge_attr))
 print('loaded graph data')
