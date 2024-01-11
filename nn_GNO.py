@@ -50,7 +50,6 @@ class KernelNN(torch.nn.Module):
 
     def forward(self, data):
         x, edge_index, edge_attr = data.x, data.edge_index, data.edge_attr
-        print(len(x))
         x = self.fc1(x)
         for k in range(self.depth):
             x = F.relu(self.conv1(x, edge_index, edge_attr))
@@ -286,7 +285,6 @@ loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
-    print(ep)
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
