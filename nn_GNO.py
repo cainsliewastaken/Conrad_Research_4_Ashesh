@@ -290,7 +290,7 @@ for ep in range(0, epochs+1):
     print(ep)
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
-        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
+        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
         optimizer.zero_grad()
         loss = 0
         for j in range(batch_size):
