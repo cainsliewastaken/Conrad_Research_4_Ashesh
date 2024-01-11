@@ -296,7 +296,7 @@ for ep in range(0, epochs+1):
             graph_batch.append(torch_geometric.data.Data(x = input_batch[j,:].cuda(), y = label_batch[j,:], edge_index = edge_index, edge_attr = edge_attr))
         data_loaded = torch_geometric.data.DataLoader(graph_batch, batch_size=batch_size, shuffle=False)
         label_batch.cuda(), du_label_batch.cuda()
-        print(data_loaded)
+        print(data_loaded[0])
         optimizer.zero_grad()
         outputs = step_func(mynet, data_loaded, time_step)
         
