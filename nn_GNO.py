@@ -46,7 +46,7 @@ class KernelNN(torch.nn.Module):
         kernel = DenseNet([ker_in, ker_width, ker_width, width**2], torch.nn.ReLU)
         self.conv1 = NNConv_old(width, width, kernel, aggr='mean')
 
-        self.fc2 = torch.nn.Linear(width, 1)
+        self.fc2 = torch.nn.Linear(width, out_width)
 
     def forward(self, data):
         x, edge_index, edge_attr = data.x, data.edge_index, data.edge_attr
@@ -295,8 +295,8 @@ for ep in range(0, epochs+1):
         loss = 0
         for j in range(batch_size):
             edge_attr = meshgenerator.attributes(theta = input_batch[j,:])
-            graph_single = torch_geometric.data.Data(x = input_batch[j,:].cuda(), 
-                    y = label_batch[j,:], 
+            graph_single = torch_geometric.data.Data(x = input_batch[j,:].T.cuda(), 
+                    y = label_batch[j,:].T, 
                     edge_index = edge_index, 
                     edge_attr = edge_attr, )
             output = step_func(mynet, graph_single, time_step)
