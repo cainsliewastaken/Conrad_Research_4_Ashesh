@@ -281,7 +281,7 @@ lamda_reg = 5
 step_func = Directstep
 
     
-loss_func = nn.MSELoss().float()
+loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
