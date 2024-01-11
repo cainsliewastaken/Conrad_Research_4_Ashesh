@@ -26,9 +26,9 @@ data=np.asarray(data[:,:250000])
 
 time_step = 1e-3
 trainN = 150000
-input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN]))
-label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN]))
-du_label_torch = (input_train_torch - label_train_torch)
+input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float()
+label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float()
+du_label_torch = (input_train_torch - label_train_torch).float()
 device = 'cuda'  
 
 
@@ -268,7 +268,7 @@ scheduler_step = 50
 scheduler_gamma = 0.8
 
 adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes) #define graph edges
-edge_index = adj_matrix.nonzero().t().contiguous()
+edge_index = adj_matrix.nonzero().t().contiguous().float()
 meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1), edge_index) #define function to find graph edges
 
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, meshgenerator.attributes, edge_index).cuda()
