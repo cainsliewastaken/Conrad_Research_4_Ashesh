@@ -281,7 +281,7 @@ lamda_reg = 5
 step_func = Directstep
 
     
-loss_func = nn.MSELoss()
+loss_func = nn.MSELoss().float()
 torch.set_printoptions(precision=10)
 
 for ep in range(0, epochs+1):
@@ -299,7 +299,7 @@ for ep in range(0, epochs+1):
             graph_single.to(device)
             
             output = step_func(mynet, graph_single, time_step)
-            loss += loss_func(output, label_batch[j,:]).type(float)  # use this loss function for mse loss
+            loss += loss_func(output, label_batch[j,:])  # use this loss function for mse loss
 
             # new_edge_attr = meshgenerator.attributes(theta = output)
             # new_graph = torch_geometric.data.Data(x = output, edge_index = edge_index, edge_attr = new_edge_attr)
