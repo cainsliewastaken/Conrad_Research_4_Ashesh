@@ -306,7 +306,7 @@ for ep in range(0, epochs+1):
             # outputs_2 = step_func(mynet, label_batch[j,:], time_step) #use these two lines for spectral loss in tendency
             # loss = spectral_loss(outputs, outputs_2, label_batch[j,:], du_label_batch[j,:], wavenum_init, lamda_reg, time_step)
 
-        loss.backward(retain_graph=True).float()
+        loss.backward(retain_graph=True)
         
         optimizer.step()
 
