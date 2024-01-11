@@ -254,9 +254,10 @@ lamda_reg = 5
 data_train = []
 for j in range(trainN):
     edge_attr = meshgenerator.attributes(theta = input_train_torch[j,:])
-    print('gotten attributes')
     data_train.append(torch_geometric.data.Data(x = input_train_torch[j,:], 
                         y = label_train_torch[j,:], edge_index = edge_index, edge_attr = edge_attr))
+    print(j)
+    
 print('loaded graph data')
 loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
