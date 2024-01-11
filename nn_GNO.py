@@ -273,7 +273,7 @@ grid = meshgenerator.get_grid()
 
 
 epochs = 60
-batch_size = 10
+batch_size = 5
 wavenum_init = 100
 lamda_reg = 5
 
