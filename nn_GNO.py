@@ -52,6 +52,7 @@ class KernelNN(torch.nn.Module):
         self.fc2 = torch.nn.Linear(width, out_width)
 
     def forward(self, x):
+        x = x.reshape(-1,1)
         edge_attr = self.find_attr_func(theta = x) #create edge values using current x
         x = self.fc1(x)
         for k in range(self.depth):
