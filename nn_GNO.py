@@ -6,7 +6,6 @@ import torch.nn.functional as F
 from count_trainable_params import count_parameters
 import pickle
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
-from nn_spectral_loss import spectral_loss
 import torch_geometric
 
 
@@ -14,7 +13,6 @@ lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
  
-step_func = Directstep
 
 net_name = 'NN_GNO_Directstep_lead'+str(lead)+''
 
@@ -251,11 +249,38 @@ batch_size = 50
 wavenum_init = 100
 lamda_reg = 5
 
-# data_train = []
-# for j in range(trainN):
-#     edge_attr = meshgenerator.attributes(theta = input_train_torch[j,:])
-#     data_train.append(torch_geometric.data.Data(x = input_train_torch[j,:], 
-#                         y = label_train_torch[j,:], edge_index = edge_index, edge_attr = edge_attr))
+
+
+def Eulerstep(net, input_batch, time_step):
+ output_1 = net(input_batch)
+ return input_batch + time_step*(output_1) 
+  
+def Directstep(net, input_batch, time_step):
+  output_1 = net(input_batch)
+  return output_1
+
+
+def RK4step(net, input_batch, time_step):
+ output_1 = net(input_batch)
+ output_2 = net(input_batch+0.5*output_1)
+ output_3 = net(input_batch+0.5*output_2)
+ output_4 = net(input_batch+output_3)
+
+ return input_batch.cuda() + time_step*(output_1+2*output_2+2*output_3+output_4)/6
+
+
+def PECstep(net, input_batch, time_step):
+ output_1 = net(input_batch) + input_batch
+ return input_batch + time_step*0.5*(net(input_batch)+net(output_1))
+
+def PEC4step(net, input_batch, time_step):
+ output_1 = time_step*net(input_batch) + input_batch
+ output_2 = input_batch + time_step*0.5*(net(input_batch)+net(output_1))
+ output_3 = input_batch + time_step*0.5*(net(input_batch)+net(output_2))
+ return input_batch + time_step*0.5*(net(input_batch)+net(output_3))
+
+step_func = Directstep
+
     
 loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
@@ -264,13 +289,12 @@ for ep in range(0, epochs+1):
     print(ep)
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
-        input_batch, label_batch, du_label_batch = input_train_torch[indices], label_train_torch[indices], du_label_torch[indices]
+        input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
         graph_batch = []
         for j in range(batch_size):
             edge_attr = meshgenerator.attributes(theta = input_batch[j,:])
             graph_batch.append(torch_geometric.data.Data(x = input_batch[j,:], 
                 y = label_batch[j,:], edge_index = edge_index, edge_attr = edge_attr))
-        print(graph_batch)
 
         optimizer.zero_grad()
         outputs = step_func(mynet, graph_batch, time_step)
