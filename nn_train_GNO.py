@@ -8,6 +8,7 @@ import pickle
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_spectral_loss import spectral_loss
 import torch_geometric
+import sklearn.metrics.pairwise_distances
 
 
 lead=1
@@ -198,7 +199,14 @@ class SquareMeshGenerator(object):
                 self.n *= mesh_size[j]
 
             self.grid = torch.tensor(np.vstack([xx.ravel() for xx in np.meshgrid(*grids)]).T).cuda()
-        
+
+    def ball_connectivity(self, r):
+        pwd = sklearn.metrics.pairwise_distances(self.grid)
+        self.edge_index = np.vstack(np.where(pwd <= r))
+        self.n_edges = self.edge_index.shape[1]
+
+        return torch.tensor(self.edge_index, dtype=torch.long)
+    
 
     def get_grid(self):
         return torch.tensor(self.grid, dtype=torch.float)
@@ -221,6 +229,8 @@ class SquareMeshGenerator(object):
                 edge_attr = f(xy[:,0:self.d], xy[:,self.d:], theta[self.edge_index[0]], theta[self.edge_index[1]])
 
         return edge_attr
+    
+
 
 
 
