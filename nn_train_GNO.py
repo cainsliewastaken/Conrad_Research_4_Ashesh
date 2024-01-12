@@ -280,7 +280,7 @@ for ep in range(0, epochs+1):
     if ep % 5 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
-        # torch.save(mynet.state_dict(), '/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
+        torch.save(mynet.state_dict(), '/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
 
 
 torch.save(mynet.state_dict(), net_name+'.pt')
