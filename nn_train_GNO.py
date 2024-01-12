@@ -14,9 +14,9 @@ lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/'
  
-step_func = PEC4step
+step_func = Directstep
 
-net_name = 'NN_GNO_PEC4step_lead'+str(lead)+''
+net_name = 'NN_GNO_Directstep_lead'+str(lead)+''
 
 # to changfe from normal loss to spectral loss scroll down 2 right above train for loop
 
@@ -248,7 +248,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 epochs = 60
-batch_size = 2
+batch_size = 10
 wavenum_init = 100
 lamda_reg = 5
 
