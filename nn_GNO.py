@@ -54,7 +54,7 @@ class KernelNN(torch.nn.Module):
 
     def forward(self, x):
         x = x.unsqueeze(-1)
-        edge_attr = self.find_attr_func(theta = x)
+        edge_attr = self.find_attr_func(theta = x).cuda()
         x = self.fc1(x)
         for k in range(self.depth):
             x = F.relu(self.conv1(x, self.edge_index, edge_attr))
