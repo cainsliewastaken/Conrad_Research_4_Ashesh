@@ -154,10 +154,10 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
 
     def update(self, aggr_out, x):
         if self.root is not None:
-            aggr_out = aggr_out + torch.mm(x, self.root)
+            # aggr_out = aggr_out + torch.mm(x, self.root)
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
-        return aggr_out.float()
+        return aggr_out
 
 class DenseNet(torch.nn.Module):
     def __init__(self, layers, nonlinearity, out_nonlinearity=None, normalize=False):
