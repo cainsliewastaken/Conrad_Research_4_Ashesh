@@ -222,7 +222,7 @@ class SquareMeshGenerator(object):
             else:
                 edge_attr = f(xy[:,0:self.d], xy[:,self.d:], theta[self.edge_index[0]], theta[self.edge_index[1]])
 
-        return torch.tensor(edge_attr, dtype=torch.float)
+        return edge_attr
 
 
 
