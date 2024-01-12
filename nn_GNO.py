@@ -228,7 +228,7 @@ class SquareMeshGenerator(object):
 width = 16
 ker_width = 128
 num_nodes = 1024
-depth = 2
+depth = 1
 edge_features = 4
 node_features = 1
 L = 100
