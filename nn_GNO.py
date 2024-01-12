@@ -63,7 +63,7 @@ class KernelNN(torch.nn.Module):
         x = x.unsqueeze(-1)
         x_new = self.fc1(x)
         edge_attr = torch.zeros((batch_size, num_nodes*(num_nodes-1), self.edge_features)).cuda()
-        for j in range(batch_size-1):
+        for j in range(batch_size):
             print(j)
             edge_attr[j] = self.find_attr_func(theta = x[j]).cuda() #create edge values using each x in batch
             for k in range(self.depth):
@@ -330,7 +330,7 @@ for ep in range(0, epochs+1):
         # outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
         # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
-        loss.backward()
+        loss.backward(retain_graph=True)
         optimizer.step()
 
 
