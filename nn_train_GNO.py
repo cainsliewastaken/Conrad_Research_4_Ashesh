@@ -14,7 +14,7 @@ lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/'
  
-step_func = PECstep
+step_func = PEC4step
 
 net_name = 'NN_GNO_PECstep_lead'+str(lead)+''
 
@@ -248,7 +248,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 epochs = 60
-batch_size = 5
+batch_size = 2
 wavenum_init = 100
 lamda_reg = 5
 
@@ -266,7 +266,6 @@ for ep in range(0, epochs+1):
 
         loss = 0
         for j in range(batch_size):
-            print(j)
             output = step_func(mynet, input_batch[j,:], time_step)
 
             # loss += loss_func(output, label_batch[j,:])  # use this loss function for mse loss
