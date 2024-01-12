@@ -18,7 +18,7 @@ step_func = Directstep
 
 net_name = 'NN_GNO_Directstep_lead'+str(lead)+''
 
-# to changfe from normal loss to spectral loss scroll down 2 right above train for loop
+# to change from normal loss to spectral loss scroll down 2 right above train for loop
 
 with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
@@ -280,7 +280,7 @@ for ep in range(0, epochs+1):
     if ep % 5 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
-        torch.save(mynet.state_dict(), '/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
+        torch.save(mynet.state_dict(), '/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
 
 
 torch.save(mynet.state_dict(), net_name+'.pt')
