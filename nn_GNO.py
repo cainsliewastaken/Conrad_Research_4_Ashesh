@@ -52,15 +52,20 @@ class KernelNN(torch.nn.Module):
         self.fc2 = torch.nn.Linear(width, out_width)
 
     def forward(self, x):
-        batch_size = x.shape[0]
+        if len(x.shape) == 1:
+            batch_size = 1
+            num_nodes = x.shape[0]
+        else:
+            batch_size = x.shape[0]
+            num_nodes = x.shape[1]
+        
         x = x.unsqueeze(-1)
         x_new = self.fc1(x)
-
+        edge_attr = torch.zeros((batch_size, num_nodes*(num_nodes-1))).cuda()
         for j in range(batch_size):
-            edge_attr = self.find_attr_func(theta = x[j]).cuda()
-            print(edge_attr.shape) #create edge values using each x in batch
+            edge_attr[j] = self.find_attr_func(theta = x[j]).cuda() #create edge values using each x in batch
             for k in range(self.depth):
-                x_new[j] = F.relu(self.conv1(x_new[j], self.edge_index, edge_attr)).cuda()
+                x_new[j] = F.relu(self.conv1(x_new[j], self.edge_index, edge_attr[j])).cuda()
 
         x_new = self.fc2(x_new).squeeze(-1)
         print(x_new.shape)
