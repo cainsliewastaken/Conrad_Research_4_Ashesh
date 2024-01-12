@@ -57,8 +57,6 @@ class KernelNN(torch.nn.Module):
         edge_attr = self.find_attr_func(theta = x).cuda()
         x = self.fc1(x)
         for k in range(self.depth):
-            print(self.depth, 'depth')
-            print(k,' k')
             x = F.relu(self.conv1(x, self.edge_index, edge_attr))
         x = self.fc2(x).squeeze(-1)
         return x
@@ -263,15 +261,14 @@ torch.autograd.set_detect_anomaly(True)
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
-        input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
+        input_batch, label_batch, du_label_batch = input_train_torch[indices].float().cuda(), label_train_torch[indices].float().cuda(), du_label_torch[indices].float().cuda()
         optimizer.zero_grad()
 
         loss = 0
         for j in range(batch_size):
             
-            output = step_func(mynet, input_batch[j,:].float(), time_step)
-            print(j,"j")
-            loss += loss_func(output, label_batch[j,:].float())  # use this loss function for mse loss
+            output = step_func(mynet, input_batch[j,:], time_step)
+            loss += loss_func(output, label_batch[j,:])  # use this loss function for mse loss
         
             # output_2 = step_func(mynet, output, time_step) #use these two lines for spectral loss in tendency
             # loss += spectral_loss(output, output_2, label_batch[j,:], du_label_batch[j,:], wavenum_init, lamda_reg, time_step)
