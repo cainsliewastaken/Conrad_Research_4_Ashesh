@@ -47,17 +47,17 @@ class KernelNN(torch.nn.Module):
 
         self.fc1 = torch.nn.Linear(in_width, width)
 
-        kernel = DenseNet([ker_in, ker_width, ker_width, width**2], torch.nn.ReLU).cuda()
-        self.conv1 = NNConv_old(width, width, kernel, aggr='mean').cuda()
+        kernel = DenseNet([ker_in, ker_width, ker_width, width**2], torch.nn.ReLU)
+        self.conv1 = NNConv_old(width, width, kernel, aggr='mean')
 
         self.fc2 = torch.nn.Linear(width, out_width)
 
     def forward(self, x):
         x = x.unsqueeze(-1)
-        edge_attr = self.find_attr_func(theta = x).cuda()
+        edge_attr = self.find_attr_func(theta = x)
         x = self.fc1(x)
         for k in range(self.depth):
-            x = F.relu(self.conv1(x, self.edge_index, edge_attr)).cuda()
+            x = F.relu(self.conv1(x, self.edge_index, edge_attr))
         x = self.fc2(x).squeeze(-1)
         return x
 
@@ -139,7 +139,7 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
 
     def message(self, x_j, pseudo):
         weight = self.nn(pseudo).view(-1, self.in_channels, self.out_channels)
-        return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1).float()
+        return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
 
     def update(self, aggr_out, x):
         if self.root is not None:
@@ -189,7 +189,7 @@ class SquareMeshGenerator(object):
 
         if self.d == 1:
             self.n = mesh_size[0]
-            self.grid = torch.tensor(np.linspace(real_space[0][0], real_space[0][1], self.n).reshape((self.n, 1))).cuda()
+            self.grid = torch.tensor(np.linspace(real_space[0][0], real_space[0][1], self.n).reshape((self.n, 1)))
         else:
             self.n = 1
             grids = []
@@ -265,6 +265,7 @@ for ep in range(0, epochs+1):
 
         loss = 0
         for j in range(batch_size):
+            print(j)
             output = step_func(mynet, input_batch[j,:], time_step)
 
             loss += loss_func(output, label_batch[j,:].float())  # use this loss function for mse loss
