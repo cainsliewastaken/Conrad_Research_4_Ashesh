@@ -64,7 +64,6 @@ class KernelNN(torch.nn.Module):
         x_new = self.fc1(x)
         edge_attr = torch.zeros((batch_size, num_nodes*(num_nodes-1), self.edge_features)).cuda()
         for j in range(batch_size):
-            print(j)
             edge_attr[j] = self.find_attr_func(theta = x[j]).cuda() #create edge values using each x in batch
             for k in range(self.depth):
                 x_new[j] = F.relu(self.conv1(x_new[j], self.edge_index, edge_attr[j])).cuda()
@@ -153,8 +152,8 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
         return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1).float()
 
     def update(self, aggr_out, x):
-        # if self.root is not None:
-            # aggr_out = aggr_out + torch.mm(x, self.root)
+        if self.root is not None:
+            aggr_out = aggr_out + torch.mm(x, self.root)
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
         return aggr_out
@@ -287,7 +286,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 epochs = 60
-batch_size = 5
+batch_size = 1
 wavenum_init = 100
 lamda_reg = 5
 
