@@ -43,7 +43,6 @@ class KernelNN(torch.nn.Module):
         self.depth = depth
         self.find_attr_func = find_attr_func
         self.edge_index = edge_index
-        self.edge_features = ker_in
 
         self.fc1 = torch.nn.Linear(in_width, width)
 
@@ -53,23 +52,14 @@ class KernelNN(torch.nn.Module):
         self.fc2 = torch.nn.Linear(width, out_width)
 
     def forward(self, x):
-        if len(x.shape) == 1:
-            batch_size = 1
-            num_nodes = x.shape[0]
-        else:
-            batch_size = x.shape[0]
-            num_nodes = x.shape[1]
-        
         x = x.unsqueeze(-1)
-        x_new = self.fc1(x)
-        edge_attr = torch.zeros((batch_size, num_nodes*(num_nodes-1), self.edge_features)).cuda()
-        for j in range(batch_size):
-            edge_attr[j] = self.find_attr_func(theta = x[j]).cuda() #create edge values using each x in batch
-            for k in range(self.depth):
-                x_new[j] = F.relu(self.conv1(x_new[j], self.edge_index, edge_attr[j])).cuda()
+        edge_attr = self.find_attr_func(theta = x).cuda()
+        x = self.fc1(x)
+        for k in range(self.depth):
+            x = F.relu(self.conv1(x, self.edge_index, edge_attr)).cuda()
 
-        x_new = self.fc2(x_new).squeeze(-1)
-        return x_new
+        x_ = self.fc2(x).squeeze(-1)
+        return x
 
 class NNConv_old(torch_geometric.nn.conv.MessagePassing):
     r"""The continuous kernel-based convolutional operator from the
@@ -319,17 +309,17 @@ for ep in range(0, epochs+1):
         # optimizer.step()
 
 
+        loss = 0
+        for j in range(batch_size):
+            
+            output = step_func(mynet, input_batch[j,:], time_step)
 
-        optimizer.zero_grad()
-        outputs = step_func(mynet, input_batch, time_step)
+            loss += loss_func(output, label_batch[j,:].float())  # use this loss function for mse loss
         
-        loss = loss_func(outputs, label_batch) #use this for basic mse loss 
+            # output_2 = step_func(mynet, output, time_step) #use these two lines for spectral loss in tendency
+            # loss += spectral_loss(output, output_2, label_batch[j,:], du_label_batch[j,:], wavenum_init, lamda_reg, time_step)
 
-        
-        # outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
-        # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
-
-        loss.backward(retain_graph=True)
+        loss.backward()
         optimizer.step()
 
 
