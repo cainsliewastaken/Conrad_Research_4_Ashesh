@@ -66,7 +66,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 
 loss_fn = nn.MSELoss()
 epochs = 60
-batch_size = 1
+batch_size = 100
 wavenum_init = 100
 lamda_reg = 5
 
@@ -84,8 +84,6 @@ for ep in range(0, epochs+1):
 
         
         outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
-        print(outputs.shape, outputs_2.shape, (outputs-outputs_2).shape)
-
         loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
