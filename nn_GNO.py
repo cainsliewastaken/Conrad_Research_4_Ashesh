@@ -198,6 +198,7 @@ class SquareMeshGenerator(object):
                 self.n *= mesh_size[j]
 
             self.grid = torch.tensor(np.vstack([xx.ravel() for xx in np.meshgrid(*grids)]).T)
+        self.grid.cuda()
 
     def get_grid(self):
         return torch.tensor(self.grid, dtype=torch.float)
