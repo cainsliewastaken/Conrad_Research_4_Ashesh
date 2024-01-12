@@ -61,7 +61,7 @@ class KernelNN(torch.nn.Module):
         
         x = x.unsqueeze(-1)
         x_new = self.fc1(x)
-        edge_attr = torch.zeros((batch_size, num_nodes*(num_nodes-1))).cuda()
+        edge_attr = torch.zeros((batch_size, num_nodes*(num_nodes-1), self.ker_in)).cuda()
         for j in range(batch_size):
             print(edge_attr[j].shape, self.find_attr_func(theta = x[j]).shape)
             edge_attr[j] = self.find_attr_func(theta = x[j]).cuda() #create edge values using each x in batch
