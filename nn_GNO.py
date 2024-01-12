@@ -153,7 +153,7 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
         return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1).float()
 
     def update(self, aggr_out, x):
-        if self.root is not None:
+        # if self.root is not None:
             # aggr_out = aggr_out + torch.mm(x, self.root)
         if self.bias is not None:
             aggr_out = aggr_out + self.bias
