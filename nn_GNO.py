@@ -61,8 +61,9 @@ class KernelNN(torch.nn.Module):
             for k in range(self.depth):
                 x_new[j] = F.relu(self.conv1(x_new[j], self.edge_index, edge_attr)).cuda()
 
-        x_new = self.fc2(x_new)
-        return x_new.squeeze(-1)
+        x_new = self.fc2(x_new).squeeze(-1)
+        print(x_new.shape)
+        return x_new
 
 class NNConv_old(torch_geometric.nn.conv.MessagePassing):
     r"""The continuous kernel-based convolutional operator from the
