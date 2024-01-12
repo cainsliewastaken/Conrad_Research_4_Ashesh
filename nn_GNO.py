@@ -47,8 +47,8 @@ class KernelNN(torch.nn.Module):
 
         self.fc1 = torch.nn.Linear(in_width, width)
 
-        kernel = DenseNet([ker_in, ker_width, ker_width, width**2], torch.nn.ReLU)
-        self.conv1 = NNConv_old(width, width, kernel, aggr='mean')
+        kernel = DenseNet([ker_in, ker_width, ker_width, width**2], torch.nn.ReLU).cuda()
+        self.conv1 = NNConv_old(width, width, kernel, aggr='mean').cuda()
 
         self.fc2 = torch.nn.Linear(width, out_width)
 
@@ -135,7 +135,7 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
         pseudo = edge_attr.unsqueeze(-1) if edge_attr.dim() == 1 else edge_attr
-        return self.propagate(edge_index, x=x, pseudo=pseudo).float()
+        return self.propagate(edge_index, x=x, pseudo=pseudo)
 
     def message(self, x_j, pseudo):
         weight = self.nn(pseudo).view(-1, self.in_channels, self.out_channels)
