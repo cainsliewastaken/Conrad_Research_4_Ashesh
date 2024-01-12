@@ -252,11 +252,11 @@ batch_size = 5
 wavenum_init = 100
 lamda_reg = 5
 
+count_parameters(mynet)
 
 loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
 
-torch.autograd.set_detect_anomaly(True)
 
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
