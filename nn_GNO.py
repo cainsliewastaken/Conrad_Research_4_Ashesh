@@ -290,6 +290,8 @@ step_func = Directstep
 loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
 
+torch.autograd.set_detect_anomaly(True)
+
 for ep in range(0, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
