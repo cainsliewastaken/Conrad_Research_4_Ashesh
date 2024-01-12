@@ -12,7 +12,7 @@ import torch_geometric
 
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
+path_outputs = '/media/volume/sdb/conrad_stability/'
  
 step_func = PECstep
 
