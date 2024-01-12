@@ -63,12 +63,12 @@ class KernelNN(torch.nn.Module):
         x_new = self.fc1(x)
         edge_attr = torch.zeros((batch_size, num_nodes*(num_nodes-1))).cuda()
         for j in range(batch_size):
+            print(edge_attr[j].shape, self.find_attr_func(theta = x[j]).shape)
             edge_attr[j] = self.find_attr_func(theta = x[j]).cuda() #create edge values using each x in batch
             for k in range(self.depth):
                 x_new[j] = F.relu(self.conv1(x_new[j], self.edge_index, edge_attr[j])).cuda()
 
         x_new = self.fc2(x_new).squeeze(-1)
-        print(x_new.shape)
         return x_new
 
 class NNConv_old(torch_geometric.nn.conv.MessagePassing):
