@@ -14,8 +14,9 @@ lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
  
+step_func = PECstep
 
-net_name = 'NN_GNO_Directstep_lead'+str(lead)+''
+net_name = 'NN_GNO_PECstep_lead'+str(lead)+''
 
 # to changfe from normal loss to spectral loss scroll down 2 right above train for loop
 
@@ -222,37 +223,8 @@ class SquareMeshGenerator(object):
 
 
 
-def Eulerstep(net, input_batch, time_step):
- output_1 = net(input_batch)
- return input_batch + time_step*(output_1) 
-  
-def Directstep(net, input_batch, time_step):
-  output_1 = net(input_batch)
-  return output_1
-
-
-def RK4step(net, input_batch, time_step):
- output_1 = net(input_batch)
- output_2 = net(input_batch+0.5*output_1)
- output_3 = net(input_batch+0.5*output_2)
- output_4 = net(input_batch+output_3)
-
- return input_batch.cuda() + time_step*(output_1+2*output_2+2*output_3+output_4)/6
-
-
-def PECstep(net, input_batch, time_step):
- output_1 = net(input_batch) + input_batch
- return input_batch + time_step*0.5*(net(input_batch)+net(output_1))
-
-def PEC4step(net, input_batch, time_step):
- output_1 = time_step*net(input_batch) + input_batch
- output_2 = input_batch + time_step*0.5*(net(input_batch)+net(output_1))
- output_3 = input_batch + time_step*0.5*(net(input_batch)+net(output_2))
- return input_batch + time_step*0.5*(net(input_batch)+net(output_3))
-
-
-width = 32
-ker_width = 256
+width = 16
+ker_width = 128
 num_nodes = 1024
 depth = 1
 edge_features = 4
@@ -274,13 +246,11 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 
-epochs = 1
-batch_size = 5
+epochs = 60
+batch_size = 10
 wavenum_init = 100
 lamda_reg = 5
 
-
-step_func = Directstep
 
 loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
@@ -292,25 +262,10 @@ for ep in range(0, epochs+1):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
         optimizer.zero_grad()
-        # loss = 0
-        # for j in range(batch_size):
-            
-        #     output = step_func(mynet, graph_single, time_step)
-        #     loss += loss_func(output, label_batch[j,:].float()).float()  # use this loss function for mse loss
-
-        #     # new_edge_attr = meshgenerator.attributes(theta = output)
-        #     # new_graph = torch_geometric.data.Data(x = output, edge_index = edge_index, edge_attr = new_edge_attr)
-        #     # outputs_2 = step_func(mynet, label_batch[j,:], time_step) #use these two lines for spectral loss in tendency
-        #     # loss = spectral_loss(outputs, outputs_2, label_batch[j,:], du_label_batch[j,:], wavenum_init, lamda_reg, time_step)
-
-        # loss.backward()
-        
-        # optimizer.step()
-
 
         loss = 0
         for j in range(batch_size):
-            
+            print(j)
             output = step_func(mynet, input_batch[j,:], time_step)
 
             loss += loss_func(output, label_batch[j,:].float())  # use this loss function for mse loss
