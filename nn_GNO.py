@@ -267,7 +267,7 @@ for ep in range(0, epochs+1):
         loss = 0
         for j in range(batch_size):
             print(j)
-            output = step_func(mynet, input_batch[j,:], time_step)
+            output = step_func(mynet, input_batch[j,:].float(), time_step)
 
             loss += loss_func(output, label_batch[j,:].float())  # use this loss function for mse loss
         
