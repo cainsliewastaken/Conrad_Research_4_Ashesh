@@ -267,8 +267,9 @@ for ep in range(0, epochs+1):
 
         loss = 0
         for j in range(batch_size):
-            print(j,"j")
+            
             output = step_func(mynet, input_batch[j,:].float(), time_step)
+            print(j,"j")
             loss += loss_func(output, label_batch[j,:].float())  # use this loss function for mse loss
         
             # output_2 = step_func(mynet, output, time_step) #use these two lines for spectral loss in tendency
