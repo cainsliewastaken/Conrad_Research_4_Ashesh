@@ -57,7 +57,7 @@ class KernelNN(torch.nn.Module):
         edge_attr = self.find_attr_func(theta = x).cuda()
         x = self.fc1(x)
         for k in range(self.depth):
-            print(k,' 2')
+            print(k,' k')
             x = F.relu(self.conv1(x, self.edge_index, edge_attr))
         x = self.fc2(x).squeeze(-1)
         return x
@@ -228,7 +228,7 @@ class SquareMeshGenerator(object):
 width = 16
 ker_width = 128
 num_nodes = 1024
-depth = 6
+depth = 2
 edge_features = 4
 node_features = 1
 L = 100
