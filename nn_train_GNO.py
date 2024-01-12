@@ -225,7 +225,7 @@ class SquareMeshGenerator(object):
 
 
 width = 8
-ker_width = 128
+ker_width = 64
 num_nodes = 1024
 depth = 1
 edge_features = 4
@@ -267,10 +267,11 @@ for ep in range(0, epochs+1):
         loss = 0
         for j in range(batch_size):
             output = step_func(mynet, input_batch[j,:], time_step)
-            print(j)
+            
             # loss += loss_func(output, label_batch[j,:])  # use this loss function for mse loss
         
             output_2 = step_func(mynet, output, time_step) #use these two lines for spectral loss in tendency
+            print(j)
             loss += spectral_loss(output.unsqueeze(0), output_2.unsqueeze(0), label_batch[j,:], du_label_batch[j,:].unsqueeze(0), wavenum_init, lamda_reg, time_step)
 
         loss.backward()
