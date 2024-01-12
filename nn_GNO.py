@@ -27,9 +27,9 @@ data=np.asarray(data[:,:250000])
 
 time_step = 1e-3
 trainN = 150000
-input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float()
-label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float()
-du_label_torch = (input_train_torch - label_train_torch).float()
+input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN]))
+label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN]))
+du_label_torch = (input_train_torch - label_train_torch)
 device = 'cuda'  
 
 
@@ -247,7 +247,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 epochs = 60
-batch_size = 5
+batch_size = 6
 wavenum_init = 100
 lamda_reg = 5
 
@@ -265,7 +265,6 @@ for ep in range(0, epochs+1):
 
         loss = 0
         for j in range(batch_size):
-            print(j)
             output = step_func(mynet, input_batch[j,:], time_step)
 
             loss += loss_func(output, label_batch[j,:].float())  # use this loss function for mse loss
