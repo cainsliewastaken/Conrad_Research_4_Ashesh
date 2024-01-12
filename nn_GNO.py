@@ -57,8 +57,7 @@ class KernelNN(torch.nn.Module):
         x = self.fc1(x)
         for k in range(self.depth):
             x = F.relu(self.conv1(x, self.edge_index, edge_attr)).cuda()
-
-        x_ = self.fc2(x).squeeze(-1)
+        x = self.fc2(x).squeeze(-1)
         return x
 
 class NNConv_old(torch_geometric.nn.conv.MessagePassing):
