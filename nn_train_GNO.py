@@ -188,7 +188,7 @@ class SquareMeshGenerator(object):
 
         if self.d == 1:
             self.n = mesh_size[0]
-            self.grid = torch.tensor(np.linspace(real_space[0][0], real_space[0][1], self.n).reshape((self.n, 1))).cuda()
+            self.grid = torch.tensor(np.linspace(real_space[0][0], real_space[0][1], self.n).reshape((self.n, 1)))
         else:
             self.n = 1
             grids = []
@@ -196,7 +196,7 @@ class SquareMeshGenerator(object):
                 grids.append(np.linspace(real_space[j][0], real_space[j][1], mesh_size[j]))
                 self.n *= mesh_size[j]
 
-            self.grid = torch.tensor(np.vstack([xx.ravel() for xx in np.meshgrid(*grids)]).T).cuda()
+            self.grid = torch.tensor(np.vstack([xx.ravel() for xx in np.meshgrid(*grids)]).T)
 
     def ball_connectivity(self, r):
         pwd = pairwise_distances(self.grid)
