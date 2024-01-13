@@ -236,7 +236,7 @@ ker_width = 64
 num_nodes = 1024
 depth = 4
 edge_features = 4
-edge_radius = 5
+edge_radius = 4
 node_features = 1
 L = 100
 
