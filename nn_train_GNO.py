@@ -178,13 +178,11 @@ class DenseNet(torch.nn.Module):
         return x
 
 class SquareMeshGenerator(object):
-    def __init__(self, real_space, mesh_size, num_edges, edge_index):
+    def __init__(self, real_space, mesh_size):
         super(SquareMeshGenerator, self).__init__()
 
         self.d = len(real_space)
         self.s = mesh_size[0]
-        self.n_edges = num_edges
-        self.edge_index = edge_index
 
         assert len(mesh_size) == self.d
 
