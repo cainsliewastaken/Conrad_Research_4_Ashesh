@@ -8,7 +8,7 @@ import pickle
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_spectral_loss import spectral_loss
 import torch_geometric
-import sklearn.metrics.pairwise_distances as pairwise_distances
+from sklearn.metrics import pairwise_distances 
 
 
 lead=1
