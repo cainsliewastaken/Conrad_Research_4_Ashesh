@@ -246,7 +246,7 @@ scheduler_gamma = 0.8
 
 # adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes) #define graph edges
 # edge_index = adj_matrix.nonzero().t().contiguous().cuda()
-meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024], num_nodes*(num_nodes-1)) #define function to find graph edges
+meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024]) #define function to find graph edges
 edge_index = meshgenerator.ball_connectivity(10)
 
 
