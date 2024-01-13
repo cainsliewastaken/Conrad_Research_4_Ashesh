@@ -34,7 +34,6 @@ du_label_torch = (input_train_torch - label_train_torch)
 device = 'cuda'  
 
 
-
 """
 Following code taken from: https://github.com/neuraloperator/graph-pde.git
 """
@@ -235,7 +234,7 @@ class SquareMeshGenerator(object):
 width = 16
 ker_width = 128
 num_nodes = 1024
-depth = 4
+depth = 2
 edge_features = 4
 node_features = 1
 L = 100
