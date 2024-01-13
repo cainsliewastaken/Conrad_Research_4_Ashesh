@@ -203,7 +203,7 @@ class SquareMeshGenerator(object):
         self.edge_index = np.vstack(np.where(pwd <= r))
         self.n_edges = self.edge_index.shape[1]
 
-        return torch.tensor(self.edge_index, dtype=torch.long)
+        return torch.tensor(self.edge_index, dtype=torch.long).cuda()
     
 
     def get_grid(self):
