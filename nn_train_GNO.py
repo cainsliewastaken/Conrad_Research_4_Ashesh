@@ -15,7 +15,7 @@ lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/'
  
-step_func = Directstep
+step_func = PEC4step
 
 net_name = 'NN_GNO_Directstep_lead'+str(lead)+''
 
@@ -232,10 +232,10 @@ class SquareMeshGenerator(object):
 
 
 
-width = 8
-ker_width = 64
+width = 16
+ker_width = 128
 num_nodes = 1024
-depth = 1
+depth = 4
 edge_features = 4
 node_features = 1
 L = 100
@@ -258,7 +258,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 epochs = 60
-batch_size = 10
+batch_size = 20
 wavenum_init = 100
 lamda_reg = 5
 
