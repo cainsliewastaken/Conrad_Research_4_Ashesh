@@ -231,8 +231,8 @@ class SquareMeshGenerator(object):
 
 
 
-width = 8
-ker_width = 64
+width = 16
+ker_width = 128
 num_nodes = 1024
 depth = 4
 edge_features = 4
@@ -258,7 +258,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 epochs = 60
-batch_size = 25
+batch_size = 20
 wavenum_init = 100
 lamda_reg = 5
 
