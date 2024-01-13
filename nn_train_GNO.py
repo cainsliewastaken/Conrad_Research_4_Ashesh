@@ -258,7 +258,7 @@ scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step,
 
 
 epochs = 60
-batch_size = 20
+batch_size = 30
 wavenum_init = 100
 lamda_reg = 5
 
