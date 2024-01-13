@@ -279,6 +279,7 @@ for ep in range(0, epochs+1):
             output = step_func(mynet, input_batch[j,:], time_step)
             
             loss += loss_func(output, label_batch[j,:])  # use this loss function for mse loss
+            print(j)
         
             # output_2 = step_func(mynet, output, time_step) #use these two lines for spectral loss in tendency
             # loss += spectral_loss(output.unsqueeze(0), output_2.unsqueeze(0), label_batch[j,:], du_label_batch[j,:].unsqueeze(0), wavenum_init, lamda_reg, time_step)
