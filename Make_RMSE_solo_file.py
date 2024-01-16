@@ -2,7 +2,7 @@ import scipy.io
 
 
 path_outputs = '/media/volume/sdb/conrad_stability/RMSE_data/'
-eval_output_name = 'predicted_'+'Directstep'+'_RMSE'
+eval_output_name = 'MLP_predicted_'+'Directstep'+'_RMSE'
 
 
 mat_file = {}
