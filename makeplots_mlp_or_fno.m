@@ -1,14 +1,14 @@
-model_one = load('predicted_Directstep_1024_lead1_skip100.mat');
-model_two = load('predicted_PECstep_1024_lead1_skip100.mat');
+model_one = load('predicted_Directstep_1024_lead1.mat');
+model_two = load('predicted_PECstep_1024_lead1.mat');
 
-% model_three = load('predicted_Directstep_1024_lead1_tendency_skip100.mat');
-model_four = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
+% model_three = load('predicted_Directstep_1024_lead1_tendency.mat');
+model_four = load('predicted_PECstep_1024_tendency_lead1.mat');
 
-% model_one = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
-% model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
+% model_one = load('predicted_Directstep_1024_FNO_lead1.mat');
+% model_two = load('predicted_PECstep_1024_FNO_lead1.mat');
 % 
-% % model_three = load('predicted_Directstep_1024_FNO_lead1_tendency_skip100.mat');
-% model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_skip100.mat');
+% % model_three = load('predicted_Directstep_1024_FNO_lead1_tendency.mat');
+% model_four = load('predicted_PECstep_1024_FNO_lead1_tendency.mat');
 
 
 
@@ -27,8 +27,8 @@ loglog([0:511],model_four.pred_FFT_x(1,1:512),'Linewidth',2,'DisplayName','PEC s
 % loglog([0:511],model_three.pred_FFT_x(1,1:512),'Linewidth',2, 'DisplayName','Direct spectral loss');
 legend(Location='southwest')
 title('Fspec X')
+saveas(figure(1), 'X_FFT_MLP')
 
-% temp = fft((model_three.prediction(2:end,:)-model_three.prediction(1:end-1,:))/1e-3);
 
 figure(2)
 clf
@@ -42,6 +42,9 @@ loglog([0:511],model_four.pred_FFT_dt(1,1:512),'-b','Linewidth',2);
 
 legend('Truth','PEC Net','Direct Net','PEC spectral loss', Location='southwest')
 title('Fspec dt')
+
+saveas(figure(2), 'dt_FFT_MLP')
+
 
 figure(3)
 clf
@@ -60,6 +63,9 @@ prediction = model_one.prediction;
 
 set(0, 'DefaultAxesFontSize', 20)
 
+saveas(figure(3), 'RMSE_MLP')
+
+
 fig4 = figure(4);
 clf
 x = linspace(-50,50,1024);
@@ -69,19 +75,19 @@ plot(x,Truth(1,:),'r','Linewidth',2)
 title(['Time Step ' num2str(1)])
 
 subplot(2,2,2)
-plot(x,prediction(10,:),'b','Linewidth',2);hold on
-plot(x,Truth(10,:),'r','Linewidth',2)
+plot(x,prediction(1000,:),'b','Linewidth',2);hold on
+plot(x,Truth(1000,:),'r','Linewidth',2)
 title(['Time Step ' num2str(1000)])
 
 subplot(2,2,3)
-plot(x,prediction(100,:),'b','Linewidth',2);hold on
-plot(x,Truth(100,:),'r','Linewidth',2)
+plot(x,prediction(10000,:),'b','Linewidth',2);hold on
+plot(x,Truth(10000,:),'r','Linewidth',2)
 title(['Time Step ' num2str(10000)])
 
 
 subplot(2,2,4)
-plot(x,prediction(1000,:),'b','Linewidth',2);hold on
-plot(x,Truth(1000,:),'r','Linewidth',2)
+plot(x,prediction(100000,:),'b','Linewidth',2);hold on
+plot(x,Truth(100000,:),'r','Linewidth',2)
 title(['Time Step ' num2str(100000)])
 fig4.Position = [550 200 1000 600]; 
 sgtitle("Direct Step at multiple time values")
@@ -89,6 +95,10 @@ Lgnd = legend('Direct Step','Truth');
 Lgnd.Position(1) = 0.01;
 Lgnd.Position(2) = .85;
 hold off
+
+% saveas(figure(4), 'RMSE_MLP')
+
+
 
 figure(5);
 clf
