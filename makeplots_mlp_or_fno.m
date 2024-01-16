@@ -27,7 +27,7 @@ loglog([0:511],model_four.pred_FFT_x(1,1:512),'Linewidth',2,'DisplayName','PEC s
 % loglog([0:511],model_three.pred_FFT_x(1,1:512),'Linewidth',2, 'DisplayName','Direct spectral loss');
 legend(Location='southwest')
 title('Fspec X')
-saveas(figure(1), 'X_FFT_MLP')
+% saveas(figure(1), 'X_FFT_MLP')
 
 
 figure(2)
@@ -43,7 +43,7 @@ loglog([0:511],model_four.pred_FFT_dt(1,1:512),'-b','Linewidth',2);
 legend('Truth','PEC Net','Direct Net','PEC spectral loss', Location='southwest')
 title('Fspec dt')
 
-saveas(figure(2), 'dt_FFT_MLP')
+% saveas(figure(2), 'dt_FFT_MLP')
 
 
 figure(3)
@@ -96,7 +96,7 @@ Lgnd.Position(1) = 0.01;
 Lgnd.Position(2) = .85;
 hold off
 
-% saveas(figure(4), 'RMSE_MLP')
+% saveas(figure(4), 'Values_MLP')
 
 
 
