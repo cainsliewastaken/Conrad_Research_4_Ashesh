@@ -15,4 +15,4 @@ hold on
 plot(model_two.RMSE,'DisplayName','PEC Step');
 plot(model_four.RMSE,'DisplayName','PEC Step spectral loss')
 legend(Location='northwest')
-axis([1 300 -.5 5])
+% axis([1 300 -.5 5])
