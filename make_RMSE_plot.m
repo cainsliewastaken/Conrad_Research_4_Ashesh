@@ -8,8 +8,6 @@ model_four = load('MLP_predicted_PECstep_1024_tendency_lead1.mat');
 % 
 % model_four = load('FNO_predicted_PECstep_1024_lead1_tendency.mat');
 
-
-
 figure(3)
 clf
 plot(model_one.RMSE,'-black','DisplayName','Direct Step','LineWidth',2);
