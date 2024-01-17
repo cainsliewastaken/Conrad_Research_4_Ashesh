@@ -1,6 +1,8 @@
+
 import numpy as np
 import torch
 print(torch.__version__)
+print(torch.cuda.mem_get_info())
 import torch.nn as nn
 import torch.nn.functional as F
 from count_trainable_params import count_parameters
