@@ -62,12 +62,17 @@ class KernelNN(torch.nn.Module):
 
     def forward(self, x):
         x = x.unsqueeze(-1)
-        
+        print(torch.cuda.memory_allocated(),'pre edge attr')
         self.edge_attr[:,2] = x[self.edge_index[0]].squeeze(-1)
         self.edge_attr[:,3] = x[self.edge_index[1]].squeeze(-1)
+        print(torch.cuda.memory_allocated(),'post edge attr')
         x = self.fc1(x)
+        print(torch.cuda.memory_allocated(),'pre propagation')
+
         for k in range(self.depth):
             x = F.relu(self.conv1(x, self.edge_index, self.edge_attr))
+        print(torch.cuda.memory_allocated(),'post propagation')
+
         x = self.fc2(x).squeeze(-1)
         return x
 
