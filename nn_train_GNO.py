@@ -44,8 +44,8 @@ class KernelNN(torch.nn.Module):
     def __init__(self, width, ker_width, depth, ker_in, in_width, out_width, edge_attr, edge_index):
         super(KernelNN, self).__init__()
         self.depth = depth
-        self.edge_attr = edge_attr
-        self.edge_index = edge_index
+        self.edge_attr = edge_attr.cuda()
+        self.edge_index = edge_index.cuda()
 
         self.fc1 = torch.nn.Linear(in_width, width)
 
