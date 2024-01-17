@@ -148,13 +148,14 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
     def forward(self, x, edge_index, edge_attr):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
-        print(torch.cuda.memory_allocated(),'pre dense')
         pseudo = edge_attr.unsqueeze(-1) if edge_attr.dim() == 1 else edge_attr
-        print(torch.cuda.memory_allocated(),'post dense')
+        
         return self.propagate(edge_index, x=x, pseudo=pseudo)
 
     def message(self, x_j, pseudo):
+        print(torch.cuda.memory_allocated(),'pre message')
         weight = self.nn(pseudo).view(-1, self.in_channels, self.out_channels)
+        print(torch.cuda.memory_allocated(),'post message')
         return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
 
     def update(self, aggr_out, x):
