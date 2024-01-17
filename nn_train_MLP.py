@@ -15,9 +15,9 @@ from nn_Cascade_MLP import Cascade_MLP_Net
 
 lead=1
 
-step_func = PECstep
+step_func = Directstep
 
-net_name = 'NN_PECstep_lead'+str(lead)+''
+net_name = 'NN_Directstep_lead'+str(lead)+''
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
