@@ -80,11 +80,11 @@ for ep in range(0, epochs+1):
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
         
-        # loss = loss_fn(outputs, label_batch) #use this for basic mse loss 
+        loss = loss_fn(outputs, label_batch) #use this for basic mse loss 
 
         
-        outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
-        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        # outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
+        # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         optimizer.step()
