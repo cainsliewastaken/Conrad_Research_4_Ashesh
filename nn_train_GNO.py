@@ -10,6 +10,7 @@ from nn_spectral_loss import spectral_loss
 import torch_geometric
 from sklearn.metrics import pairwise_distances 
 
+print(torch.cuda.mem_get_info())
 
 lead = 1
 
