@@ -57,11 +57,13 @@ class KernelNN(torch.nn.Module):
 
     def forward(self, x):
         x = x.unsqueeze(-1)
-        self.edge_attr[:,2] = x[self.edge_index[0]].squeeze(-1)
-        self.edge_attr[:,3] = x[self.edge_index[1]].squeeze(-1)
+        edge_attr = torch.zeros((self.edge_index.shape[1], 4))
+        edge_attr[:,0:2] = self.edge_attr
+        edge_attr[:,2] = x[self.edge_index[0]].squeeze(-1)
+        edge_attr[:,3] = x[self.edge_index[1]].squeeze(-1)
         x = self.fc1(x)
         for k in range(self.depth):
-            x = F.relu(self.conv1(x, self.edge_index, self.edge_attr))
+            x = F.relu(self.conv1(x, self.edge_index, edge_attr))
 
         x = self.fc2(x).squeeze(-1)
         return x
@@ -252,7 +254,7 @@ scheduler_gamma = 0.8
 # edge_index = adj_matrix.nonzero().t().contiguous().cuda()
 meshgenerator = SquareMeshGenerator([[-1, 1]], [1024]) #define function to find graph edges
 edge_index = meshgenerator.ball_connectivity(edge_radius/50)
-edge_attr = meshgenerator.attributes(theta = torch.zeros(input_train_torch[0,:].shape))
+edge_attr = meshgenerator.attributes()
 
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, edge_attr, edge_index).cuda()
 mynet.load_state_dict(torch.load(net_file_path))
