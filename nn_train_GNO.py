@@ -2,7 +2,7 @@
 import numpy as np
 import torch
 print(torch.__version__)
-print(torch.cuda.mem_get_info())
+print(torch.cuda.memory_allocated())
 import torch.nn as nn
 import torch.nn.functional as F
 from count_trainable_params import count_parameters
@@ -12,7 +12,6 @@ from nn_spectral_loss import spectral_loss
 import torch_geometric
 from sklearn.metrics import pairwise_distances 
 
-print(torch.cuda.mem_get_info())
 
 lead = 1
 
@@ -47,9 +46,10 @@ class KernelNN(torch.nn.Module):
     def __init__(self, width, ker_width, depth, ker_in, in_width, out_width, edge_attr, edge_index):
         super(KernelNN, self).__init__()
         self.depth = depth
-        print(torch.cuda.mem_get_info())
+        print(torch.cuda.memory_allocated())
         self.edge_attr = edge_attr.cuda()
-        print(torch.cuda.mem_get_info())
+        print(torch.cuda.memory_allocated())
+
 
         self.edge_index = edge_index
 
@@ -260,11 +260,11 @@ meshgenerator = SquareMeshGenerator([[-1, 1]], [1024]) #define function to find 
 edge_index = meshgenerator.ball_connectivity(edge_radius)
 edge_attr = meshgenerator.attributes(theta = torch.zeros(input_train_torch[0,:].shape))
 
-print(torch.cuda.mem_get_info())
+print(torch.cuda.memory_allocated())
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, edge_attr, edge_index).cuda()
-print(torch.cuda.mem_get_info())
+print(torch.cuda.memory_allocated())
 mynet.load_state_dict(torch.load(net_file_path))
-print(torch.cuda.mem_get_info())
+print(torch.cuda.memory_allocated())
 
 optimizer = torch.optim.Adam(mynet.parameters(), lr=learning_rate, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step, gamma=scheduler_gamma)
