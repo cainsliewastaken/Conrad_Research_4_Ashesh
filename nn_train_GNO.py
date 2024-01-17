@@ -68,7 +68,6 @@ class KernelNN(torch.nn.Module):
         print(torch.cuda.memory_allocated(),'post edge attr')
         x = self.fc1(x)
         print(torch.cuda.memory_allocated(),'pre propagation')
-
         for k in range(self.depth):
             x = F.relu(self.conv1(x, self.edge_index, self.edge_attr))
         print(torch.cuda.memory_allocated(),'post propagation')
@@ -149,7 +148,9 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
     def forward(self, x, edge_index, edge_attr):
         """"""
         x = x.unsqueeze(-1) if x.dim() == 1 else x
+        print(torch.cuda.memory_allocated(),'pre dense')
         pseudo = edge_attr.unsqueeze(-1) if edge_attr.dim() == 1 else edge_attr
+        print(torch.cuda.memory_allocated(),'post dense')
         return self.propagate(edge_index, x=x, pseudo=pseudo)
 
     def message(self, x_j, pseudo):
