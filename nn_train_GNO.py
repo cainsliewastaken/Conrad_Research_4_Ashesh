@@ -190,6 +190,7 @@ class DenseNet(torch.nn.Module):
     def forward(self, x):
         print(torch.cuda.memory_allocated(),'pre dense forward')
         for _, l in enumerate(self.layers):
+            print(_)
             x = l(x)
         print(torch.cuda.memory_allocated(),'post dense forward')
         return x
