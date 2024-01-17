@@ -44,7 +44,7 @@ class KernelNN(torch.nn.Module):
     def __init__(self, width, ker_width, depth, ker_in, in_width, out_width, edge_attr, edge_index):
         super(KernelNN, self).__init__()
         self.depth = depth
-        self.edge_attr = edge_attr.cuda()
+        self.edge_attr = edge_attr
         self.edge_index = edge_index
 
         self.fc1 = torch.nn.Linear(in_width, width)
@@ -252,10 +252,12 @@ scheduler_gamma = 0.8
 # edge_index = adj_matrix.nonzero().t().contiguous().cuda()
 meshgenerator = SquareMeshGenerator([[-1, 1]], [1024]) #define function to find graph edges
 edge_index = meshgenerator.ball_connectivity(edge_radius)
+print(input_train_torch[0,:].shape)
 edge_attr = meshgenerator.attributes(theta = torch.zeros(input_train_torch[0,:].shape))
 
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, edge_attr, edge_index).cuda()
 mynet.load_state_dict(torch.load(net_file_path))
+
 optimizer = torch.optim.Adam(mynet.parameters(), lr=learning_rate, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step, gamma=scheduler_gamma)
 
