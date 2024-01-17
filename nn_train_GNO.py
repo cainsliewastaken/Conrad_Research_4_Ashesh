@@ -11,7 +11,7 @@ import torch_geometric
 from sklearn.metrics import pairwise_distances 
 
 
-lead=1
+lead = 1
 
 path_outputs = '/media/volume/sdb/conrad_stability/'
 
