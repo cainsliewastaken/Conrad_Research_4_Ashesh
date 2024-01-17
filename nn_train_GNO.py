@@ -270,7 +270,7 @@ scheduler_gamma = 0.8
 meshgenerator = SquareMeshGenerator([[-1, 1]], [1024]) #define function to find graph edges
 edge_index = meshgenerator.ball_connectivity(edge_radius)
 edge_attr = meshgenerator.attributes(theta = torch.zeros(input_train_torch[0,:].shape))
-
+print(edge_attr.shape, "attr shape")
 print(torch.cuda.memory_allocated())
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, edge_attr, edge_index).cuda()
 print(torch.cuda.memory_allocated())
