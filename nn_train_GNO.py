@@ -188,6 +188,7 @@ class DenseNet(torch.nn.Module):
             self.layers.append(out_nonlinearity())
 
     def forward(self, x):
+        print(x.shape)
         print(torch.cuda.memory_allocated(),'pre dense forward')
         for _, l in enumerate(self.layers):
             print(_)
@@ -272,6 +273,7 @@ edge_attr = meshgenerator.attributes(theta = torch.zeros(input_train_torch[0,:].
 
 print(torch.cuda.memory_allocated())
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, edge_attr, edge_index).cuda()
+                (width, ker_width, depth, ker_in, in_width, out_width, edge_attr, edge_index)
 print(torch.cuda.memory_allocated())
 mynet.load_state_dict(torch.load(net_file_path))
 print(torch.cuda.memory_allocated())
