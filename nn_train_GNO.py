@@ -14,8 +14,10 @@ from sklearn.metrics import pairwise_distances
 lead=1
 
 path_outputs = '/media/volume/sdb/conrad_stability/'
- 
+
 step_func = PEC4step
+
+net_file_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/NN_GNO_PEC4step_lead1/chkpt_NN_GNO_PEC4step_lead1_epoch20.pt"
 
 net_name = 'NN_GNO_PEC4step_lead'+str(lead)+''
 
@@ -39,10 +41,10 @@ Following code taken from: https://github.com/neuraloperator/graph-pde.git
 """
 
 class KernelNN(torch.nn.Module):
-    def __init__(self, width, ker_width, depth, ker_in, in_width, out_width, find_attr_func, edge_index):
+    def __init__(self, width, ker_width, depth, ker_in, in_width, out_width, edge_attr, edge_index):
         super(KernelNN, self).__init__()
         self.depth = depth
-        self.find_attr_func = find_attr_func
+        self.edge_attr = edge_attr
         self.edge_index = edge_index
 
         self.fc1 = torch.nn.Linear(in_width, width)
@@ -54,10 +56,12 @@ class KernelNN(torch.nn.Module):
 
     def forward(self, x):
         x = x.unsqueeze(-1)
-        edge_attr = self.find_attr_func(theta = x).cuda()
+        
+        self.edge_attr[:,3] = x[self.edge_index[0]].squeeze(-1)
+        self.edge_attr[:,4] = x[self.edge_index[1]].squeeze(-1)
         x = self.fc1(x)
         for k in range(self.depth):
-            x = F.relu(self.conv1(x, self.edge_index, edge_attr))
+            x = F.relu(self.conv1(x, self.edge_index, self.edge_attr))
         x = self.fc2(x).squeeze(-1)
         return x
 
@@ -246,12 +250,12 @@ scheduler_gamma = 0.8
 
 # adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes) #define graph edges
 # edge_index = adj_matrix.nonzero().t().contiguous().cuda()
-meshgenerator = SquareMeshGenerator([[-L/2, L/2]], [1024]) #define function to find graph edges
+meshgenerator = SquareMeshGenerator([[-1, 1]], [1024]) #define function to find graph edges
 edge_index = meshgenerator.ball_connectivity(edge_radius)
+edge_attr = meshgenerator.attributes(theta = torch.zeros(torch.shape(input_train_torch[0,:])))
 
-
-mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, meshgenerator.attributes, edge_index).cuda()
-
+mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, edge_attr, edge_index).cuda()
+mynet.load_state_dict(torch.load(net_file_path))
 optimizer = torch.optim.Adam(mynet.parameters(), lr=learning_rate, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step, gamma=scheduler_gamma)
 
@@ -268,7 +272,7 @@ loss_func = nn.MSELoss()
 torch.set_printoptions(precision=10)
 
 
-for ep in range(0, epochs+1):
+for ep in range(20, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = input_train_torch[indices].float().cuda(), label_train_torch[indices].float().cuda(), du_label_torch[indices].float().cuda()
@@ -287,7 +291,7 @@ for ep in range(0, epochs+1):
         optimizer.step()
 
 
-    if ep % 5 == 0:
+    if ep % 1 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
         torch.save(mynet.state_dict(), '/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
