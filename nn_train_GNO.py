@@ -2,7 +2,6 @@
 import numpy as np
 import torch
 print(torch.__version__)
-print(torch.cuda.memory_allocated())
 import torch.nn as nn
 import torch.nn.functional as F
 from count_trainable_params import count_parameters
@@ -46,11 +45,7 @@ class KernelNN(torch.nn.Module):
     def __init__(self, width, ker_width, depth, ker_in, in_width, out_width, edge_attr, edge_index):
         super(KernelNN, self).__init__()
         self.depth = depth
-        print(torch.cuda.memory_allocated())
-        self.edge_attr = edge_attr.cuda()
-        print(torch.cuda.memory_allocated())
-
-
+        self.edge_attr = edge_attr
         self.edge_index = edge_index
 
         self.fc1 = torch.nn.Linear(in_width, width)
@@ -62,15 +57,11 @@ class KernelNN(torch.nn.Module):
 
     def forward(self, x):
         x = x.unsqueeze(-1)
-        print(torch.cuda.memory_allocated(),'pre edge attr')
         self.edge_attr[:,2] = x[self.edge_index[0]].squeeze(-1)
         self.edge_attr[:,3] = x[self.edge_index[1]].squeeze(-1)
-        print(torch.cuda.memory_allocated(),'post edge attr')
         x = self.fc1(x)
-        print(torch.cuda.memory_allocated(),'pre propagation')
         for k in range(self.depth):
             x = F.relu(self.conv1(x, self.edge_index, self.edge_attr))
-        print(torch.cuda.memory_allocated(),'post propagation')
 
         x = self.fc2(x).squeeze(-1)
         return x
@@ -188,13 +179,8 @@ class DenseNet(torch.nn.Module):
             self.layers.append(out_nonlinearity())
 
     def forward(self, x):
-        print(x.shape)
-        print(torch.cuda.memory_allocated(),'pre dense forward')
         for _, l in enumerate(self.layers):
-            print(_)
             x = l(x)
-            print(x.shape)
-        print(torch.cuda.memory_allocated(),'post dense forward')
         return x
 
 class SquareMeshGenerator(object):
@@ -217,7 +203,6 @@ class SquareMeshGenerator(object):
                 self.n *= mesh_size[j]
 
             self.grid = torch.tensor(np.vstack([xx.ravel() for xx in np.meshgrid(*grids)]).T)
-            print(self.grid.shape, 'grid shape')
 
     def ball_connectivity(self, r):
         pwd = pairwise_distances(self.grid)
@@ -236,8 +221,6 @@ class SquareMeshGenerator(object):
                 edge_attr = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
             else:
                 edge_attr = torch.zeros((self.n_edges, 4))
-                print('generated correctly, d is', self.d)
-
                 edge_attr[:,0:2*self.d] = self.grid[self.edge_index.T].reshape((self.n_edges,-1))
                 edge_attr[:, 2 * self.d] = theta[self.edge_index[0]].squeeze(-1)
                 edge_attr[:, 2 * self.d +1] = theta[self.edge_index[1]].squeeze(-1)
@@ -272,12 +255,9 @@ scheduler_gamma = 0.8
 meshgenerator = SquareMeshGenerator([[-1, 1]], [1024]) #define function to find graph edges
 edge_index = meshgenerator.ball_connectivity(edge_radius/50)
 edge_attr = meshgenerator.attributes(theta = torch.zeros(input_train_torch[0,:].shape))
-print(edge_attr.shape, "attr shape")
-print(torch.cuda.memory_allocated())
+
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, edge_attr, edge_index).cuda()
-print(torch.cuda.memory_allocated())
 mynet.load_state_dict(torch.load(net_file_path))
-print(torch.cuda.memory_allocated())
 
 optimizer = torch.optim.Adam(mynet.parameters(), lr=learning_rate, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step, gamma=scheduler_gamma)
