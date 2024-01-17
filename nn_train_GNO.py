@@ -45,7 +45,7 @@ class KernelNN(torch.nn.Module):
     def __init__(self, width, ker_width, depth, ker_in, in_width, out_width, edge_attr, edge_index):
         super(KernelNN, self).__init__()
         self.depth = depth
-        self.edge_attr = edge_attr
+        self.edge_attr = edge_attr.cuda()
         self.edge_index = edge_index
 
         self.fc1 = torch.nn.Linear(in_width, width)
@@ -144,9 +144,7 @@ class NNConv_old(torch_geometric.nn.conv.MessagePassing):
         return self.propagate(edge_index, x=x, pseudo=pseudo)
 
     def message(self, x_j, pseudo):
-        print(torch.cuda.memory_allocated(),'pre message')
         weight = self.nn(pseudo).view(-1, self.in_channels, self.out_channels)
-        print(torch.cuda.memory_allocated(),'post message')
         return torch.matmul(x_j.unsqueeze(1), weight).squeeze(1)
 
     def update(self, aggr_out, x):
