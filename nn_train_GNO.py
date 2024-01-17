@@ -217,6 +217,7 @@ class SquareMeshGenerator(object):
                 self.n *= mesh_size[j]
 
             self.grid = torch.tensor(np.vstack([xx.ravel() for xx in np.meshgrid(*grids)]).T)
+            print(self.grid.shape, 'grid shape')
 
     def ball_connectivity(self, r):
         pwd = pairwise_distances(self.grid)
