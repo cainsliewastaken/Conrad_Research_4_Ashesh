@@ -19,7 +19,7 @@ lead = (1/1e-3)*time_step
 
 step_func = PEC4step
 
-net_name = 'NN_PEC4step_implicit_lead'+str(lead)+'_tendency'
+net_name = 'NN_PEC4step_implicit_lead'+str(lead)+'_spectral_loss'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
@@ -69,6 +69,23 @@ def implicit_iterations(net,input_batch,output,num_iter):
       iter=iter+1 
     return output1
 
+wavenum_init = 100
+
+
+def spectral_loss_no_tendency(output, target):
+
+   loss1 = torch.mean((output-target)**2)
+   
+   out_fft = torch.fft.rfft(output,dim=1)
+   target_fft = torch.fft.rfft(target,dim=1)
+   
+   loss2 = torch.mean(torch.abs(out_fft[:,wavenum_init:] - target_fft[:,wavenum_init:]))
+
+   loss = (1-lamda_reg)*loss1 + lamda_reg*loss2
+  
+   return loss
+
+
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
 count_parameters(mynet)
@@ -83,7 +100,6 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 loss_fn = nn.MSELoss()
 epochs = 60
 batch_size = 100
-wavenum_init = 100
 lamda_reg = 5
 
 torch.set_printoptions(precision=10)
@@ -95,14 +111,14 @@ for ep in range(0, epochs+1):
         optimizer.zero_grad()
         outputs = PEC4step(mynet, input_batch, time_step)
         outputs = implicit_iterations(mynet, input_batch.cuda(), outputs, num_iters)
-        loss = spectral_loss(outputs, label_batch)
+        loss = spectral_loss_no_tendency(outputs, label_batch)
   
         loss.backward(retain_graph=True)
         optimizer.step()
-        if ep % 5 == 0:
-          print('Epoch', ep)
-          print ('Loss', loss)
-          torch.save(mynet.state_dict(), '/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
+      if ep % 5 == 0:
+        print('Epoch', ep)
+        print ('Loss', loss)
+        torch.save(mynet.state_dict(), '/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
 
 
 torch.save(mynet.state_dict(), net_name+'.pt')
