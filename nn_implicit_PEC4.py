@@ -6,10 +6,8 @@ import torch.nn.functional as F
 import torch.optim as optim
 #from torchinfo import summary
 import sys
-import netCDF4 as nc
 #from prettytable import PrettyTable
 from count_trainable_params import count_parameters
-import hdf5storage
 import pickle
 from nn_MLP import MLP_Net
 from nn_spectral_loss import spectral_loss
