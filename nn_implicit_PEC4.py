@@ -93,7 +93,7 @@ for ep in range(0, epochs+1):
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch = input_train_torch[indices], label_train_torch[indices]
         optimizer.zero_grad()
-        outputs = PEC4step(mynet, input_batch)
+        outputs = PEC4step(mynet, input_batch, time_step)
         outputs = implicit_iterations(mynet, input_batch.cuda(), outputs, num_iters)
         loss = spectral_loss(outputs, label_batch)
   
