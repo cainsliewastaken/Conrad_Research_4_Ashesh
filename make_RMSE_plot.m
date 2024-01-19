@@ -3,10 +3,10 @@ model_two = load('MLP_predicted_PECstep_RMSE.mat');
 
 model_four = load('MLP_predicted_PECstep_tendnecy_RMSE.mat');
 
-% model_one = load('FNO_predicted_Directstep_RMSE.mat');
-% model_two = load('FNO_predicted_PECstep_RMSE.mat');
-% 
-% model_four = load('FNO_predicted_PECstep_tendency_RMSE.mat');
+model_one = load('FNO_predicted_Directstep_RMSE.mat');
+model_two = load('FNO_predicted_PECstep_RMSE.mat');
+
+model_four = load('FNO_predicted_PECstep_tendency_RMSE.mat');
 
 figure(3)
 clf

@@ -10,19 +10,18 @@ model_six = load('MLP_KS_PECstep_lead1_UNTRAINED_jacs.mat');
 
 
 % Use these 6 models to compare FNO models
-% model_one = load('FNO_KS_Directstep_lead1_large_jacs.mat');
-% model_two = load('FNO_KS_PECstep_lead1_large_jacs.mat');
-% 
-% % model_three = load('FNO_KS_Directstep_lead1_tendency_large_jacs.mat');
-% model_four = load('FNO_KS_PECstep_lead1_tendency_large_jacs.mat');
-% 
-% model_five = load('FNO_KS_Directstep_lead1_UNTRAINED_jacs.mat');
-% model_six = load('FNO_KS_PECstep_lead1_UNTRAINED_jacs.mat');
+model_one = load('FNO_KS_Directstep_lead1_large_jacs.mat');
+model_two = load('FNO_KS_PECstep_lead1_large_jacs.mat');
+
+% model_three = load('FNO_KS_Directstep_lead1_tendency_large_jacs.mat');
+model_four = load('FNO_KS_PECstep_lead1_tendency_large_jacs.mat');
+
+model_five = load('FNO_KS_Directstep_lead1_UNTRAINED_jacs.mat');
+model_six = load('FNO_KS_PECstep_lead1_UNTRAINED_jacs.mat');
 
 % eigenvalue calculations
 direct_j = squeeze(model_one.Jacobian_mats(1,:,:));
-% (direct_j*direct_j')/1024)
-[v_direct, e_direct] = eig(direct_j);
+[v_direct, e_direct] = eig((direct_j*direct_j')/1024);
 [e_direct, ind_d] = sort(diag(e_direct));
 
 PEC_j = (squeeze(model_two.Jacobian_mats(1,:,:))-eye(1024))/1e-3;
@@ -37,8 +36,7 @@ PEC_sl_j = (squeeze(model_four.Jacobian_mats(1,:,:))-eye(1024))/1e-3;
 [e_PEC_sl, ind_p_sl] = sort(diag(e_PEC_sl));
 
 direct_un_j = squeeze(model_five.Jacobian_mats(1,:,:));
-% (direct_un_j*direct_un_j')/1024
-[v_direct_un, e_direct_un] = eig(direct_un_j);
+[v_direct_un, e_direct_un] = eig((direct_un_j*direct_un_j')/1024);
 [e_direct_un, ind_d_un] = sort(diag(e_direct_un));
 
 PEC_un_j = (squeeze(model_six.Jacobian_mats(1,:,:))-eye(1024))/1e-3;
@@ -129,9 +127,9 @@ clf
 % p = histcounts(abs(e_direct),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_direct),1000)
+histogram(abs(e_direct),100, Normalization="pdf")
 hold on
-histogram(abs(e_direct_un), 25)
+histogram(abs(e_direct_un), 25,Normalization="pdf")
 MarchenkoPasturLaw(100, 1024, 1024, abs(e_direct_un))
 legend('Direct Eigvals','Direct untrained','Marchenko Pastur',fontsize=10)
 
@@ -237,8 +235,8 @@ hold on
 % p = histcounts(real(e_PEC_FNO),50,'Normalization','pdf');
 % binCenters = h.BinEdges + (h.BinWidth/2);
 %plot(binCenters(1:end-1), p)
-histogram(abs(e_PEC), 1000)
-histogram(abs(e_PEC_sl), 1000)
+histogram(abs(e_PEC), 100, Normalization="pdf")
+histogram(abs(e_PEC_sl), 100, Normalization="pdf")
 % histogram(abs(e_PEC_un), 100, Normalization="pdf")
 % MarchenkoPasturLaw(6, 1024, 1024, abs(e_PEC_un))
 
