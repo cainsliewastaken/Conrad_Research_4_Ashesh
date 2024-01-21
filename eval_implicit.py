@@ -23,7 +23,7 @@ skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller),
 
 path_outputs = '/home/exouser/conrad_stability/implicit_outputs/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_stability/Conrad_Research_4_Ashesh/MLP_PEC4step_implicit_lead100_tendency.pt" #change this to use a different network
+net_file_name = "/home/exouser/conrad_stability/Conrad_Research_4_Ashesh/MLP_PEC4step_implicit_lead100_spectral_loss.pt" #change this to use a different network
 
 eval_output_name = 'predicted_implicit_PEC4step_1024_lead'+str(lead)+'_spectralloss'  # what to name the output file, .mat ending not needed
 
