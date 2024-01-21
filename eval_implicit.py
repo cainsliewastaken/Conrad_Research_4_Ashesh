@@ -16,8 +16,6 @@ import matplotlib.pyplot as plt
 from nn_MLP import MLP_Net
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
-
-
 time_step = 1e-1
 lead = (1/1e-3)*time_step
 
@@ -73,7 +71,7 @@ def implicit_iterations(net,input_batch,output,num_iter):
     iter=0
     while(iter < num_iter):
       output1 = (PEC4step_implicit(net,input_batch.cuda(),output)).cuda()
-      print('residue inside implicit',torch.norm(output1-output))
+    #   print('residue inside implicit',torch.norm(output1-output))
       output = output1
       iter=iter+1 
     return output1
@@ -92,13 +90,13 @@ for k in range(0,M):
  
     if (k==0):
 
-        net_output =(PEC4step(mynet,input_test_torch[0,:]))
+        net_output =(PEC4step(mynet,input_test_torch[0,:], time_step))
         net_output = implicit_iterations(mynet,input_test_torch[0,:].cuda(),net_output,lead)
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
     else:
 
-        net_output = (PEC4step(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda()))
+        net_output = (PEC4step(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),time_step))
         net_output = implicit_iterations(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),net_output,lead)
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
