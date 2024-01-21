@@ -1,14 +1,14 @@
-model_one = load('predicted_Directstep_1024_lead1.mat');
-model_two = load('predicted_PECstep_1024_lead1.mat');
-
-% model_three = load('predicted_Directstep_1024_lead1_tendency.mat');
-model_four = load('predicted_PECstep_1024_tendency_lead1.mat');
-
-% model_one = load('predicted_Directstep_1024_FNO_lead1.mat');
-% model_two = load('predicted_PECstep_1024_FNO_lead1.mat');
+% model_one = load('predicted_Directstep_1024_lead1.mat');
+% model_two = load('predicted_PECstep_1024_lead1.mat');
 % 
-% % model_three = load('predicted_Directstep_1024_FNO_lead1_tendency.mat');
-% model_four = load('predicted_PECstep_1024_FNO_lead1_tendency.mat');
+% % model_three = load('predicted_Directstep_1024_lead1_tendency.mat');
+% model_four = load('predicted_PECstep_1024_tendency_lead1.mat');
+
+model_one = load('predicted_implicit_PEC4step_1024_lead100.0_spectralloss_skip100.mat');
+model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
+
+% model_three = load('predicted_Directstep_1024_FNO_lead1_tendency.mat');
+model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_skip100.mat');
 
 
 
@@ -54,7 +54,7 @@ plot(model_two.RMSE,'DisplayName','PEC Step');
 % plot(model_three.RMSE,'DisplayName','Direct Step spectral loss')
 plot(model_four.RMSE,'DisplayName','PEC Step spectral loss')
 legend(Location='northwest')
-axis([1 300 -.5 5])
+% axis([1 300 -.5 5])
 
 
 Truth = model_one.Truth;
@@ -75,19 +75,19 @@ plot(x,Truth(1,:),'r','Linewidth',2)
 title(['Time Step ' num2str(1)])
 
 subplot(2,2,2)
-plot(x,prediction(1000,:),'b','Linewidth',2);hold on
-plot(x,Truth(1000,:),'r','Linewidth',2)
+plot(x,prediction(10,:),'b','Linewidth',2);hold on
+plot(x,Truth(10,:),'r','Linewidth',2)
 title(['Time Step ' num2str(1000)])
 
 subplot(2,2,3)
-plot(x,prediction(10000,:),'b','Linewidth',2);hold on
-plot(x,Truth(10000,:),'r','Linewidth',2)
+plot(x,prediction(100,:),'b','Linewidth',2);hold on
+plot(x,Truth(100,:),'r','Linewidth',2)
 title(['Time Step ' num2str(10000)])
 
 
 subplot(2,2,4)
-plot(x,prediction(100000,:),'b','Linewidth',2);hold on
-plot(x,Truth(100000,:),'r','Linewidth',2)
+plot(x,prediction(1000,:),'b','Linewidth',2);hold on
+plot(x,Truth(1000,:),'r','Linewidth',2)
 title(['Time Step ' num2str(100000)])
 fig4.Position = [550 200 1000 600]; 
 sgtitle("Direct Step at multiple time values")

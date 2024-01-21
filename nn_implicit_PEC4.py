@@ -15,7 +15,7 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 
 time_step = 1e-1
-lead = (1/1e-3)*time_step
+lead = int((1/1e-3)*time_step)
 
 step_func = PEC4step
 
@@ -30,7 +30,6 @@ with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') 
 data=np.asarray(data[:,:250000])
 
 
-lead=1
 trainN = 150000
 input_size = 1024
 output_size = 1024

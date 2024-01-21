@@ -17,7 +17,7 @@ from nn_MLP import MLP_Net
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 time_step = 1e-1
-lead = (1/1e-3)*time_step
+lead = int((1/1e-3)*time_step)
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
@@ -33,7 +33,6 @@ with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') 
 data=np.asarray(data[:,:250000])
 
 
-lead=1
 trainN = 150000
 input_size = 1024
 output_size = 1024
@@ -42,13 +41,9 @@ hidden_layer_size_cascade = 1024
 num_layers = 8
 num_iters = 50
 
-input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
-label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
-du_label_torch = input_train_torch - label_train_torch
-
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
-label_test = np.transpose(data[:,trainN+lead:])
+label_test = np.transpose(data[:,trainN+lead:-1:lead])
 
 
 
@@ -82,7 +77,7 @@ mynet.load_state_dict(torch.load(net_file_name))
 mynet.cuda()
 print('Model loaded')
 
-M = 99999
+M = round(99999/lead)
 net_pred = np.zeros([M,np.size(label_test,1)])
 
 
@@ -106,11 +101,11 @@ def RMSE(y_hat, y_true):
     return np.sqrt(np.mean((y_hat - y_true)**2, axis=1, keepdims=True)) 
 
 #this is the fourier spectrum across a single timestep, output has rows as timestep and columns as modes
-truth_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
-net_pred_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
+truth_fspec_x = np.zeros(np.shape(net_pred[:,:]), dtype=complex)
+net_pred_fspec_x = np.zeros(np.shape(net_pred[:,:]), dtype=complex)
 
-for n in range(np.shape(label_test)[0]):
-    truth_fspec_x[n,:] = np.abs(np.fft.fft(label_test[n,:])) 
+for n in range(np.shape(net_pred)[0]):
+    truth_fspec_x[n,:] = np.abs(np.fft.fft(label_test[n*lead,:])) 
     net_pred_fspec_x[n,:] = np.abs(np.fft.fft(net_pred[n,:])) 
 
 
@@ -119,12 +114,12 @@ truth_dt = np.diff(label_test, n=1, axis=0)
 net_pred_dt = np.diff(net_pred, n=1, axis=0)
 
 # calculate fourier spectrum of time derivative along a single timestep
-truth_fspec_dt = np.zeros(np.shape(truth_dt[:,:]), dtype=complex)
+truth_fspec_dt = np.zeros(np.shape(truth_dt[0:-1:lead,:]), dtype=complex)
 net_pred_fspec_dt = np.zeros(np.shape(net_pred_dt[:,:]), dtype=complex)
 
 
 for n in range(np.shape(truth_dt)[0]):
-    truth_fspec_dt[n,:] = np.abs(np.fft.fft(truth_dt[n,:])) 
+    truth_fspec_dt[n,:] = np.abs(np.fft.fft(truth_dt[n*lead,:])) 
     net_pred_fspec_dt[n,:] = np.abs(np.fft.fft(net_pred_dt[n,:])) 
 
 
@@ -138,7 +133,7 @@ matfiledata_output[u'pred_FFT_x'] = net_pred_fspec_x
 matfiledata_output[u'Truth_FFT_dt'] = truth_fspec_dt
 matfiledata_output[u'pred_FFT_dt'] = net_pred_fspec_dt
 
-scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
+# scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
 
 temp_matfile = {}
 temp_matfile[u'RMSE'] = matfiledata_output[u'RMSE']
