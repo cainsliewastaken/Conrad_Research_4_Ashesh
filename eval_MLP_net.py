@@ -78,7 +78,7 @@ def RMSE(y_hat, y_true):
 truth_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
 net_pred_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
 
-for n in range(np.shape(label_test)[0]-1):
+for n in range(np.shape(label_test)[0]):
     truth_fspec_x[n,:] = np.abs(np.fft.fft(label_test[n,:])) 
     net_pred_fspec_x[n,:] = np.abs(np.fft.fft(net_pred[n,:])) 
 
@@ -92,7 +92,7 @@ truth_fspec_dt = np.zeros(np.shape(truth_dt[:,:]), dtype=complex)
 net_pred_fspec_dt = np.zeros(np.shape(net_pred_dt[:,:]), dtype=complex)
 
 
-for n in range(np.shape(truth_dt)[0]-1):
+for n in range(np.shape(truth_dt)[0]):
     truth_fspec_dt[n,:] = np.abs(np.fft.fft(truth_dt[n,:])) 
     net_pred_fspec_dt[n,:] = np.abs(np.fft.fft(net_pred_dt[n,:])) 
 
