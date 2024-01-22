@@ -19,7 +19,7 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 time_step = 1e-1
 lead = int((1/1e-3)*time_step)
 
-skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
+skip_factor = 0 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
 path_outputs = '/home/exouser/conrad_stability/implicit_outputs/' #this is where the saved graphs and .mat files end up
 
@@ -77,7 +77,7 @@ mynet.load_state_dict(torch.load(net_file_name))
 mynet.cuda()
 print('Model loaded')
 
-M = round(99999/lead)
+M = int(np.floor(99999/lead))
 net_pred = np.zeros([M,np.size(label_test,1)])
 
 
@@ -133,7 +133,7 @@ matfiledata_output[u'pred_FFT_x'] = net_pred_fspec_x
 matfiledata_output[u'Truth_FFT_dt'] = truth_fspec_dt
 matfiledata_output[u'pred_FFT_dt'] = net_pred_fspec_dt
 
-# scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
+scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
 
 temp_matfile = {}
 temp_matfile[u'RMSE'] = matfiledata_output[u'RMSE']
