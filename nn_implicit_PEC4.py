@@ -68,7 +68,7 @@ def implicit_iterations(net,input_batch,output,num_iter):
       iter=iter+1 
     return output1
 
-wavenum_init = 100
+wavenum_init = 50
 
 
 def spectral_loss_no_tendency(output, target):
