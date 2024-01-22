@@ -19,7 +19,7 @@ lead = int((1/1e-3)*time_step)
 
 step_func = PEC4step
 
-net_name = 'NN_PEC4step_implicit_lead'+str(lead)+'_spectral_loss'
+net_name = 'MLP_PEC4step_implicit_lead'+str(lead)+'_spectral_loss'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
