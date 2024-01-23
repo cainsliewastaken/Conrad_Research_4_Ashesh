@@ -56,7 +56,7 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 
-eq_points = 10000
+eq_points = 10000 #find jacobean for first 10000 points
 eq_point_range = range(eq_points)
 # FNO archetecture hyperparams
 
