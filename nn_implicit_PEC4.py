@@ -15,11 +15,11 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 
 time_step = 1e-1
-lead = (1/1e-3)*time_step
+lead = int((1/1e-3)*time_step)
 
 step_func = PEC4step
 
-net_name = 'NN_PEC4step_implicit_lead'+str(lead)+'_spectral_loss'
+net_name = 'MLP_PEC4step_implicit_lead'+str(lead)+'_spectral_loss'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
@@ -30,7 +30,6 @@ with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') 
 data=np.asarray(data[:,:250000])
 
 
-lead=1
 trainN = 150000
 input_size = 1024
 output_size = 1024
@@ -69,7 +68,7 @@ def implicit_iterations(net,input_batch,output,num_iter):
       iter=iter+1 
     return output1
 
-wavenum_init = 100
+wavenum_init = 50
 
 
 def spectral_loss_no_tendency(output, target):
