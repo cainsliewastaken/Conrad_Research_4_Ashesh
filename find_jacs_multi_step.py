@@ -56,8 +56,8 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 
-eq_point_range = range(10000)
 eq_points = 10000
+eq_point_range = range(eq_points)
 # FNO archetecture hyperparams
 
 time_history = 1 #time steps to be considered as input to the solver
