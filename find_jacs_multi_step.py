@@ -80,8 +80,8 @@ for k in (np.array(eq_point_range)):
 
 
 
-# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-mynet = FNO1d(modes, width, time_future, time_history)
+mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+# mynet = FNO1d(modes, width, time_future, time_history)
 mynet.load_state_dict(torch.load(model_path))
 print('model defined')
 print(model_path)
@@ -125,10 +125,10 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
 
-    # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
+    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
     
-    temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-    ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+    # temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
+    # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
     # print(sum(sum(np.abs(ygrad[k,:,:]))))
 
