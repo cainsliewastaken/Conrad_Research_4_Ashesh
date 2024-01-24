@@ -56,7 +56,7 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 
-eq_points = 1000 #find jacobean for this many points
+eq_points = 100 #find jacobean for this many points
 skip_factor = 100 #sample every nth point
 eq_point_range = [ x*skip_factor for x in range(eq_points)]
 # FNO archetecture hyperparams
