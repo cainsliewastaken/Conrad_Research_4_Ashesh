@@ -5,6 +5,7 @@ PEC_struct = load('MLP_KS_PECstep_lead1_jacs_all_chkpts_1000_epochs.mat');
 PEC_mat = cell2mat(struct2cell(PEC_struct));
 % e_Direct_full = zeros(41,1024);
 e_PEC_full = zeros(41,1024);
+e_PEC_vals = [];
 
 for i=1:41
     % [~, e_direct] = eig(squeeze(direct_mat(i,:,:)));
@@ -12,6 +13,7 @@ for i=1:41
     
     [~, e_PEC] = eig(squeeze(PEC_mat(i,:,:)));
     e_PEC_full(i,:) = sort(diag(e_PEC));
+    e_PEC_vals = [e_PEC_vals, diag(e_PEC)];
 end
 
 % figure(1)

@@ -75,7 +75,7 @@ width = 512 # input and output chasnnels to the FNO layer
 x_torch = torch.zeros([eq_points,input_size]).cuda()
 
 count=0
-for k in (np.array(eq_point_range)):
+for k in (eq_point_range):
   x_torch[count,:] = input_test_torch[k,:].requires_grad_(requires_grad=True)
   count=count+1
 
