@@ -115,7 +115,7 @@ def PECstep(input_batch):
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
 # print(torch.cuda.memory_allocated())
-step_func = PECstep
+step_func = Directstep
 
 print("step function is "+str(step_func))
 # print(torch.cuda.memory_allocated())
