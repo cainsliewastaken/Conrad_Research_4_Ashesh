@@ -29,7 +29,7 @@ path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
 model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_Directstep_lead1.pt"
 
-matfile_name = 'MLP_KS_Directstep_lead'+str(lead)+'_full_jacs.mat'
+matfile_name = 'MLP_KS_Directstep_lead'+str(lead)+'_multi_jacs.mat'
 
 
 print('loading data')
@@ -56,8 +56,9 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 
-eq_points = 100 #find jacobean for first 10000 points
-eq_point_range = range(eq_points)
+eq_points = 1000 #find jacobean for this many points
+skip_factor = 100 #sample every nth point
+eq_point_range = range(eq_points) * skip_factor
 # FNO archetecture hyperparams
 
 time_history = 1 #time steps to be considered as input to the solver
