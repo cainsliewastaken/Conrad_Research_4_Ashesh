@@ -18,7 +18,7 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_Cascade_MLP import Cascade_MLP_Net
 
 
-time_step = 1e-1
+time_step = 1e-3
 lead = int((1/1e-3)*time_step)
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version

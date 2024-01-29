@@ -110,7 +110,8 @@ for ep in range(0, epochs+1):
         optimizer.zero_grad()
         outputs = PEC4step(mynet, input_batch, time_step)
         outputs = implicit_iterations(mynet, input_batch.cuda(), outputs, num_iters)
-        loss = spectral_loss_no_tendency(outputs, label_batch)
+        # loss = spectral_loss_no_tendency(outputs, label_batch)
+        loss = loss_fn(outputs, label_batch)
   
         loss.backward(retain_graph=True)
         optimizer.step()
