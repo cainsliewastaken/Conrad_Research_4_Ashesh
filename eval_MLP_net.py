@@ -17,14 +17,9 @@ from nn_MLP import MLP_Net
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_Cascade_MLP import Cascade_MLP_Net
 
-lead=1
-time_step = 1e-3
-trainN = 150000 #dont explicitly need this as no training is done in file, here to help separate training data from eval data
-input_size = 1024
-hidden_layer_size = 2000
-num_layers = 6
-hidden_layer_size_cascade = 1024
-output_size = 1024
+
+time_step = 1e-1
+lead = int((1/1e-3)*time_step)
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
@@ -40,10 +35,16 @@ with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') 
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
+trainN = 150000 #dont explicitly need this as no training is done in file, here to help separate training data from eval data
+input_size = 1024
+hidden_layer_size = 2000
+num_layers = 6
+hidden_layer_size_cascade = 1024
+output_size = 1024
 
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
-label_test = np.transpose(data[:,trainN+lead:])
+label_test = np.transpose(data[:,trainN+lead:-1:lead])
 
 
 my_net_MLP = MLP_Net(input_size, hidden_layer_size, output_size)
@@ -52,7 +53,7 @@ my_net_MLP.load_state_dict(torch.load(net_file_name))
 my_net_MLP.cuda()
 print('Model loaded')
 
-M = 99999
+M = int(np.floor(99999/lead))
 net_pred = np.zeros([M,np.size(label_test,1)])
 
 
@@ -75,10 +76,10 @@ def RMSE(y_hat, y_true):
     return np.sqrt(np.mean((y_hat - y_true)**2, axis=1, keepdims=True)) 
 
 #this is the fourier spectrum across a single timestep, output has rows as timestep and columns as modes
-truth_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
-net_pred_fspec_x = np.zeros(np.shape(label_test[:,:]), dtype=complex)
+truth_fspec_x = np.zeros(np.shape(net_pred[:,:]), dtype=complex)
+net_pred_fspec_x = np.zeros(np.shape(net_pred[:,:]), dtype=complex)
 
-for n in range(np.shape(label_test)[0]):
+for n in range(np.shape(net_pred)[0]):
     truth_fspec_x[n,:] = np.abs(np.fft.fft(label_test[n,:])) 
     net_pred_fspec_x[n,:] = np.abs(np.fft.fft(net_pred[n,:])) 
 
@@ -109,7 +110,9 @@ matfiledata_output[u'pred_FFT_dt'] = net_pred_fspec_dt
 
 scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
 
-
+temp_matfile = {}
+temp_matfile[u'RMSE'] = matfiledata_output[u'RMSE']
+scipy.io.savemat(path_outputs+eval_output_name+'_RMSE.mat', temp_matfile)
 
 if skip_factor: #check if not == 0
     matfiledata_output_skip = {}
