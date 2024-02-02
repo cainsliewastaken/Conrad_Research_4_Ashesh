@@ -35,7 +35,6 @@ input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda(
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
 label_test = np.transpose(data[:,trainN+lead::lead])
 
-print(label_test.shape)
 
 device = 'cuda'  
 
