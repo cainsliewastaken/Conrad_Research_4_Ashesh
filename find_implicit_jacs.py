@@ -81,8 +81,8 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 
 
 
-# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-mynet = FNO1d(modes, width, time_future, time_history)
+mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+# mynet = FNO1d(modes, width, time_future, time_history)
 mynet.load_state_dict(torch.load(model_path))
 print('model defined')
 print(model_path)
@@ -134,7 +134,7 @@ def implicit_iterations(input_batch):
 
 
 # print(torch.cuda.memory_allocated())
-step_func = PEC4step_implicit
+step_func = implicit_iterations
 
 print("step function is "+str(step_func))
 # print(torch.cuda.memory_allocated())
