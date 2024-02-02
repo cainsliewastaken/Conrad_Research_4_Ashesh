@@ -17,7 +17,6 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 time_step = 1e-1
 lead = int((1/1e-3)*time_step)
 
-step_func = PEC4step
 
 net_name = 'MLP_PEC4step_implicit_lead'+str(lead)+'_spectral_loss'
 

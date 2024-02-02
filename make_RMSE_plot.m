@@ -23,10 +23,10 @@
 model_one = load('predicted_implicit_PEC4step_1024_lead50_RMSE.mat');
 model_two = load('predicted_PEC4step_1024_lead50_tendency_RMSE.mat');
 
-model_three = load('predicted_implicit_PEC4step_1024_lead100_spectralloss_RMSE.mat');
+model_three = load('predicted_implicit_PEC4step_1024_lead100_RMSE.mat');
 model_four = load('predicted_PEC4step_1024_lead100_tendency_RMSE.mat');
 
-model_three = load('GNO_predicted_PEC4step_1024_lead1_RMSE.mat');
+% model_three = load('GNO_predicted_PEC4step_1024_lead1_RMSE.mat');
 
 
 figure(4)
