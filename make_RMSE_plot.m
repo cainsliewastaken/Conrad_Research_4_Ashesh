@@ -20,7 +20,7 @@
 
 
 
-model_one = load('predicted_implicit_PEC4step_1024_lead50_spectralloss_RMSE.mat');
+model_one = load('predicted_implicit_PEC4step_1024_lead50_RMSE.mat');
 model_two = load('predicted_PEC4step_1024_lead50_tendency_RMSE.mat');
 
 model_three = load('predicted_implicit_PEC4step_1024_lead100_spectralloss_RMSE.mat');

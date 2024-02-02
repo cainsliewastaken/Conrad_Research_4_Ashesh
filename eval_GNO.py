@@ -35,6 +35,7 @@ input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda(
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
 label_test = np.transpose(data[:,trainN+lead:-1:lead])
 
+print(torch.shape(label_test))
 
 device = 'cuda'  
 
@@ -243,9 +244,6 @@ edge_radius = 3
 node_features = 1
 L = 100
 
-learning_rate = 0.0001
-scheduler_step = 50
-scheduler_gamma = 0.8
 
 # adj_matrix = torch.ones((num_nodes, num_nodes)) - torch.eye(num_nodes) #define graph edges
 # edge_index = adj_matrix.nonzero().t().contiguous().cuda()
