@@ -1,15 +1,19 @@
-% model_one = load('predicted_Directstep_1024_lead1.mat');
+model_one = load('predicted_Directstep_1024_lead1_skip100.mat');
 model_two = load('predicted_PECstep_1024_lead1_skip100.mat');
-% 
-% % model_three = load('predicted_Directstep_1024_lead1_tendency.mat');
+
+% model_three = load('predicted_Directstep_1024_lead1_tendency.mat');
 model_four = load('predicted_PECstep_1024_tendency_lead1_skip100.mat');
 
-model_one = load('predicted_implicit_PEC4step_1024_lead100_spectralloss.mat');
+model_one = load('GNO_predicted_PEC4step_1024_lead1_skip100.mat');
+
+% model_one = load('predicted_Directstep_1024_FNO_lead1_skip100.mat');
+% % model_one = load('predicted_implicit_PEC4step_1024_lead100_spectralloss.mat');
+% % model_one = load('GNO_predicted_PEC4step_1024_lead1_skip100.mat');
+% 
 % model_two = load('predicted_PECstep_1024_FNO_lead1_skip100.mat');
-
-% model_three = load('predicted_Directstep_1024_FNO_lead1_tendency.mat');
+% 
+% % model_three = load('predicted_Directstep_1024_FNO_lead1_tendency.mat');
 % model_four = load('predicted_PECstep_1024_FNO_lead1_tendency_skip100.mat');
-
 
 
 figure(1)

@@ -263,7 +263,6 @@ net_pred = np.zeros([M,np.size(label_test,1)])
 
 for k in range(0,M):
     if (k==0):
-
         net_output = step_func(mynet,input_test_torch[0,:], time_step)
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
