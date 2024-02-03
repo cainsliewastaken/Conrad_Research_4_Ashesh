@@ -1,22 +1,38 @@
-% model_one = load('MLP_predicted_Directstep_RMSE.mat');
-% model_two = load('MLP_predicted_PECstep_RMSE.mat');
-% model_four = load('MLP_predicted_PECstep_tendency_RMSE.mat');
-% % 
-% model_one = load('FNO_predicted_Directstep_RMSE.mat');
-% model_two = load('FNO_predicted_PECstep_RMSE.mat');
-% model_four = load('FNO_predicted_PECstep_tendency_RMSE.mat');
-
-
+model_one = load('MLP_predicted_Directstep_RMSE.mat');
+model_two = load('MLP_predicted_PECstep_RMSE.mat');
+model_three = load('MLP_predicted_PECstep_tendency_RMSE.mat');
 % 
-% figure(3)
-% clf
-% plot(model_one.RMSE,'-black','DisplayName','Direct Step','LineWidth',2);
-% hold on
-% plot(model_two.RMSE,'DisplayName','PEC Step');
-% plot(model_four.RMSE,'DisplayName','PEC Step spectral loss')
-% legend(Location='northwest')
-% % axis([1 300 -.5 5])
-% hold off
+model_four = load('FNO_predicted_Directstep_RMSE.mat');
+model_five = load('FNO_predicted_PECstep_RMSE.mat');
+model_six = load('FNO_predicted_PECstep_tendency_RMSE.mat');
+
+t_final = 100;
+t_range = linspace(0, t_final, 10000);
+
+figure(3)
+clf
+
+xx = linspace(0,t_final,length(model_one.RMSE));
+plot(xx, model_one.RMSE,'-black','DisplayName','Direct Step MLP');
+
+hold on
+xx = linspace(0,t_final,length(model_two.RMSE));
+plot(xx, model_two.RMSE,'DisplayName','PEC Step MLP ');
+
+xx = linspace(0,t_final,length(model_three.RMSE));
+plot(xx, model_three.RMSE,'DisplayName','PEC Step MLP spectral loss')
+
+xx = linspace(0,t_final,length(model_four.RMSE));
+plot(xx, model_four.RMSE,'DisplayName','Direct Step FNO ')
+
+xx = linspace(0,t_final,length(model_five.RMSE));
+plot(xx, model_five.RMSE,'DisplayName','PEC Step FNO ');
+
+xx = linspace(0,t_final,length(model_six.RMSE));
+plot(xx, model_six.RMSE,'DisplayName','PEC Step FNO spectral loss')
+legend(Location='northwest')
+axis([-.5 100 -.5 20])
+hold off
 
 
 
@@ -27,7 +43,7 @@ model_three = load('predicted_implicit_PEC4step_1024_lead100_RMSE.mat');
 model_four = load('predicted_PEC4step_1024_lead100_tendency_RMSE.mat');
 
 % model_three = load('GNO_predicted_PEC4step_1024_lead1_RMSE.mat');
-
+% model_four = load('GNO_predicted_PEC4step_1024_lead1_tendnecy_epoch52_RMSE.mat');
 
 figure(4)
 clf
