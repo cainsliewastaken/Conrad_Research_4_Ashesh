@@ -14,11 +14,11 @@ from nn_spectral_loss import spectral_loss
 
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/'
+chkpts_path_outputs = '/media/volume/sdb/conrad_stability/'
  
-step_func = Directstep
+step_func = PEC4step
 
-net_name = 'NN_FNO_Directstep_lead'+str(lead)+'_tendency'
+net_name = 'NN_FNO_PEC4step_lead'+str(lead)+'_tendency'
 
 # to changfe from normal loss to spectral loss scroll down 2 right above train for loop
 
@@ -59,7 +59,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 
 
 epochs = 60
-batch_size = 50
+batch_size = 10
 wavenum_init = 100
 lamda_reg = 5
 
@@ -94,7 +94,7 @@ for ep in range(0, epochs+1):
     if ep % 5 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
-        # torch.save(mynet.state_dict(), '/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
+        torch.save(mynet.state_dict(), chkpts_path_outputs+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
 
 
 torch.save(mynet.state_dict(), net_name+'.pt')
