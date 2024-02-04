@@ -256,7 +256,7 @@ edge_index = meshgenerator.ball_connectivity(edge_radius/50)
 edge_attr = meshgenerator.attributes()
 
 mynet = KernelNN(width, ker_width, depth, edge_features, node_features, node_features, edge_attr, edge_index).cuda()
-mynet.load_state_dict(torch.load(net_file_path))
+# mynet.load_state_dict(torch.load(net_file_path))
 
 optimizer = torch.optim.Adam(mynet.parameters(), lr=learning_rate, weight_decay=5e-4)
 scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=scheduler_step, gamma=scheduler_gamma)
@@ -288,9 +288,11 @@ for ep in range(20, epochs+1):
         
             # output_2 = step_func(mynet, output, time_step) #use these two lines for spectral loss in tendency
             # loss += spectral_loss(output.unsqueeze(0), output_2.unsqueeze(0), label_batch[j,:], du_label_batch[j,:].unsqueeze(0), wavenum_init, lamda_reg, time_step)
-
+        print(mynet.fcl.weights, 'pre')
         loss.backward()
+        print(mynet.fcl.weights, 'mid')
         optimizer.step()
+        print(mynet.fcl.weights, 'post')
 
 
     if ep % 1 == 0:
