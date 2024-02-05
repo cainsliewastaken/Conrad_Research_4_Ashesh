@@ -25,11 +25,11 @@ import gc
 
 
 lead = 1
-path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
+path_outputs = '/home/exouser/conrad_net_stability/jacobian_mats/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/NN_PECstep_lead1_1000_epochs/chkpt_NN_PECstep_lead1"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/NN_PEC4step_lead1/chkpt_NN_PECstep_lead1"
 
-matfile_name = 'MLP_KS_PECstep_lead'+str(lead)+'_jacs_all_chkpts_1000_epochs.mat'
+matfile_name = 'MLP_KS_PEC4step_lead'+str(lead)+'_jacs_all_chkpts.mat'
 
 
 print('loading data')
@@ -102,13 +102,21 @@ def PECstep(input_batch):
  output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
-step_func = PECstep
+
+def PEC4step(input_batch):
+ output_1 = time_step*mynet(input_batch.cuda()) + input_batch.cuda()
+ output_2 = input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
+ output_3 = input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_2))
+ return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_3))
+
+
+step_func = PEC4step
 
 print("step function is "+str(step_func))
 
 matfiledata = {}
 
-for epoch_num in range(0,41):
+for epoch_num in range(0,61):
     mynet.load_state_dict(torch.load(model_path+'_epoch'+str(5*epoch_num)+'.pt'))
     mynet.cuda()
 
@@ -127,7 +135,7 @@ for epoch_num in range(0,41):
 
 
     ygrad = ygrad.detach().cpu().numpy()
-    matfiledata[u'Jacobian_mats_epoch_'+str(epoch_num*25)] = ygrad
+    matfiledata[u'Jacobian_mats_epoch_'+str(epoch_num)] = ygrad
 
 
 
