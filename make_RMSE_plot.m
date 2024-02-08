@@ -1,6 +1,6 @@
 model_one = load('MLP_predicted_Directstep_RMSE.mat');
-model_two = load('MLP_predicted_PECstep_RMSE.mat');
-model_three = load('MLP_predicted_PECstep_tendency_RMSE.mat');
+model_two = load('predicted_PEC4step_1024_lead1_RMSE.mat');
+model_three = load('predicted_PEC4step_1024_lead1_tendency_RMSE.mat');
 % 
 model_four = load('FNO_predicted_Directstep_RMSE.mat');
 model_five = load('FNO_predicted_PECstep_RMSE.mat');
@@ -17,10 +17,10 @@ plot(xx, model_one.RMSE,'-black','DisplayName','Direct Step MLP');
 
 hold on
 xx = linspace(0,t_final,length(model_two.RMSE));
-plot(xx, model_two.RMSE,'DisplayName','PEC Step MLP ');
+plot(xx, model_two.RMSE,'DisplayName','PEC4 Step MLP ');
 
 xx = linspace(0,t_final,length(model_three.RMSE));
-plot(xx, model_three.RMSE,'DisplayName','PEC Step MLP spectral loss')
+plot(xx, model_three.RMSE,'DisplayName','PEC4 Step MLP spectral loss')
 
 xx = linspace(0,t_final,length(model_four.RMSE));
 plot(xx, model_four.RMSE,'DisplayName','Direct Step FNO ')
