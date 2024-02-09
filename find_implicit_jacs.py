@@ -29,7 +29,6 @@ lead = int((1/1e-3)*time_step)
 num_iter = 50
 
 
-
 path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
 
 model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_PECstep_lead1_tendency.pt"

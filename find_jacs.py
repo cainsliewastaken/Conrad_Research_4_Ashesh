@@ -23,26 +23,25 @@ from nn_MLP import MLP_Net
 from torch.profiler import profile, record_function, ProfilerActivity
 import gc
 
+time_step = .5e-1
+lead = int((1/1e-3)*time_step)
 
-lead = 1
-path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
+path_outputs = '/home/exouser/conrad_net_stability/PEC4_MLP_outputs/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1_tendency.pt"
+model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/MLP_PEC4step_lead50_tendency.pt"
 
-matfile_name = 'FNO_KS_PECstep_lead'+str(lead)+'_large_jacs.mat'
+matfile_name = 'MLP_KS_PEC4step_lead'+str(lead)+'_tendency_jacs.mat'
 
 
 print('loading data')
 
-with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
+with open("/home/exouser/conrad_net_stability/training_data/KS_1024.pkl", 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
 print('data loaded')
 
 
-lead=1
-time_step = 1e-3
 trainN=150000
 input_size = 1024
 hidden_layer_size = 2000
@@ -78,8 +77,8 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 
 
 
-# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-mynet = FNO1d(modes, width, time_future, time_history)
+mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+# mynet = FNO1d(modes, width, time_future, time_history)
 mynet.load_state_dict(torch.load(model_path))
 print('model defined')
 print(model_path)
@@ -111,8 +110,16 @@ def PECstep(input_batch):
  output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
+
+def PEC4step(input_batch):
+ output_1 = time_step*mynet(input_batch.cuda()) + input_batch.cuda()
+ output_2 = input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
+ output_3 = input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_2))
+ return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_3))
+
+
 # print(torch.cuda.memory_allocated())
-step_func = PECstep
+step_func = PEC4step
 
 print("step function is "+str(step_func))
 # print(torch.cuda.memory_allocated())

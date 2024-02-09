@@ -50,7 +50,7 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
-# mynet = Cascade_MLP_Net(input_size, hidden_layer_size_cascade, output_size, num_layers).cuda()
+# mynet.load_state_dict(torch.load(net_file_path))
 count_parameters(mynet)
 
 

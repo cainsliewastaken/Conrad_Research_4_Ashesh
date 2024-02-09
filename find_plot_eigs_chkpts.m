@@ -1,10 +1,10 @@
-Direct_struct = load('MLP_KS_Directstep_lead1_multi_jacs.mat');
+Direct_struct = load('MLP_KS_Directstep_lead1_test_jacs_all_chkpts.mat');
 PEC_struct = load('MLP_KS_PEC4step_lead1_jacs_all_chkpts.mat');
-PEC_specloss_struct = load('MLP_KS_PEC4step_lead1_tendency_jacs_all_chkpts.mat');
+PEC_specloss_struct = load('MLP_KS_PECstep_lead1_tendency_test_jacs_all_chkpts.mat');
 
-Direct_struct_FNO = load('FNO_KS_Directstep_lead1_multi_jacs.mat');
-PEC_struct_FNO = load('FNO_KS_PECstep_lead1_multi_jacs.mat');
-PEC_specloss_struct_FNO = load('FNO_KS_PECstep_lead1_tendency_multi_jacs.mat');
+Direct_struct_FNO = load('FNO_KS_Directstep_lead1_jacs_all_chkpts.mat');
+PEC_struct_FNO = load('FNO_KS_PECstep_lead1_small_jacs_all_chkpts.mat');
+PEC_specloss_struct_FNO = load('FNO_KS_PECstep_lead1_small_tendency_jacs_all_chkpts.mat');
 
 direct_mat = cell2mat(struct2cell(Direct_struct));
 PEC_mat = cell2mat(struct2cell(PEC_struct));
@@ -128,15 +128,25 @@ ylabel('$|\lambda|$','Interpreter','latex')
 title("Largest Direct Step Eigenvalue per Epoch")
 legend()
 
-
 figure(4)
 clf
 hold on
+
+
+x_final = 61;
+xx = linspace(0, x_final-1, x_final);
 plot(xx, max(abs(e_PEC_full(1:x_final,:)),[],2),'DisplayName','MLP PEC4 ')
 plot(xx, max(abs(e_PEC_specloss_full(1:x_final,:)),[],2),'DisplayName','MLP PEC4 w/ spectral loss')
 
-plot(xx, max(abs(e_PEC_full_FNO(1:x_final,:)),[],2),'--','DisplayName','FNO PEC')
-plot(xx, max(abs(e_PEC_specloss_full_FNO(1:x_final,:)),[],2),'--','DisplayName','FNO PEC w/ spectral loss')
+temp_size = size(e_PEC_full_FNO);
+xx = linspace(0, x_final-1, temp_size(1));
+
+plot(xx, max(abs(e_PEC_full_FNO(:,:)),[],2),'--','DisplayName','FNO PEC')
+
+temp_size = size(e_PEC_specloss_full_FNO);
+xx = linspace(0, x_final-1, temp_size(1));
+
+plot(xx, max(abs(e_PEC_specloss_full_FNO(:,:)),[],2),'--','DisplayName','FNO PEC w/ spectral loss')
 
 
 xlabel('Epoch')

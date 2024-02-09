@@ -1,11 +1,12 @@
 % Use these 6 models to compare MLP models
 model_one = load('MLP_KS_Directstep_lead1_jacs.mat');
-% model_two = load('MLP_KS_PECstep_lead1_jacs.mat');
-model_two = load('MLP_KS_PEC4step_lead1_jacs_all_chkpts.mat');
+model_two = load('MLP_KS_PECstep_lead1_jacs.mat');
+% model_two = load('MLP_KS_PEC4step_lead1_jacs_all_chkpts.mat');
 
 % model_three = load('MLP_KS_Directstep_lead1_tendency_jacs.mat');
-% model_four = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
-model_four = load('MLP_KS_PEC4step_lead1_tendency_jacs_all_chkpts.mat');
+model_four = load('MLP_KS_PECstep_lead1_tendency_jacs.mat');
+% model_four = load('MLP_KS_PEC4step_lead1_tendency_jacs_all_chkpts.mat');
+
 
 model_five = load('MLP_KS_Directstep_lead1_UNTRAINED_jacs.mat');
 model_six = load('MLP_KS_PECstep_lead1_UNTRAINED_jacs.mat');
@@ -25,12 +26,12 @@ model_thirteen = load('KS_PEC4step_implicit_lead100_jacs.mat');
 model_fourteen = load('KS_PEC4step_implicit_lead50_jacs.mat');
 
 % MLP eigenvalue calculations
-direct_MLP = squeeze(model_one.Jacobian_mats(1,:,:));
+direct_MLP = squeeze(model_one.Jacobian_mats_epoch_60(1,:,:));
 % direct_MLP = (direct_MLP*direct_MLP')/1024;
 [v_direct_MLP, e_direct_MLP] = eig(direct_MLP);
 [e_direct_MLP, ind_d_MLP] = sort(diag(e_direct_MLP));
 
-PEC_MLP = squeeze(model_two.Jacobian_mats_epoch_60(1,:,:));
+PEC_MLP = squeeze(model_two.Jacobian_mats(1,:,:));
 % PEC_MLP = (PEC_MLP*PEC_MLP')/1024;
 [v_PEC_MLP, e_PEC_MLP] = eig(PEC_MLP);
 [e_PEC_MLP, ind_p_MLP] = sort(diag(e_PEC_MLP));
@@ -38,7 +39,7 @@ PEC_MLP = squeeze(model_two.Jacobian_mats_epoch_60(1,:,:));
 % [v_direct_sl, e_direct_sl] = eig(squeeze(model_three.Jacobian_mats(1,:,:)));
 % [e_direct_sl, ind_d_sl] = sort(diag(e_direct_sl));
 
-PEC_sl_MLP = squeeze(model_four.Jacobian_mats_epoch_60(1,:,:));
+PEC_sl_MLP = squeeze(model_four.Jacobian_mats(1,:,:));
 % PEC_sl_MLP = (PEC_sl_MLP*PEC_sl_MLP')/1024;
 [v_PEC_sl_MLP, e_PEC_sl_MLP] = eig(PEC_sl_MLP);
 [e_PEC_sl_MLP, ind_p_sl_MLP] = sort(diag(e_PEC_sl_MLP));
