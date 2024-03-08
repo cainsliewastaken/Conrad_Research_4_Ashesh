@@ -55,9 +55,8 @@ num_of_basis_funcs = 10
 layer_sizes_branch = [1024, 2000, 2000, num_of_basis_funcs]
 layer_sizes_trunk = [1, 256, 256, num_of_basis_funcs]
 
-mynet = deepxde_torch.deeponet.DeepONet(layer_sizes_branch, layer_sizes_trunk, 'tanh', )
+mynet = deepxde_torch.deeponet.DeepONet(layer_sizes_branch, layer_sizes_trunk, 'tanh', "Glorot uniform")
 count_parameters(mynet)
-
 
 #use two optimizers.  learing rates seem to work.
 # optimizer = optim.SGD(mynet.parameters(), lr=0.005)
