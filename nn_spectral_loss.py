@@ -15,8 +15,8 @@ def spectral_loss (output, output2, target, tendency, wavenum_init, lamda_reg, t
 
    loss3 = torch.mean(torch.abs(out_du_fft[:,0:]-target_du_fft[:,0:])).cuda()
 
-   # loss = loss1 + lamda_reg*loss3
-   loss = loss1*(1+lamda_reg*loss3)
+   loss = loss1 + lamda_reg*loss3
+   # loss = loss1*(1+lamda_reg*loss3)
 
   
    return loss.cuda()

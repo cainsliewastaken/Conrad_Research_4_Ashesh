@@ -21,16 +21,16 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 lead=1
 
-path_outputs = '/media/volume/sdb/conrad_stability/model_eval_FNO_tendency/' #this is where the saved graphs and .mat files end up
+path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/FNO_output/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PECstep_lead1_tendency.pt"
+net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/NN_FNO_PEC4step_lead1.pt"
 #change this to use a different network
 
-step_func = PECstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = PEC4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-eval_output_name = 'predicted_PECstep_1024_FNO_lead'+str(lead)+'_tendency'  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_PEC4step_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
-with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f: #change based on eval data location.
+with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f: #change based on eval data location.
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
@@ -52,8 +52,8 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 512 # number of Fourier modes to multiply
-width = 1  # input and output chasnnels to the FNO layer
+modes = 256 # number of Fourier modes to multiply
+width = 512  # input and output chasnnels to the FNO layer
 
 num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
 learning_rate = 0.0001
@@ -127,6 +127,9 @@ matfiledata_output[u'pred_FFT_dt'] = u_pred_difft_n2_fspec
 
 scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
 
+temp_matfile = {}
+temp_matfile[u'RMSE'] = matfiledata_output[u'RMSE']
+scipy.io.savemat(path_outputs+eval_output_name+'_RMSE.mat', temp_matfile)
 
 
 if skip_factor: #check if not == 0

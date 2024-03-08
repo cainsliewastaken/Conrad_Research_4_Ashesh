@@ -13,24 +13,24 @@ from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_spectral_loss import spectral_loss
 from nn_Cascade_MLP import Cascade_MLP_Net
 
-lead=1
+time_step = 1e-3
+lead = int((1/1e-3)*time_step)
 
-step_func = PECstep
+step_func = PEC4step
 
-net_name = 'NN_PECstep_lead'+str(lead)+'_tendency'
+net_name = 'MLP_PEC4step_lead'+str(lead)+'_tendency'
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
 #comment and uncomment code in training for loop below to change from mse to spectral loss in tendency
 
-with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
+with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
 
 
-lead=1
-time_step = 1e-3
+
 trainN = 150000
 input_size = 1024
 output_size = 1024
@@ -88,12 +88,12 @@ for ep in range(0, epochs+1):
 
         loss.backward(retain_graph=True)
         optimizer.step()
-    if ep % 5 == 0:
+    if ep % 1 == 0:
         print('Epoch', ep)
         print ('Loss', loss)
-        torch.save(mynet.state_dict(), '/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
+        torch.save(mynet.state_dict(), '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/'+str(net_name)+'/'+'chkpt_'+net_name+'_epoch'+str(ep)+'.pt')
 
-
+ 
 torch.save(mynet.state_dict(), net_name+'.pt')
 torch.set_printoptions(precision=4)
 print("Model Saved")

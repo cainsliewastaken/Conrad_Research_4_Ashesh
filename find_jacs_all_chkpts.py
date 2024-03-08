@@ -25,16 +25,16 @@ import gc
 
 
 lead = 1
-path_outputs = '/home/exouser/conrad_net_stability/jacobian_mats/'
+path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/jacobean_mats/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/model_chkpts/NN_PEC4step_lead1/chkpt_NN_PECstep_lead1"
+model_path = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/MLP_PEC4step_lead1_tendency/chkpt_MLP_PEC4step_lead1_tendency'
 
-matfile_name = 'MLP_KS_PEC4step_lead'+str(lead)+'_jacs_all_chkpts.mat'
+matfile_name = 'MLP_PEC4step_lead'+str(lead)+'_tendency_jacs_all_chkpts.mat'
 
 
 print('loading data')
 
-with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
+with open("/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl", 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
@@ -79,7 +79,7 @@ for k in (np.array([ int(0)])):
 
 
 mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-# mynet = FNO1d(modes, width, time_future, time_history)
+# mynet = FNO1d(modes, width, time_future, time_history).cuda()
 
 
 def RK4step(input_batch):
@@ -117,7 +117,7 @@ print("step function is "+str(step_func))
 matfiledata = {}
 
 for epoch_num in range(0,61):
-    mynet.load_state_dict(torch.load(model_path+'_epoch'+str(5*epoch_num)+'.pt'))
+    mynet.load_state_dict(torch.load(model_path+'_epoch'+str(epoch_num)+'.pt'))
     mynet.cuda()
 
     mynet.eval()

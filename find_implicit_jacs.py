@@ -114,6 +114,10 @@ def PECstep(input_batch):
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
 
 
+def Eulerstep_implicit(net,input_batch,output_iter):
+ output_1 = net(output_iter.cuda())
+ return input_batch.cuda() + time_step*(output_1)
+
 def PEC4step_implicit(input_batch,output_iter):
  output_1 = time_step*mynet(output_iter.cuda()) + input_batch.cuda()
  output_2 = input_batch.cuda() + time_step*0.5*(mynet(output_iter.cuda())+mynet(output_1))
@@ -131,6 +135,16 @@ def implicit_iterations(input_batch):
       iter=iter+1 
     return output1
 
+def implicit_iterations_euler(net,input_batch,output,num_iter):
+    output = Eulerstep(mynet, input_batch, time_step)
+    output=output.cuda()
+    iter=0
+    while(iter < num_iter):
+      output1 = (Eulerstep_implicit(net,input_batch.cuda(),output)).cuda()
+      # print('residue inside implicit',torch.norm(output1-output), iter)
+      output = output1
+      iter=iter+1 
+    return output1
 
 # print(torch.cuda.memory_allocated())
 step_func = implicit_iterations
