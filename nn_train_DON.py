@@ -5,7 +5,7 @@ print(torch.__version__)
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import deepxpde.nn.pytorch as deepxpde_torch
+import deepxde.nn.pytorch as deepxde_torch
 #from torchinfo import summary
 from count_trainable_params import count_parameters
 import pickle
@@ -55,7 +55,7 @@ num_of_basis_funcs = 10
 layer_sizes_branch = [1024, 2000, 2000, num_of_basis_funcs]
 layer_sizes_trunk = [1, 256, 256, num_of_basis_funcs]
 
-mynet = deepxpde_torch.deeponet.DeepONet(layer_sizes_branch, layer_sizes_trunk, 'tanh', )
+mynet = deepxde_torch.deeponet.DeepONet(layer_sizes_branch, layer_sizes_trunk, 'tanh', )
 count_parameters(mynet)
 
 
