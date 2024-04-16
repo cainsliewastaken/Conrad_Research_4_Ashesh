@@ -1,8 +1,8 @@
-model_one = load('predicted_Directstep_1024_lead1_test_RMSE.mat');
-model_two = load('predicted_PEC4step_1024_lead1_tendency_RMSE.mat');
+model_one = load('predicted_Directstep_1024_lead1_RMSE.mat');
+model_two = load('predicted_PEC4step_1024_lead1_RMSE.mat');
 model_three = load('predicted_PEC4step_1024_lead1_tendency_RMSE.mat');
 
-model_four = load('predicted_Directstep_1024_FNO_lead1_RMSE.mat');
+model_four = load('predicted_Directstep_1024_FNO_lead1_V2_RMSE.mat');
 model_five = load('predicted_PEC4step_1024_FNO_lead1_RMSE.mat');
 model_six = load('predicted_PEC4step_1024_FNO_lead1_tendency_RMSE.mat');
 
