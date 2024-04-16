@@ -23,19 +23,20 @@ from nn_MLP import MLP_Net
 from torch.profiler import profile, record_function, ProfilerActivity
 import gc
 
-time_step = .5e-1
+time_step = 1e-3
 lead = int((1/1e-3)*time_step)
+print(lead)
 
-path_outputs = '/home/exouser/conrad_net_stability/PEC4_MLP_outputs/'
+path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/jacobean_mats/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/MLP_PEC4step_lead50_tendency.pt"
+model_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/MLP_RK4step_lead1.pt"
 
-matfile_name = 'MLP_KS_PEC4step_lead'+str(lead)+'_tendency_jacs.mat'
+matfile_name = 'MLP_RK4step_lead'+str(lead)+'_jacs.mat'
 
 
 print('loading data')
 
-with open("/home/exouser/conrad_net_stability/training_data/KS_1024.pkl", 'rb') as f:
+with open("/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl", 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
@@ -119,7 +120,7 @@ def PEC4step(input_batch):
 
 
 # print(torch.cuda.memory_allocated())
-step_func = PEC4step
+step_func = RK4step
 
 print("step function is "+str(step_func))
 # print(torch.cuda.memory_allocated())
@@ -130,10 +131,10 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
 
-    # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
+    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
     
-    temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-    ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+    # temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
+    # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
     # print(sum(sum(np.abs(ygrad[k,:,:]))))
 

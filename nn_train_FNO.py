@@ -12,16 +12,18 @@ from nn_FNO import FNO1d
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 from nn_spectral_loss import spectral_loss
 
-time_step = 1e-2
+time_step = 1e-3
 lead = int((1/1e-3)*time_step)
+print(lead, 'FNO')
 
 chkpts_path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/'
 
-step_func = PEC4step
+step_func = RK4step
+print(step_func)
 
-net_name = 'FNO_PEC4step_lead'+str(lead)+''
+net_name = 'FNO_RK4step_lead'+str(lead)+'_tendency'
 
-net_file_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_PEC4step_lead10/chkpt_FNO_PEC4step_lead10_epoch39.pt"
+net_file_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_RK4step_lead1_tendency/chkpt_FNO_RK4step_lead1_tendency_epoch51.pt"
 
 # to change from normal loss to spectral loss scroll down 2 right above train for loop
 
@@ -65,8 +67,8 @@ lamda_reg = 5
 loss_fn = nn.MSELoss()  #for basic loss func
 loss_fc = spectral_loss #for spectral loss in tendency, also change loss code inside for loop below
 torch.set_printoptions(precision=10)
- 
-for ep in range(40, epochs+1):
+
+for ep in range(52, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
@@ -79,10 +81,10 @@ for ep in range(40, epochs+1):
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
         
-        loss = loss_fn(outputs, label_batch)  # use this loss function for mse loss
+        # loss = loss_fn(outputs, label_batch)  # use this loss function for mse loss
 
-        # outputs_2 = step_func(mynet, outputs, time_step) #use this line and line below for spectral loss
-        # loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        outputs_2 = step_func(mynet, outputs, time_step) #use this line and line below for spectral loss
+        loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward()
         

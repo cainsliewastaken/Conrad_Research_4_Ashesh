@@ -17,16 +17,17 @@ from nn_MLP import MLP_Net
 from nn_FNO import FNO1d
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
-time_step = 1e-2
+time_step = 5e-2
 lead = int((1/1e-3)*time_step)
+print(lead)
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/implicit_output/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/MLP_Eulerstep_implicit_lead10.pt" #change this to use a different network
+net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/MLP_PEC4step_implicit_lead50.pt" #change this to use a different network
 
-eval_output_name = 'MLP_predicted_implicit_Eulerstep_1024_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'MLP_predicted_implicit_PEC4step_1024_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
 
 with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f:
@@ -43,7 +44,7 @@ num_layers = 8
 num_iters = 50
 
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
-label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
+label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead::lead])).float().cuda()
 label_test = np.transpose(data[:,trainN+lead::lead])
 
 
@@ -107,11 +108,11 @@ net_pred = np.zeros([M,np.size(label_test,1)])
 for k in range(0,M):
  
     if (k==0):
-        net_output =(Eulerstep(mynet,input_test_torch[0,:], time_step))
-        net_output = implicit_iterations_euler(mynet,input_test_torch[0,:].cuda(),net_output,num_iters)
+        # net_output =(Eulerstep(mynet,input_test_torch[0,:], time_step))
+        # net_output = implicit_iterations_euler(mynet,input_test_torch[0,:].cuda(),net_output,num_iters)
 
-        # net_output =(PEC4step(mynet,input_test_torch[0,:], time_step))
-        # net_output = implicit_iterations(mynet,input_test_torch[0,:].cuda(),net_output,num_iters)
+        net_output =(PEC4step(mynet,input_test_torch[0,:], time_step))
+        net_output = implicit_iterations(mynet,input_test_torch[0,:].cuda(),net_output,num_iters)
         
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
@@ -126,11 +127,11 @@ for k in range(0,M):
         # net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
 
     else:
-        net_output = (Eulerstep(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),time_step))
-        net_output = implicit_iterations_euler(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),net_output,num_iters)
+        # net_output = (Eulerstep(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),time_step))
+        # net_output = implicit_iterations_euler(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),net_output,num_iters)
 
-        # net_output = (PEC4step(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),time_step))
-        # net_output = implicit_iterations(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),net_output,num_iters)
+        net_output = (PEC4step(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),time_step))
+        net_output = implicit_iterations(mynet,torch.from_numpy(net_pred[k-1,:]).float().cuda(),net_output,num_iters)
 
         net_pred [k,:] = net_output.detach().cpu().numpy()
 

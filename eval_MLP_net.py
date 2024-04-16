@@ -20,16 +20,17 @@ from nn_Cascade_MLP import Cascade_MLP_Net
 
 time_step = 1e-3
 lead = int((1/1e-3)*time_step)
+print(lead)
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/MLP_output/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/MLP_PEC4step_lead1_tendency.pt" #change this to use a different network
+net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/MLP_Eulerstep_lead1_tendency.pt" #change this to use a different network
 
-step_func = PEC4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = Eulerstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-eval_output_name = 'predicted_PEC4step_1024_lead'+str(lead)+'_tendency'  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_Eulerstep_1024_lead'+str(lead)+'_tendency'  # what to name the output file, .mat ending not needed
 
 with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f: #change for eval data location.
     data = pickle.load(f)
@@ -43,7 +44,7 @@ hidden_layer_size_cascade = 1024
 output_size = 1024
 
 input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
-label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
+label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead::lead])).float().cuda()
 label_test = np.transpose(data[:,trainN+lead::lead])
 
 
@@ -60,7 +61,7 @@ net_pred = np.zeros([M,np.size(label_test,1)])
 for k in range(0,M):
     if (k==0):
 
-        net_output = step_func(my_net_MLP,input_test_torch[0,:], time_step)
+        net_output = step_func(my_net_MLP,label_test_torch[0,:], time_step)
         net_pred [k,:] = net_output.detach().cpu().numpy()
 
     else:

@@ -24,21 +24,22 @@ from torch.profiler import profile, record_function, ProfilerActivity
 import gc
 
 
-time_step = 1e-1
+time_step = 1e-3
 lead = int((1/1e-3)*time_step)
 num_iter = 50
 
 
-path_outputs = '/media/volume/sdb/conrad_stability/jacobian_mats_all_models/'
+path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/jacobean_mats/'
 
-model_path = "/home/exouser/conrad_net_stability/Conrad_Research_4_Ashesh/NN_PECstep_lead1_tendency.pt"
+model_path = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_PEC4step_implicit_lead50/chkpt_FNO_PEC4step_implicit_lead50'
 
-matfile_name = 'FNO_KS_PECstep_lead'+str(lead)+'_large_jacs.mat'
+matfile_name = 'FNO_PEC4step_implicit_lead'+str(lead)+'_jacs_all_chkpts.mat'
 
 
-print('loading data')
+print('loading data, lead is', lead)
 
-with open('/media/volume/sdb/conrad_stability/training_data/KS_1024.pkl', 'rb') as f:
+
+with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f: 
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
 
@@ -57,7 +58,7 @@ label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float()
 label_test = np.transpose(data[:,trainN+lead:])
 
 
-eq_points = 4
+eq_points = 1
 # FNO archetecture hyperparams
 
 time_history = 1 #time steps to be considered as input to the solver
@@ -65,8 +66,8 @@ time_future = 1 #time steps to be considered as output of the solver
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-modes = 256 # number of Fourier modes to multiply
-width = 512 # input and output chasnnels to the FNO layer
+modes = 128 # number of Fourier modes to multiply
+width = 256 # input and output chasnnels to the FNO layer
 
 
 
@@ -74,21 +75,14 @@ width = 512 # input and output chasnnels to the FNO layer
 x_torch = torch.zeros([eq_points,input_size]).cuda()
 
 count=0
-for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
+for k in (np.array([ int(0)])):
   x_torch[count,:] = input_test_torch[k,:].requires_grad_(requires_grad=True)
   count=count+1
 
 
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+mynet = FNO1d(modes, width, time_future, time_history)
 
-mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-# mynet = FNO1d(modes, width, time_future, time_history)
-mynet.load_state_dict(torch.load(model_path))
-print('model defined')
-print(model_path)
-print(torch.cuda.memory_allocated())
-mynet.cuda()
-print('model cuda')
-print(torch.cuda.memory_allocated())
 
 mynet.eval()
 
@@ -153,29 +147,35 @@ print("step function is "+str(step_func))
 # print(torch.cuda.memory_allocated())
 
 ygrad = torch.zeros([eq_points,input_size,input_size])
-
-
-
-for k in range(0,eq_points):
-
-    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
-    
-    # temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-    # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
-
-    # print(sum(sum(np.abs(ygrad[k,:,:]))))
-
-
-
-ygrad = ygrad.detach().cpu().numpy()
-
-print(ygrad.shape)
-
-
-
 matfiledata = {}
-matfiledata[u'Jacobian_mats'] = ygrad
+
+
+for epoch_num in range(0,61):
+    mynet.load_state_dict(torch.load(model_path+'_epoch'+str(epoch_num)+'.pt'))
+    mynet.cuda()
+
+    mynet.eval()
+    ygrad = torch.zeros([eq_points,input_size,input_size])
+
+    for k in range(0,eq_points):
+
+        # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
+        
+        temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
+        ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+
+        # print(sum(sum(np.abs(ygrad[k,:,:]))))
+
+
+
+    ygrad = ygrad.detach().cpu().numpy()
+    matfiledata[u'Jacobian_mats_epoch_'+str(epoch_num)] = ygrad
+
+
+
+
 scipy.io.savemat(path_outputs+matfile_name, matfiledata)
 
 print('Saved Predictions')
+
 

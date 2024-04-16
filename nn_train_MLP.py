@@ -15,10 +15,12 @@ from nn_Cascade_MLP import Cascade_MLP_Net
 
 time_step = 1e-3
 lead = int((1/1e-3)*time_step)
+print(lead)
 
-step_func = PEC4step
+step_func = Eulerstep
+print(step_func)
 
-net_name = 'MLP_PEC4step_lead'+str(lead)+'_tendency'
+net_name = 'MLP_Eulerstep_lead'+str(lead)+''
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 
@@ -27,7 +29,6 @@ path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
 with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f:
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
-
 
 
 
@@ -42,10 +43,6 @@ num_layers = 8
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).float().cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).float().cuda()
 du_label_torch = input_train_torch - label_train_torch
-
-input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float().cuda()
-label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().cuda()
-label_test = np.transpose(data[:,trainN+lead:])
 
 
 
@@ -80,11 +77,11 @@ for ep in range(0, epochs+1):
         optimizer.zero_grad()
         outputs = step_func(mynet, input_batch, time_step)
         
-        # loss = loss_fn(outputs, label_batch) #use this for basic mse loss 
+        loss = loss_fn(outputs, label_batch) #use this for basic mse loss 
 
         
-        outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
-        loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
+        # outputs_2 = step_func(mynet, outputs, time_step) #use these two lines for spectral loss in tendency
+        # loss = spectral_loss(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward(retain_graph=True)
         optimizer.step()
