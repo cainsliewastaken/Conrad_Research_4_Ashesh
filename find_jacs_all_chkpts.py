@@ -24,12 +24,17 @@ from torch.profiler import profile, record_function, ProfilerActivity
 import gc
 
 
-lead = 1
+time_step = 1e-2
+lead = int((1/1e-3)*time_step)
+print(lead)
+
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/jacobean_mats/'
 
-model_path = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/MLP_PEC4step_lead1_tendency/chkpt_MLP_PEC4step_lead1_tendency'
+model_path = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_PEC4step_lead10/chkpt_FNO_PEC4step_lead10'
 
-matfile_name = 'MLP_PEC4step_lead'+str(lead)+'_tendency_jacs_all_chkpts.mat'
+matfile_name = 'FNO_PEC4step_lead'+str(lead)+'_jacs_all_chkpts.mat'
+
+
 
 
 print('loading data')
@@ -41,8 +46,7 @@ data=np.asarray(data[:,:250000])
 print('data loaded')
 
 
-lead=1
-time_step = 1e-3
+
 trainN=150000
 input_size = 1024
 hidden_layer_size = 2000
@@ -72,14 +76,14 @@ width = 512 # input and output chasnnels to the FNO layer
 x_torch = torch.zeros([eq_points,input_size]).cuda()
 
 count=0
-for k in (np.array([ int(0)])):
+for k in (np.array([int(0)])):
   x_torch[count,:] = input_test_torch[k,:].requires_grad_(requires_grad=True)
   count=count+1
 
 
 
-mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-# mynet = FNO1d(modes, width, time_future, time_history).cuda()
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+mynet = FNO1d(modes, width, time_future, time_history).cuda()
 
 
 def RK4step(input_batch):
@@ -125,10 +129,10 @@ for epoch_num in range(0,61):
 
     for k in range(0,eq_points):
 
-        ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
+        # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
         
-        # temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-        # ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+        temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
+        ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
 
         # print(sum(sum(np.abs(ygrad[k,:,:]))))
 
