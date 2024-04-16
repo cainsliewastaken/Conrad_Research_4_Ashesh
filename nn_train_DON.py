@@ -6,6 +6,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 import deepxde.nn.pytorch as deepxde_torch
+import deepxde.nn.pytorch as deepxde_torch
 #from torchinfo import summary
 from count_trainable_params import count_parameters
 import pickle
@@ -58,11 +59,9 @@ num_of_basis_funcs = 40
 layer_sizes_branch = [1024, 4096, 4*4096, 4096, num_of_basis_funcs]
 layer_sizes_trunk = [1, 521, 4*512, 512, num_of_basis_funcs]
 
-mynet = DeepONet_FullGrid(layer_sizes_branch, layer_sizes_trunk, 1024)
-mynet.load_state_dict(torch.load(model_path))
-print('model defined')
-print(model_path)
+mynet = deepxde_torch.deeponet.DeepONet(layer_sizes_branch, layer_sizes_trunk, 'tanh', "Glorot uniform")
 count_parameters(mynet)
+
 
 
 #use two optimizers.  learing rates seem to work.
