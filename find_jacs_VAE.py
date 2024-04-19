@@ -26,13 +26,13 @@ import gc
 
 time_step = 1e-3
 lead = int((1/1e-3)*time_step)
-print(lead)
+print('lead ',lead)
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/jacobean_mats/'
 
 model_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/VAE_PEC4step_lead1.pt"
 
-matfile_name = 'VAE_PEC4step_lead'+str(lead)+'_jacs.mat'
+matfile_name = 'VAE_PEC4step_lead'+str(lead)+'_jacs_V2.mat'
 
 
 print('loading data')
@@ -136,18 +136,17 @@ step_func = PEC4step
 print("step function is "+str(step_func))
 # print(torch.cuda.memory_allocated())
 
-ygrad = torch.zeros([num_ensembles,eq_points,input_size,input_size])
+ygrad = np.zeros([num_ensembles,eq_points,input_size,input_size])
 
 
 for i in range(num_ensembles):
     for k in range(0,eq_points):
-
-        ygrad [i,k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) 
+        temp_mat = torch.autograd.functional.jacobian(step_func, x_torch[k,:]).detach().cpu().numpy()
+        ygrad [i,k,:,:] = temp_mat
         
-        # print(sum(sum(np.abs(ygrad[k,:,:]))))
+        print(sum(sum(np.abs(ygrad[i,k,:,:]))))
 
 
-ygrad = ygrad.detach().cpu().numpy()
 
 print(ygrad.shape)
 

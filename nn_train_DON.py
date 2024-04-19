@@ -24,7 +24,7 @@ step_func = PEC4step
 
 net_name = 'DON_PEC4step_lead'+str(lead)+''
 
-model_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/DON_PEC4step_lead1/chkpt_DON_PEC4step_lead1_epoch28.pt"
+model_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/DON_PEC4step_lead1/chkpt_DON_PEC4step_lead1_epoch88.pt"
 
 
 path_outputs = '/media/volume/sdb/conrad_stability/model_eval/'
@@ -55,11 +55,11 @@ label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float().
 label_test = np.transpose(data[:,trainN+lead:])
 
 
-num_of_basis_funcs = 40
-layer_sizes_branch = [1024, 4096, 4*4096, 4096, num_of_basis_funcs]
-layer_sizes_trunk = [1, 521, 4*512, 512, num_of_basis_funcs]
+num_of_basis_funcs = 200
+layer_sizes_branch = [1024, 4096, 4096, 4096, num_of_basis_funcs]
+layer_sizes_trunk = [1, 521, 512, 512, num_of_basis_funcs]
 
-mynet = deepxde_torch.deeponet.DeepONet(layer_sizes_branch, layer_sizes_trunk, 'tanh', "Glorot uniform")
+mynet = DeepONet_FullGrid(layer_sizes_branch, layer_sizes_trunk, 1024).cuda()
 count_parameters(mynet)
 
 
@@ -80,7 +80,7 @@ lamda_reg = 5
 
 torch.set_printoptions(precision=10)
 best_epoch_loss = np.inf
-for ep in range(15, epochs+1):
+for ep in range(0, epochs+1):
     epoch_loss = 0
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1 ,stop=step+batch_size))
