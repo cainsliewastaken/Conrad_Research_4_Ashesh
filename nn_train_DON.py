@@ -5,8 +5,7 @@ print(torch.__version__)
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
-import deepxde.nn.pytorch as deepxde_torch
-import deepxde.nn.pytorch as deepxde_torch
+
 #from torchinfo import summary
 from count_trainable_params import count_parameters
 import pickle
@@ -72,7 +71,7 @@ lr_decay = 0.4
 optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate)
 scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15], gamma=lr_decay)
 
-loss_fn = nn.MSELoss()
+loss_fn = nn.MSELoss() 
 epochs = 100
 batch_size = 10
 wavenum_init = 100

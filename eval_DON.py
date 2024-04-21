@@ -10,10 +10,10 @@ import torch.optim as optim
 import sys
 #import netCDF4 as nc
 #from prettytable import PrettyTable
-#from count_trainable_params import count_parameters    
+from count_trainable_params import count_parameters    
 import pickle
 import matplotlib.pyplot as plt
-from nn_FNO import FNO1d
+from nn_DON import DeepONet_FullGrid
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 
@@ -24,16 +24,14 @@ time_step = 1e-3
 lead = int((1/1e-3)*time_step)
 print(lead,'lead')
 
-path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/FNO_output/' #this is where the saved graphs and .mat files end up
+path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/DON_output/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/FNO_RK4step_lead1.pt"
+net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/DON_PEC4step_lead1/chkpt_DON_PEC4step_lead1_epoch100.pt"
 #change this to use a different network
 
-step_func = RK4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = PEC4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
-print(step_func)
-
-eval_output_name = 'predicted_RK4step_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_PEC4step_1024_DON_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 
 with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f: #change based on eval data location.
     data = pickle.load(f)
@@ -49,22 +47,15 @@ input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float()
 label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead::lead])).float()
 label_test = np.transpose(data[:,trainN+lead::lead])
 
+num_of_basis_funcs = 200
+layer_sizes_branch = [1024, 4096, 4096, 4096, num_of_basis_funcs]
+layer_sizes_trunk = [1, 521, 512, 512, num_of_basis_funcs]
 
-time_history = 1 #time steps to be considered as input to the solver
-time_future = 1 #time steps to be considered as output of the solver
-device = 'cuda'  #change to cpu if no cuda available
+my_net_DON = DeepONet_FullGrid(layer_sizes_branch, layer_sizes_trunk, 1024)
+count_parameters(my_net_DON)
+my_net_DON.load_state_dict(torch.load(net_file_name))
+my_net_DON.cuda()
 
-#model parameters
-modes = 256 # number of Fourier modes to multiply
-width = 512  # input and output chasnnels to the FNO layer
-
-num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
-learning_rate = 0.0001
-lr_decay = 0.4
-
-my_net_FNO = FNO1d(modes, width, time_future, time_history)
-my_net_FNO.load_state_dict(torch.load(net_file_name))
-my_net_FNO.cuda()
 
 M = int(np.floor(99999/lead))
 net_pred = np.zeros([M,np.size(label_test,1)])
@@ -73,20 +64,18 @@ print('Model loaded')
 
 
 for k in range(0,M):
- 
     if (k==0):
 
-        net_output = step_func(my_net_FNO, torch.reshape(input_test_torch[0,:],(1,input_size,1)), time_step)
-        net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
-        print(sum(sum(abs(net_pred))))
+        net_output = step_func(my_net_DON,label_test_torch[0,:], time_step)
+        net_pred [k,:] = net_output.detach().cpu().numpy()
 
     else:
+        net_output = step_func(my_net_DON,torch.from_numpy(net_pred[k-1,:]).float().cuda(), time_step)
+        net_pred [k,:] = net_output.detach().cpu().numpy()
 
-        net_output = step_func(my_net_FNO,torch.reshape(torch.from_numpy(net_pred[k-1,:]),(1,input_size,1)).float().cuda(), time_step)
-        net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
     if k%10000==0:
-        print(k) 
-       
+        print(k)        
+
 print('Eval Finished')
 
 
