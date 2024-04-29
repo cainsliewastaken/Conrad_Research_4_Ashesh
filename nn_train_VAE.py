@@ -52,10 +52,10 @@ print(lead, 'VAE')
 
 chkpts_path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/'
 
-step_func = PEC4step
+step_func = Directstep
 print(step_func)
 
-net_name = 'VAE_PEC4step_lead'+str(lead)+''
+net_name = 'VAE_Directstep_lead'+str(lead)+''
 
 net_file_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/NN_FNO_PEC4step_lead1_tendency/chkpt_NN_FNO_PEC4step_lead1_tendency_epoch51.pt"
 
@@ -67,9 +67,6 @@ data=np.asarray(data[:,:250000])
 
 
 trainN = 150000
-input_size = 1024
-output_size = 1024
-hidden_layer_size = 2000
 input_train_torch = torch.from_numpy(np.transpose(data[:,0:trainN])).cuda()
 label_train_torch = torch.from_numpy(np.transpose(data[:,lead:lead+trainN])).cuda()
 du_label_torch = (input_train_torch - label_train_torch).cuda()
@@ -77,16 +74,14 @@ du_label_torch = (input_train_torch - label_train_torch).cuda()
 device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
-imgChannels = 1
-out_channels = 1
-num_filters = 64
-dimx = 1024
-dimy = 1
-zDim = 256
+input_size = 1024
+output_size = 1024
+hidden_layer_size = 2000
+distribution_size = 256
 learning_rate = 0.001
 lr_decay = 0.4
 
-mynet = VAE(imgChannels, out_channels, num_filters, dimx, dimy, zDim).cuda()
+mynet = VAE(input_size, output_size, hidden_layer_size, distribution_size).cuda()
 # mynet.load_state_dict(torch.load(net_file_path))
 
 count_parameters(mynet)
@@ -95,10 +90,11 @@ optimizer = optim.AdamW(mynet.parameters(), lr=learning_rate)
 # scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15], gamma=lr_decay)
 
 epochs = 60
-batch_size = 100
+batch_size = 25
 wavenum_init = 100
-lamda_reg = 5
-beta = 1
+lambda_reg = 5
+beta = .1
+print('Beta is ', beta)
 
 loss_fn = nn.MSELoss()  #for basic loss func
 loss_fc = spectral_loss #for spectral loss in tendency, also change loss code inside for loop below

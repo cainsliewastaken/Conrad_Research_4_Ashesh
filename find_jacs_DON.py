@@ -10,14 +10,13 @@ import torch.optim as optim
 import sys
 #import netCDF4 as nc
 #from prettytable import PrettyTable
-#from count_trainable_params import count_parameters    
+from count_trainable_params import count_parameters    
 #import hdf5storage
 import pickle
 import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
-from nn_FNO import FNO1d
-from nn_MLP import MLP_Net 
+from nn_DON import DeepONet_FullGrid 
 # from nn_step_methods import Directstep, Eulerstep, PECstep
 
 from torch.profiler import profile, record_function, ProfilerActivity
@@ -29,9 +28,9 @@ print(lead)
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/jacobean_mats/'
 
-model_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/NN_FNO_PEC4step_lead1_tendency/chkpt_NN_FNO_PEC4step_lead1_tendency_epoch60.pt"
+net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/DON_PEC4step_lead1/chkpt_DON_PEC4step_lead1_epoch100.pt"
 
-matfile_name = 'FNO_PEC4step_lead'+str(lead)+'_tendency_jacs.mat'
+matfile_name = 'DON_PEC4step_lead'+str(lead)+'_jacs.mat'
 
 
 print('loading data')
@@ -56,18 +55,6 @@ label_test = np.transpose(data[:,trainN+lead:])
 
 
 eq_points = 4
-# FNO archetecture hyperparams
-
-time_history = 1 #time steps to be considered as input to the solver
-time_future = 1 #time steps to be considered as output of the solver
-device = 'cuda'  #change to cpu if no cuda available
-
-#model parameters
-modes = 256 # number of Fourier modes to multiply
-width = 512 # input and output chasnnels to the FNO layer
-
-
-
 
 x_torch = torch.zeros([eq_points,input_size]).cuda()
 
@@ -78,11 +65,18 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
 
 
 
-# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
-mynet = FNO1d(modes, width, time_future, time_history)
-mynet.load_state_dict(torch.load(model_path))
+num_of_basis_funcs = 200
+layer_sizes_branch = [1024, 4096, 4096, 4096, num_of_basis_funcs]
+layer_sizes_trunk = [1, 521, 512, 512, num_of_basis_funcs]
+
+mynet = DeepONet_FullGrid(layer_sizes_branch, layer_sizes_trunk, 1024)
+count_parameters(mynet)
+mynet.load_state_dict(torch.load(net_file_name))
+mynet.cuda()
+
+
 print('model defined')
-print(model_path)
+print(net_file_name)
 print(torch.cuda.memory_allocated())
 mynet.cuda()
 print('model cuda')
@@ -120,7 +114,7 @@ def PEC4step(input_batch):
 
 
 # print(torch.cuda.memory_allocated())
-step_func = PEC4step
+step_func = RK4step
 
 print("step function is "+str(step_func))
 # print(torch.cuda.memory_allocated())
@@ -131,10 +125,7 @@ ygrad = torch.zeros([eq_points,input_size,input_size])
 
 for k in range(0,eq_points):
 
-    # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
-    
-    temp_mat = torch.autograd.functional.jacobian(step_func, torch.reshape(x_torch[k,:],(1,input_size,1))) #Use these for FNO
-    ygrad [k,:,:] = torch.reshape(temp_mat,(1,input_size, input_size))
+    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
 
     # print(sum(sum(np.abs(ygrad[k,:,:]))))
 
@@ -143,12 +134,3 @@ for k in range(0,eq_points):
 ygrad = ygrad.detach().cpu().numpy()
 
 print(ygrad.shape)
-
-
-
-matfiledata = {}
-matfiledata[u'Jacobian_mats'] = ygrad
-scipy.io.savemat(path_outputs+matfile_name, matfiledata)
-
-print('Saved Predictions')
-

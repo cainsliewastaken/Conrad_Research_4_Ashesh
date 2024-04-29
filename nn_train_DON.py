@@ -19,9 +19,9 @@ from nn_Cascade_MLP import Cascade_MLP_Net
 time_step = 1e-3
 lead = int((1/1e-3)*time_step)
 
-step_func = PEC4step
+step_func = RK4step
 
-net_name = 'DON_PEC4step_lead'+str(lead)+''
+net_name = 'DON_RK4step_lead'+str(lead)+''
 
 model_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/DON_PEC4step_lead1/chkpt_DON_PEC4step_lead1_epoch88.pt"
 
