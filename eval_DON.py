@@ -30,6 +30,7 @@ net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkp
 #change this to use a different network
 
 step_func = PEC4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+print(step_func)
 
 eval_output_name = 'predicted_PEC4step_1024_DON_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
 

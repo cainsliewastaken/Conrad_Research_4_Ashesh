@@ -87,12 +87,10 @@ mynet = VAE(imgChannels, out_channels, num_filters, dimx, dimy, zDim).cuda()
 mynet.load_state_dict(torch.load(model_path))
 print('model defined')
 print(model_path)
-print(torch.cuda.memory_allocated())
-mynet.cuda()
-print('model cuda')
-print(torch.cuda.memory_allocated())
 
-mynet.eval()
+mynet.cuda()
+
+
 
 
 def Eulerstep(input_batch):
@@ -137,6 +135,8 @@ print("step function is "+str(step_func))
 # print(torch.cuda.memory_allocated())
 
 ygrad = np.zeros([num_ensembles,eq_points,input_size,input_size])
+
+mynet.eval()
 
 
 for i in range(num_ensembles):

@@ -18,12 +18,14 @@ print(lead, 'FNO')
 
 chkpts_path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/'
 
-step_func = PEC4step
+step_func = RK4step
 print(step_func)
 
 net_name = 'FNO_PEC4step_lead'+str(lead)+'_tendency'
+print(net_name)
 
-net_file_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_PEC4step_lead1_tendency/chkpt_FNO_PEC4step_lead1_tendency_epoch20.pt"
+net_file_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_PEC4step_lead1_tendency/chkpt_FNO_PEC4step_lead1_tendency_epoch27.pt"
+starting_epoch = 28
 
 # to change from normal loss to spectral loss scroll down 2 right above train for loop
 
@@ -46,7 +48,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 256 # number of Fourier modes to multiply
-width = 512  # input and output chasnnels to the FNO layer
+width = 512  # input and output channels to the FNO layer
 
 learning_rate = 0.001
 lr_decay = 0.4
@@ -68,7 +70,7 @@ loss_fn = nn.MSELoss()  #for basic loss func
 loss_fc = spectral_loss #for spectral loss in tendency, also change loss code inside for loop below
 torch.set_printoptions(precision=10)
 
-for ep in range(21, epochs+1):
+for ep in range(starting_epoch, epochs+1):
     for step in range(0,trainN,batch_size):
         indices = np.random.permutation(np.arange(start=step, step=1,stop=step+batch_size))
         input_batch, label_batch, du_label_batch = input_train_torch[indices].cuda(), label_train_torch[indices].cuda(), du_label_torch[indices].cuda()
@@ -87,7 +89,6 @@ for ep in range(21, epochs+1):
         loss = loss_fc(outputs, outputs_2, label_batch, du_label_batch, wavenum_init, lamda_reg, time_step)
 
         loss.backward()
-        
 
         optimizer.step()
 

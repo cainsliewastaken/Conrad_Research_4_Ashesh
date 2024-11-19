@@ -26,20 +26,18 @@ print(lead,'lead')
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/FNO_output/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_RK4step_lead1/chkpt_FNO_RK4step_lead1_epoch60.pt"
+net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/NN_FNO_PEC4step_lead1/chkpt_NN_FNO_PEC4step_lead1_epoch60.pt"
 #change this to use a different network
 
-step_func = RK4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = PEC4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
 print(step_func)
 
-eval_output_name = 'predicted_RK4step_1024_FNO_lead'+str(lead)+''  # what to name the output file, .mat ending not needed
+eval_output_name = 'predicted_PEC4step_1024_FNO_lead'+str(lead)+'_noised_1.0'  # what to name the output file, .mat ending not needed
 
 with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f: #change based on eval data location.
     data = pickle.load(f)
 data=np.asarray(data[:,:250000])
-
-
 
 trainN=150000 #dont explicitly need this as no training is done in file
 input_size = 1024
@@ -66,17 +64,24 @@ my_net_FNO = FNO1d(modes, width, time_future, time_history)
 my_net_FNO.load_state_dict(torch.load(net_file_name))
 my_net_FNO.cuda()
 
-M = int(np.floor(99999/lead))
+M = int(np.floor(9999/lead))
 net_pred = np.zeros([M,np.size(label_test,1)])
 
 print('Model loaded')
 
+noise_var = 1.0
+
+print('Model loaded')
+
+noised_input = (noise_var)*torch.randn(1,1024).cuda()
+noised_input = label_test_torch[0,:].cuda() + noised_input
+print(noised_input.size())
 
 for k in range(0,M):
  
     if (k==0):
 
-        net_output = step_func(my_net_FNO, torch.reshape(input_test_torch[0,:],(1,input_size,1)), time_step)
+        net_output = step_func(my_net_FNO, torch.reshape(noised_input,(1,input_size,1)), time_step)
         net_pred [k,:] = torch.reshape(net_output,(1,input_size)).detach().cpu().numpy()
         print(sum(sum(abs(net_pred))))
 
@@ -111,16 +116,15 @@ truth_fspec_dt = np.zeros(np.shape(truth_dt[:,:]), dtype=complex)
 net_pred_fspec_dt = np.zeros(np.shape(net_pred_dt[:,:]), dtype=complex)
 
 
-for n in range(np.shape(truth_dt)[0]):
+for n in range(np.shape(net_pred_dt)[0]):
     truth_fspec_dt[n,:] = np.abs(np.fft.fft(truth_dt[n,:])) 
     net_pred_fspec_dt[n,:] = np.abs(np.fft.fft(net_pred_dt[n,:])) 
-
 
 
 matfiledata_output = {}
 matfiledata_output[u'prediction'] = net_pred
 matfiledata_output[u'Truth'] = label_test 
-matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test)
+matfiledata_output[u'RMSE'] = RMSE(net_pred, label_test[0:net_pred.shape[0]])
 matfiledata_output[u'Truth_FFT_x'] = truth_fspec_x
 matfiledata_output[u'pred_FFT_x'] = net_pred_fspec_x
 matfiledata_output[u'Truth_FFT_dt'] = truth_fspec_dt
@@ -137,7 +141,7 @@ if skip_factor: #check if not == 0
     matfiledata_output_skip = {}
     matfiledata_output_skip[u'prediction'] = net_pred[0::skip_factor,:]
     matfiledata_output_skip[u'Truth'] = label_test[0::skip_factor,:]
-    matfiledata_output_skip[u'RMSE'] = RMSE(net_pred, label_test)[0::skip_factor,:]
+    matfiledata_output_skip[u'RMSE'] = RMSE(net_pred, label_test[0:net_pred.shape[0]])[0::skip_factor,:]
     matfiledata_output_skip[u'Truth_FFT_x'] = truth_fspec_x[0::skip_factor,:]
     matfiledata_output_skip[u'pred_FFT_x'] = net_pred_fspec_x[0::skip_factor,:]
     matfiledata_output_skip[u'Truth_FFT_dt'] = truth_fspec_dt[0::skip_factor,:]

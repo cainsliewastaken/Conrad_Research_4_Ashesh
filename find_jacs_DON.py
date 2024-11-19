@@ -17,19 +17,22 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as anim
 
 from nn_DON import DeepONet_FullGrid 
-# from nn_step_methods import Directstep, Eulerstep, PECstep
+from nn_MLP import MLP_Net 
+from nn_step_methods import Directstep, Eulerstep, PEC4step, RK4step
 
-from torch.profiler import profile, record_function, ProfilerActivity
-import gc
+import time
+
+
 
 time_step = 1e-3
-lead = int((1/1e-3)*time_step)
+lead = 1
 print(lead)
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/jacobean_mats/'
 
 net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/DON_PEC4step_lead1/chkpt_DON_PEC4step_lead1_epoch100.pt"
-
+# net_file_name = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/MLP_PEC4step_lead1/chkpt_MLP_PEC4step_lead1_epoch60.pt'
+print(net_file_name)
 matfile_name = 'DON_PEC4step_lead'+str(lead)+'_jacs.mat'
 
 
@@ -49,12 +52,13 @@ output_size = 1024
 
 
 
-input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).float()
-label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).float()
+input_test_torch = torch.from_numpy(np.transpose(data[:,trainN:])).double()
+label_test_torch = torch.from_numpy(np.transpose(data[:,trainN+lead:])).double()
 label_test = np.transpose(data[:,trainN+lead:])
 
 
 eq_points = 4
+
 
 x_torch = torch.zeros([eq_points,input_size]).cuda()
 
@@ -64,25 +68,22 @@ for k in (np.array([ int(0),  int(10000), int(20000), int(99999)])):
   count=count+1
 
 
+# mynet = MLP_Net(input_size, hidden_layer_size, output_size)
+
+
 
 num_of_basis_funcs = 200
 layer_sizes_branch = [1024, 4096, 4096, 4096, num_of_basis_funcs]
 layer_sizes_trunk = [1, 521, 512, 512, num_of_basis_funcs]
 
 mynet = DeepONet_FullGrid(layer_sizes_branch, layer_sizes_trunk, 1024)
-count_parameters(mynet)
 mynet.load_state_dict(torch.load(net_file_name))
 mynet.cuda()
 
 
 print('model defined')
 print(net_file_name)
-print(torch.cuda.memory_allocated())
-mynet.cuda()
-print('model cuda')
-print(torch.cuda.memory_allocated())
 
-mynet.eval()
 
 
 def RK4step(input_batch):
@@ -113,24 +114,33 @@ def PEC4step(input_batch):
  return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_3))
 
 
-# print(torch.cuda.memory_allocated())
-step_func = RK4step
+
+step_func = Directstep
 
 print("step function is "+str(step_func))
-# print(torch.cuda.memory_allocated())
+count_parameters(mynet)
+
 
 ygrad = torch.zeros([eq_points,input_size,input_size])
 
+mynet.eval()
+mynet.double()
 
-
+t_0 = time.time()
 for k in range(0,eq_points):
-
-    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
-
-    # print(sum(sum(np.abs(ygrad[k,:,:]))))
-
+    ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:].double(), strict = True) 
+    # ygrad [k,:,:] = torch.func.jacfwd(step_func, argnums=1)(mynet, x_torch[k,:].double(), time_step) 
+t_1 = time.time()
+print(t_1-t_0, 'Time taken to run')
+print(sum(sum(ygrad[1,:,:])))
 
 
 ygrad = ygrad.detach().cpu().numpy()
 
 print(ygrad.shape)
+
+matfiledata = {}
+matfiledata[u'Jacobian_mats'] = ygrad
+scipy.io.savemat(path_outputs+matfile_name, matfiledata)
+
+print('Saved Predictions')
