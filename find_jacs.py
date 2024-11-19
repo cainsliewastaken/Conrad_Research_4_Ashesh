@@ -128,7 +128,6 @@ print("step function is "+str(step_func))
 ygrad = torch.zeros([eq_points,input_size,input_size])
 
 
-
 for k in range(0,eq_points):
 
     # ygrad [k,:,:] = torch.autograd.functional.jacobian(step_func,x_torch[k,:]) #Use this line for MLP networks
