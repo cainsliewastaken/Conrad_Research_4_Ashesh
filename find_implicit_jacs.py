@@ -70,8 +70,6 @@ modes = 128 # number of Fourier modes to multiply
 width = 256 # input and output chasnnels to the FNO layer
 
 
-
-
 x_torch = torch.zeros([eq_points,input_size]).cuda()
 
 count=0
@@ -85,66 +83,6 @@ mynet = FNO1d(modes, width, time_future, time_history)
 
 
 mynet.eval()
-
-
-def RK4step(input_batch):
- output_1 = mynet(input_batch.cuda())
- output_2 = mynet(input_batch.cuda()+0.5*output_1)
- output_3 = mynet(input_batch.cuda()+0.5*output_2)
- output_4 = mynet(input_batch.cuda()+output_3)
-
- return input_batch.cuda() + time_step*(output_1+2*output_2+2*output_3+output_4)/6
-
-def Eulerstep(input_batch):
- output_1 = mynet(input_batch.cuda())
- return input_batch.cuda() + time_step*(output_1) 
-  
-def Directstep(input_batch):
-  output_1 = mynet(input_batch.cuda())
-  return output_1
-
-def PECstep(input_batch):
- output_1 = mynet(input_batch.cuda()) + input_batch.cuda()
- return input_batch.cuda() + time_step*0.5*(mynet(input_batch.cuda())+mynet(output_1))
-
-
-def Eulerstep_implicit(net,input_batch,output_iter):
- output_1 = net(output_iter.cuda())
- return input_batch.cuda() + time_step*(output_1)
-
-def PEC4step_implicit(input_batch,output_iter):
- output_1 = time_step*mynet(output_iter.cuda()) + input_batch.cuda()
- output_2 = input_batch.cuda() + time_step*0.5*(mynet(output_iter.cuda())+mynet(output_1))
- output_3 = input_batch.cuda() + time_step*0.5*(mynet(output_iter.cuda())+mynet(output_2))
- return input_batch.cuda() + time_step*0.5*(mynet(output_iter.cuda())+mynet(output_3))
-
-def implicit_iterations(input_batch):
-    output = PEC4step(mynet, input_batch, time_step)
-    output=output.cuda()
-    iter=0
-    while(iter < num_iter):
-      output1 = (PEC4step_implicit(input_batch.cuda(),output)).cuda()
-      # print('residue inside implicit',torch.norm(output1-output))
-      output = output1
-      iter=iter+1 
-    return output1
-
-def implicit_iterations_euler(net,input_batch,output,num_iter):
-    output = Eulerstep(mynet, input_batch, time_step)
-    output=output.cuda()
-    iter=0
-    while(iter < num_iter):
-      output1 = (Eulerstep_implicit(net,input_batch.cuda(),output)).cuda()
-      # print('residue inside implicit',torch.norm(output1-output), iter)
-      output = output1
-      iter=iter+1 
-    return output1
-
-# print(torch.cuda.memory_allocated())
-step_func = implicit_iterations
-
-print("step function is "+str(step_func))
-# print(torch.cuda.memory_allocated())
 
 ygrad = torch.zeros([eq_points,input_size,input_size])
 matfiledata = {}

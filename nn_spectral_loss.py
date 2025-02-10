@@ -1,6 +1,7 @@
 import torch
+import torch.nn.functional as F
 
-def spectral_loss (output, output2, target, tendency, wavenum_init, lamda_reg, time_step):
+def spectral_loss(output, output2, target, tendency, wavenum_init, lamda_reg, time_step):
 
    loss1 = torch.mean((output-target)**2).cuda()
    
@@ -17,6 +18,5 @@ def spectral_loss (output, output2, target, tendency, wavenum_init, lamda_reg, t
 
    loss = loss1 + lamda_reg*loss3
    # loss = loss1*(1+lamda_reg*loss3)
-
   
    return loss.cuda()

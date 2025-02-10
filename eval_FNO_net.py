@@ -17,23 +17,22 @@ from nn_FNO import FNO1d
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
 
 
-
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
 
 time_step = 1e-3
 lead = int((1/1e-3)*time_step)
 print(lead,'lead')
 
-path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/FNO_output/' #this is where the saved graphs and .mat files end up
+path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/FNO_output_new/' #this is where the saved graphs and .mat files end up
 
-net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/NN_FNO_PEC4step_lead1/chkpt_NN_FNO_PEC4step_lead1_epoch60.pt"
+net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/Conrad_Research_4_Ashesh/FNO_PEC4step_lead1_tendency.pt"
 #change this to use a different network
 
 step_func = PEC4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
 print(step_func)
 
-eval_output_name = 'predicted_PEC4step_1024_FNO_lead'+str(lead)+'_noised_1.0'  # what to name the output file, .mat ending not needed
+eval_output_name = 'KS_pred_PEC4step_FNO_tendency'  # what to name the output file, .mat ending not needed
 
 with open('/glade/derecho/scratch/cainslie/conrad_net_stability/training_data/KS_1024.pkl', 'rb') as f: #change based on eval data location.
     data = pickle.load(f)
@@ -54,7 +53,7 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 256 # number of Fourier modes to multiply
-width = 512  # input and output chasnnels to the FNO layer
+width = 256  # input and output chasnnels to the FNO layer
 
 num_epochs = 1 #set to one so faster computation, in principle 20 is best.  WHERE IS THIS USED, WHAT IT DO?
 learning_rate = 0.0001
@@ -64,14 +63,14 @@ my_net_FNO = FNO1d(modes, width, time_future, time_history)
 my_net_FNO.load_state_dict(torch.load(net_file_name))
 my_net_FNO.cuda()
 
-M = int(np.floor(9999/lead))
+M = int(np.floor(99999/lead))
 net_pred = np.zeros([M,np.size(label_test,1)])
 
 print('Model loaded')
 
-noise_var = 1.0
+noise_var = 0
 
-print('Model loaded')
+print(noise_var)
 
 noised_input = (noise_var)*torch.randn(1,1024).cuda()
 noised_input = label_test_torch[0,:].cuda() + noised_input
@@ -93,7 +92,6 @@ for k in range(0,M):
         print(k) 
        
 print('Eval Finished')
-
 
 def RMSE(y_hat, y_true):
     return np.sqrt(np.mean((y_hat - y_true)**2, axis=1, keepdims=True)) 
@@ -120,7 +118,6 @@ for n in range(np.shape(net_pred_dt)[0]):
     truth_fspec_dt[n,:] = np.abs(np.fft.fft(truth_dt[n,:])) 
     net_pred_fspec_dt[n,:] = np.abs(np.fft.fft(net_pred_dt[n,:])) 
 
-
 matfiledata_output = {}
 matfiledata_output[u'prediction'] = net_pred
 matfiledata_output[u'Truth'] = label_test 
@@ -130,11 +127,14 @@ matfiledata_output[u'pred_FFT_x'] = net_pred_fspec_x
 matfiledata_output[u'Truth_FFT_dt'] = truth_fspec_dt
 matfiledata_output[u'pred_FFT_dt'] = net_pred_fspec_dt
 
-scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
+# scipy.io.savemat(path_outputs+eval_output_name+'.mat', matfiledata_output)
+np.save(path_outputs+eval_output_name, matfiledata_output)
+
 
 temp_matfile = {}
 temp_matfile[u'RMSE'] = matfiledata_output[u'RMSE']
-scipy.io.savemat(path_outputs+eval_output_name+'_RMSE.mat', temp_matfile)
+# scipy.io.savemat(path_outputs+eval_output_name+'_RMSE.mat', temp_matfile)
+np.save(path_outputs+eval_output_name+'_RMSE', temp_matfile)
 
 
 if skip_factor: #check if not == 0
@@ -147,5 +147,7 @@ if skip_factor: #check if not == 0
     matfiledata_output_skip[u'Truth_FFT_dt'] = truth_fspec_dt[0::skip_factor,:]
     matfiledata_output_skip[u'pred_FFT_dt'] = net_pred_fspec_dt[0::skip_factor,:]
 
-    scipy.io.savemat(path_outputs+eval_output_name+'_skip'+str(skip_factor)+'.mat', matfiledata_output_skip)
+    # scipy.io.savemat(path_outputs+eval_output_name+'_skip'+str(skip_factor)+'.mat', matfiledata_output_skip)
+    np.save(path_outputs+eval_output_name+'_skip'+str(skip_factor), matfiledata_output_skip)
+
 print('Data saved')

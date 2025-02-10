@@ -13,9 +13,11 @@ import sys
 import pickle
 import matplotlib.pyplot as plt
 from nn_FNO import FNO1d
-from nn_MLP import MLP_Net
+from nn_MLP import MLP_Net, MLP_net_variable
 from nn_step_methods import Directstep, Eulerstep, RK4step, PECstep, PEC4step
-from ensemble_FP import ensemble_FP, ensemble_FP_cov
+from ensemble_FP import *
+from Obs_func_generator import EnsKFstep_module
+from nn_FP_net import *
 import hdf5storage
 
 skip_factor = 100 #Number of timesteps to skip (to make the saved data smaller), set to zero to not save a skipped version
@@ -24,23 +26,25 @@ time_step = 1e-3
 lead = int((1/1e-3)*time_step)
 print(lead,'lead')
 
-net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/MLP_PEC4step_lead1/chkpt_MLP_PEC4step_lead1_epoch60.pt"
+net_file_name = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_Eulerstep_lead1_tendency/chkpt_FNO_Eulerstep_lead1_tendency_epoch60.pt"
 #change this to use a different network
 print(net_file_name)
 
-step_func = PEC4step #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
+step_func = Eulerstep #this determines the step funciton used in the eval step, has inputs net (pytorch network), input batch, time_step
 
 print(step_func)
 
 num_ensembles = 100
-noise_var = 10.0
-wavenum_cutoff = 100
+noise_var = 5.0
+wave_num_start = 0
+wavenum_cutoff = 512
+noise_cutoff = 512
 
 print('Noise ', noise_var)
 print('Ensembles  ', num_ensembles)
 print('Wave cut off ',wavenum_cutoff)
 
-eval_output_name = 'PEC4_MLP_noise_'+str(noise_var)+'_'+str(num_ensembles)+'_ens_'+str(wavenum_cutoff)+'_wavenum_no_FP_short_t'
+eval_output_name = 'Euler_FNO_tendency_noise_'+str(noise_var)+'_'+str(num_ensembles)+'_ens_'+str(wavenum_cutoff)+'_wavenum_fp_w_mean'
 print(eval_output_name)
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/FP_output/'+eval_output_name+'/' #this is where the saved graphs and .mat files end up
@@ -66,55 +70,86 @@ device = 'cuda'  #change to cpu if no cuda available
 
 #model parameters
 modes = 256 # number of Fourier modes to multiply
-width = 512  # input and output chasnnels to the FNO layer
+width = 256  # input and output chasnnels to the FNO layer
 
-# my_net = FNO1d(modes, width, time_future, time_history)
-my_net = MLP_Net(input_size, hidden_layer_size, output_size)
+my_net = FNO1d(modes, width, time_future, time_history)
+# my_net = MLP_Net(input_size, hidden_layer_size, output_size)
 
 my_net.load_state_dict(torch.load(net_file_name))
 my_net.cuda()
 my_net.eval()
 
+# #EnsKFstep_module parameters
+# hidden_size = input_size*4
+# ydim = 512
+# observation_func_net = MLP_net_variable(input_size, ydim, hidden_size, 8, activation=F.tanh, use_act=False).cuda() #Made it only 3 hidden layers (HIDDEN LAYERS WERE 512, now 1024)
 
+# EnsKFstep = EnsKFstep_module(observation_func_net, ydim).cuda()
+# FP_model = FPmodel_parent(EnsKFstep, 1, 1, 1, num_ensembles, time_step, 1024, noise_var).cuda()
+# FP_model.load_state_dict(torch.load('/glade/derecho/scratch/cainslie/conrad_net_stability/FP_chkpts/KS_FP_net_MLP_3_noise_400_ens_512_ydim/chkpt_KS_FP_net_MLP_3_noise_400_ens_512_ydim_epoch_20.pt'))
 
-M = int(np.floor(999/lead))
+# obs_net_FP = FP_model.EnsKF_step_module
+
+M = int(np.floor(99999/lead))
 net_pred = np.zeros([M,num_ensembles,np.size(label_test,1)])
 
 print('Model loaded')
 
+observation_func = lambda input: torch.fft.rfft(input, dim=1)[:,wave_num_start:wavenum_cutoff].real.cuda() #input is ens by x_dim
+
+y_vals_test = torch.zeros(label_test_torch.shape[0],wavenum_cutoff - wave_num_start)
+
+# for i in range(label_test_torch.shape[0]):
+#     y_vals_test[i] = observation_func(label_test_torch[i,:].reshape(1, 1024))
+
+y_vals_test = observation_func(label_test_torch.reshape(label_test_torch.shape[0], 1024))
+
+y_true_invariant_mean = torch.mean(y_vals_test, dim=0).reshape(1, wavenum_cutoff - wave_num_start)
+# y_true_invariant_mean[noise_cutoff - wave_num_start:] = 0
+
+y_true_invariant_std = torch.std(y_vals_test, dim=0).reshape(1, wavenum_cutoff - wave_num_start)
+# y_true_invariant_std[noise_cutoff - wave_num_start:] = 0
+
+y_true_cov = torch.cov(y_vals_test.transpose(0,1))
+
+# y_label_cov = torch.corrcoef(label_test_torch.transpose(0,1)).cuda()
+
 noised_input = (noise_var)*torch.randn(num_ensembles, 1024).cuda()
 noised_input = label_test_torch[0,:].cuda() + noised_input
-
-observation_func = lambda input: torch.fft.rfft(input, dim=1)[:,0:wavenum_cutoff].real.cuda() #input is ens by x_dim
-
-y_vals_test = torch.zeros(label_test_torch.shape[0],wavenum_cutoff)
-for i in range(label_test_torch.shape[0]):
-    y_vals_test[i] = observation_func(label_test_torch[i,:].reshape(1, 1024))
-
-y_true_invariant_mean = torch.mean(y_vals_test, dim=0).reshape(1, wavenum_cutoff)
-y_true_invariant_std = torch.std(y_vals_test, dim=0).reshape(1, wavenum_cutoff)
-# y_true_cov = torch.cov(y_vals_test.transpose(0,1))
-# print(y_true_cov.shape)
 
 with torch.no_grad():
     for k in range(0,M):
     #  print('time step',k)
         if (k==0):
             output = step_func(my_net, noised_input.reshape(num_ensembles,1024,1) ,time_step)
-            net_pred[k,:,:,] = output.reshape(num_ensembles, 1024).detach().cpu().numpy()
-        else:
-            if k%1000==0:
-                print(k)
+            # output = ensemble_FP(output, observation_func, y_true_invariant_mean.cuda(), y_true_invariant_std.cuda(), 1, 1)
 
-            if (k>100) and (k%5==0):
-                output = step_func(my_net, torch.from_numpy(net_pred[k-1,:,:,]).reshape(num_ensembles,1024,1).float().cuda(), time_step)
-                output = ensemble_FP(output, observation_func, y_true_invariant_mean.cuda(), y_true_invariant_std.cuda())
-                # output = ensemble_FP_cov(output, observation_func, y_true_invariant_mean.cuda(), y_true_cov.cuda())
+            net_pred[k,:,:,] = output.reshape(num_ensembles, 1024).detach().cpu().numpy()
+            print(k, net_pred[k].max(), net_pred[k].min())
+
+        else:
+            if (k%1000==0):
+                print(k, net_pred[k-1].max(), net_pred[k-1].min())
+                print(np.sqrt(np.mean((net_pred[k-1,:] -  label_test[k-1])**2)), float(output.std(0).mean()))
+
+            if (k == 10) or (k % 100==0):
+                output = step_func(my_net, torch.from_numpy(net_pred[k-1]).reshape(num_ensembles,1024,1).float().cuda(), time_step)
+                output = ensemble_FP(output, observation_func, y_true_invariant_mean.cuda(), y_true_invariant_std.cuda(), 0, 1)
+
+                # noised_input = (.1)*torch.randn(num_ensembles, 1024).cuda()
+                # output += noised_input.unsqueeze(-1)
+
+                # output = ensemble_FP_cov(output, observation_func, y_true_invariant_mean.cuda(), y_true_cov.cuda(), 0, 1)
+
+                # output = obs_net_FP(output.squeeze(2).unsqueeze(0))
 
                 net_pred[k,:,:] = output.reshape(num_ensembles, 1024).detach().cpu().numpy()
+
             else:
                 output = step_func(my_net, torch.from_numpy(net_pred[k-1,:,:,]).reshape(num_ensembles,1024,1).float().cuda(), time_step)
                 net_pred[k,:,:] = output.reshape(num_ensembles, 1024).detach().cpu().numpy()
+
+        # print(np.sqrt(np.mean((net_pred[k-1,:] -  label_test[k-1])**2)), float(output.std(0).mean()))
 
 print('Eval Finished')
 # print(net_pred.shape)
@@ -195,4 +230,3 @@ for chunk in np.array_split(net_pred, num_chunks):
     print(chunk_count, prev_ind)
     chunk_count += 1
 print('Data saved')
-

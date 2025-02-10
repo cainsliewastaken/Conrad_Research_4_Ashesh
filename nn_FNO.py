@@ -50,9 +50,9 @@ class SpectralConv1d(nn.Module):
         x_ft = torch.fft.rfft(x) 
 
         # Multiply relevant Fourier modes
-        
+
         out_ft = torch.zeros(batchsize, self.out_channels, self.modes,  device=x.device, dtype=torch.cfloat)
-        out_ft[:, :, :] = self.compl_mul1d(x_ft[:, :, :self.modes], self.weights)
+        out_ft = self.compl_mul1d(x_ft[:, :, :self.modes], self.weights)
 
         #Return to physical space
         x = torch.fft.irfft(out_ft, n=x.size(-1))
@@ -69,9 +69,7 @@ class FNO1d(nn.Module):
         2. 4 layers of the integral operators u' = (W + K)(u).
             W defined by self.w; K defined by self.conv .
         3. Project from the channel space to the output space by self.fc1 and self.fc2 .
-
-        input: a driving function observed at T timesteps + 1 locations (u(1, x), ..., u(T, x),  x).
-        input shape: (batchsize, x=s, c=2)
+        input shape: (batchsize, x=s, c=1)
         output: the solution of a later timestep
         output shape: (batchsize, x=s, c=1)
         """
@@ -93,6 +91,8 @@ class FNO1d(nn.Module):
         self.fc2 = nn.Linear(128, self.time_future)
 
     def forward(self, u):
+        if len(u.shape)==2:
+            u = u.unsqueeze(0) #when there is no batchsize
         grid = self.get_grid(u.shape, u.device)
         x = torch.cat((u, grid), dim=-1)
         x = self.fc0(x)
