@@ -35,7 +35,7 @@ step_func = RK4step #this determines the step funciton used in the eval step, ha
 print(step_func)
 
 num_ensembles = 100
-noise_var = 5.0
+noise_var = 0.1
 wave_num_start = 0
 wavenum_cutoff = 512
 # noise_cutoff = wavenum_cutoff
@@ -44,7 +44,7 @@ print('Noise ', noise_var)
 print('Ensembles  ', num_ensembles)
 print('Wave cut off ',wavenum_cutoff)
 
-eval_output_name = 'RK4_FNO_noise_'+str(noise_var)+'_'+str(num_ensembles)+'_ens_'+str(wavenum_cutoff)+'_wavenum_complex'
+eval_output_name = 'RK4_FNO_noise_'+str(noise_var)+'_'+str(num_ensembles)+'_ens_'+str(wavenum_cutoff)+'_wavenum_fp_w_mean_test'
 print(eval_output_name)
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/FP_output/'+eval_output_name+'/' #this is where the saved graphs and .mat files end up
@@ -95,9 +95,9 @@ net_pred = np.zeros([M,num_ensembles,np.size(label_test,1)])
 
 print('Model loaded')
 
-observation_func = lambda input: torch.fft.rfft(input, dim=1)[:,wave_num_start:wavenum_cutoff].cuda() #input is ens by x_dim
+observation_func = lambda input: torch.fft.rfft(input, dim=1)[:,wave_num_start:wavenum_cutoff].real.cuda() #input is ens by x_dim
 
-y_vals_test = torch.zeros(label_test_torch.shape[0], wavenum_cutoff - wave_num_start, dtype=torch.cfloat)
+y_vals_test = torch.zeros(label_test_torch.shape[0],wavenum_cutoff - wave_num_start)
 
 # for i in range(label_test_torch.shape[0]):
 #     y_vals_test[i] = observation_func(label_test_torch[i,:].reshape(1, 1024))
@@ -138,7 +138,7 @@ with torch.no_grad():
 
             if (k >= 100) and (k % 20 == 0):
                 output = step_func(my_net, torch.from_numpy(net_pred[k-1]).reshape(num_ensembles,1024,1).float().cuda(), time_step)
-                output = ensemble_FP(output, observation_func, y_true_invariant_mean.cuda(), y_true_invariant_std.cuda(), 0, 1, 1)
+                output = ensemble_FP(output, observation_func, y_true_invariant_mean.cuda(), y_true_invariant_std.cuda(), 0, 1.2, 1)
 
                 # noised_input = (.1)*torch.randn(num_ensembles, 1024).cuda()
                 # output += noised_input.unsqueeze(-1)

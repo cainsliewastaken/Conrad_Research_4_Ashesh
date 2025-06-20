@@ -15,20 +15,20 @@ from nn_spectral_loss import spectral_loss
 from nn_step_methods import *
 from nn_jacobian_loss import *
 
-time_step = 1e-1
+time_step = 1e-3
 lead = int((1/1e-3)*time_step)
 
 print(time_step, lead)
 
 step_network = Implicit_Euler_step
 
-net_name = 'FNO_Eulerstep_implicit_lead'+str(lead)+'_spectral_jacobian_loss'
+net_name = 'FNO_Eulerstep_implicit_lead'+str(lead)+''
 print(net_name)
 
 path_outputs = '/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/'
 
 net_file_path = "/glade/derecho/scratch/cainslie/conrad_net_stability/model_chkpts/FNO_Eulerstep_implicit_lead100_spectral_jacobian_loss/chkpt_FNO_Eulerstep_implicit_lead100_spectral_jacobian_loss_epoch3.pt"
-starting_epoch = 4
+starting_epoch = 0
 print('Starting epoch: ', starting_epoch)
 #comment and uncomment code in training for loop below to change from mse to spectral loss in tendency
 
@@ -107,7 +107,7 @@ width = 256  # input and output chasnnels to the FNO layer
 
 # mynet = MLP_Net(input_size, hidden_layer_size, output_size).cuda()
 mynet = FNO1d(modes, width, time_future, time_history)
-mynet.load_state_dict(torch.load(net_file_path))
+# mynet.load_state_dict(torch.load(net_file_path))
 mynet.cuda()
 count_parameters(mynet)
 
@@ -118,8 +118,7 @@ scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[0, 5, 10, 15],
 
 loss_fn = nn.MSELoss()
 epochs = 60
-batch_size = 1
-lamda_reg = 5
+batch_size = 25
 
 torch.set_printoptions(precision=10)
 
@@ -138,18 +137,18 @@ for ep in range(starting_epoch, epochs+1):
     label_batch = torch.reshape(label_batch,(batch_size,input_size,1)).float()
 
     optimizer.zero_grad()
-    # outputs = Eulerstep(mynet, input_batch, time_step)
-    # outputs = implicit_iterations_euler(mynet, input_batch.cuda(), outputs, num_iters)
+    # # outputs = Eulerstep(mynet, input_batch, time_step)
+    # # outputs = implicit_iterations_euler(mynet, input_batch.cuda(), outputs, num_iters)
 
-    # outputs = PEC4step(mynet, input_batch, time_step)
-    # outputs = implicit_iterations(mynet, input_batch.cuda(), outputs, num_iters)
+    # # outputs = PEC4step(mynet, input_batch, time_step)
+    # # outputs = implicit_iterations(mynet, input_batch.cuda(), outputs, num_iters)
 
-    # loss = spectral_loss_no_tendency(outputs, label_batch)
+    # # loss = spectral_loss_no_tendency(outputs, label_batch)
 
-    # outputs = step_net(input_batch)
-    # loss = loss_fn(outputs, label_batch)
+    outputs = step_net(input_batch)
+    loss = loss_fn(outputs, label_batch)
 
-    loss = spectral_jacobian_loss(step_net, input_batch, label_batch, 1, 1)
+    # loss = spectral_jacobian_loss(step_net, input_batch, label_batch, 1, 1)
 
     loss.backward(retain_graph=True)
     optimizer.step()
